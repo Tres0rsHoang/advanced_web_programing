@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node authenServer & node server",
-    "build": "node authenServer & node server"
+    "build": "npm install bcrypt && node authenServer & npm install bcrypt &&  node server"
   },
   "author": "",
   "license": "ISC",
