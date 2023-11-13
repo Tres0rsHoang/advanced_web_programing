@@ -52,6 +52,7 @@ app.post('/login', async (req, res) => {
     const reqData = req.body;
     const email = reqData['email'];
     const password = reqData['password'];
+    res.json({"messages": email});
 
     const id = await authenPassword(email, password);
     if (id) {
