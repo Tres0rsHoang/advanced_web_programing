@@ -13,12 +13,12 @@ const PORT = 9500;
 
 app.use(express.json());
 
-const dbConnection = await databaseConnection("AuthenServer",{
+const dbConnection = await databaseConnection("AuthenServer", {
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASS,
     database: process.env.DATABASE_NAME
-}).catch(err => { console.err(err) });
+}).catch(err => { console.log(err) });
 
 async function authenPassword(email, password) {
     const sql = "SELECT id, `password` FROM `user` WHERE email = ?";
@@ -37,14 +37,16 @@ async function authenPassword(email, password) {
 async function createRefreshToken(userId) {
     const refreshTokenId = uuidv4();
     const refreshToken = jwt.sign(
-        {"id": refreshTokenId},
-        process.env.REFRESH_TOKEN_SECRET_KEY, 
-        { expiresIn: "7d"}
+        { "id": refreshTokenId },
+        process.env.REFRESH_TOKEN_SECRET_KEY,
+        { expiresIn: "7d" }
     )
     const sql = "INSERT INTO refresh_authen (id, user_id, token, is_revoked) VALUES ( ?, ?, ?, ?)";
-    const params = [refreshTokenId, userId, refreshToken, true];
-    
+    const params = [refreshTokenId, userId, refreshToken, false];
+
     await databaseQuery(dbConnection, sql, params).catch(err => console.err(err));
+
+    return refreshTokenId;
 }
 
 app.post('/login', async (req, res) => {
@@ -54,11 +56,11 @@ app.post('/login', async (req, res) => {
 
     const id = await authenPassword(email, password);
     if (id) {
+        const refreshTokenId = await createRefreshToken(id);
         const accessToken = jwt.sign(
-            { "id": id },
-            process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '100s' }
+            { "refresh_token_id": refreshTokenId },
+            process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '5s' }
         );
-        createRefreshToken(id);
         res.json({ 'access_token': accessToken });
     }
     else {
@@ -66,7 +68,7 @@ app.post('/login', async (req, res) => {
     }
 });
 
-router.get('/refreshToken', authenToken, async (req, res) => {
+app.get('/refreshToken', authenToken, async (req, res) => {
     const authorizationHeader = req.headers['authorization'];
     const accessToken = authorizationHeader.split(' ')[1];
     jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET_KEY, async (err, data) => {
@@ -77,7 +79,7 @@ router.get('/refreshToken', authenToken, async (req, res) => {
         const refreshTokenId = data['refresh_token_id'];
         const sql = "SELECT * FROM refresh_authen WHERE id = ?";
         const params = [refreshTokenId];
-        const result = await databaseQuery(sql, params).catch(err => console.err(err));
+        const result = await databaseQuery(dbConnection, sql, params).catch(err => console.err(err));
         if (result.length > 0) {
             const refreshToken = result[0]['token'];
             const refreshTokenRevoked = result[0]['is_revoked'];
@@ -104,7 +106,7 @@ router.get('/refreshToken', authenToken, async (req, res) => {
     });
 });
 
-router.get('/logout', authenToken, async (req, res) => {
+app.get('/logout', authenToken, async (req, res) => {
     const authorizationHeader = req.headers['authorization'];
     const accessToken = authorizationHeader.split(' ')[1];
 
@@ -117,7 +119,7 @@ router.get('/logout', authenToken, async (req, res) => {
         const sql = "UPDATE refresh_authen SET is_revoked = 1 WHERE id = ?";
         const params = [refreshTokenId];
 
-        await databaseQuery(sql, params).catch(err=> res.status(500).json({"Error": err}));
+        await databaseQuery(dbConnection, sql, params).catch(err=> res.status(500).json({"Error": err}));
 
         res.json({"message" : "Logout successfully"});
     });
