@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node authenServer & node server",
+    "start": "nodemon authenServer & nodemon server",
     "build": "node authenServer & node server"
   },
   "author": "",
