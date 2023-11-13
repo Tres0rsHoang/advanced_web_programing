@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon authenServer && nodemon server",
-    "build": "node authenServer.js && node server.js"
+    "start": "node authenServer & node server",
+    "build": "nodemon authenServer.js & nodemon server.js"
   },
   "author": "",
   "license": "ISC",
