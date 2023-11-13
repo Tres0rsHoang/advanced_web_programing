@@ -1,4 +1,4 @@
-export default async function(conn, query, params) {
+export default async function(connection, query, params) {
     return new Promise(
         (resolve, reject) => {
             const handler = (error, result) => {
@@ -8,7 +8,7 @@ export default async function(conn, query, params) {
                 }
                 resolve(result);
             }
-            conn.query(query, params, handler);
+            connection.query(query, params, handler);
         }
     );
 }

@@ -12,12 +12,12 @@ const PORT = process.env.PORT || 9000;
 
 app.use(express.json());
 
-const dbConnection = await databaseConnection("DataServer",{
+const dbConnection = await databaseConnection("AuthenServer", {
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASS,
     database: process.env.DATABASE_NAME
-}).catch(err => { console.err(err) });
+}).catch(err => { console.log(err) });
 
 app.post('/register', async (req, res) => {
     const reqData = req.body;
@@ -53,7 +53,19 @@ app.post('/register', async (req, res) => {
 });
 
 app.get('/profile', authenToken, async (req, res) => {
-    res.json({ "message": "ok"});
+    const userId = req.body.user_id;
+    const sql = "SELECT * FROM `user` WHERE id = ?"
+    const params = [userId];
+    
+    const results = await databaseQuery(dbConnection, sql, params).catch(err => {
+        res.status(500).json({"message" : "Server error"});
+    });
+
+    if ( results.length <= 0 ) res.status(200).json({"message" : "Invalid user id"});
+    else {
+        const userInformation = results[0];
+        res.status(200).json(userInformation);
+    }
 });
 
 app.get('/', (req, res) => {
