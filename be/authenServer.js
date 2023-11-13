@@ -66,14 +66,62 @@ app.post('/login', async (req, res) => {
     }
 });
 
-app.get('/refreshToken', authenToken, async (req, res) => {
+router.get('/refreshToken', authenToken, async (req, res) => {
     const authorizationHeader = req.headers['authorization'];
-    const accessToken = authorizationHeader.split(' ')[1];    
-    const token = jwt.decode(
-        accessToken
-    );
+    const accessToken = authorizationHeader.split(' ')[1];
+    jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET_KEY, async (err, data) => {
+        if (err) {
+            res.status(403).json({ "Error": err });
+            throw err;
+        }
+        const refreshTokenId = data['refresh_token_id'];
+        const sql = "SELECT * FROM refresh_authen WHERE id = ?";
+        const params = [refreshTokenId];
+        const result = await databaseQuery(sql, params).catch(err => console.err(err));
+        if (result.length > 0) {
+            const refreshToken = result[0]['token'];
+            const refreshTokenRevoked = result[0]['is_revoked'];
+            if (refreshTokenRevoked == 0) {
+                jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET_KEY, (err, data) => {
+                    if (err) {
+                        res.status(403).json({ "Error": err });
+                        throw err;
+                    }
+                    const accessToken = jwt.sign(
+                        { "refresh_token_id": refreshTokenId },
+                        process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '100s' }
+                    );
+                    res.status(200).json({ "access_token": accessToken });
+                });
+            }
+            else {
+                res.status(403).json({ "message": "Refresh token is revoked" });
+            }
+        }
+        else {
+            res.status(403).json({ "Error": "Invalid Access Token" });
+        }
+    });
+});
 
-   res.json({token});
+router.get('/logout', authenToken, async (req, res) => {
+    const authorizationHeader = req.headers['authorization'];
+    const accessToken = authorizationHeader.split(' ')[1];
+
+    jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET_KEY, async (err, data) => {
+        if (err) {
+            res.status(403).json({ "Error": err });
+            throw err;
+        }
+        const refreshTokenId = data['refresh_token_id'];
+        const sql = "UPDATE refresh_authen SET is_revoked = 1 WHERE id = ?";
+        const params = [refreshTokenId];
+
+        await databaseQuery(sql, params).catch(err=> res.status(500).json({"Error": err}));
+
+        res.json({"message" : "Logout successfully"});
+    });
+
 });
 
 app.listen(PORT, () => {
