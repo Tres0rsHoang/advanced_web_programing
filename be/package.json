@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node authenServer & node server",
-    "build": "nodemon authenServer.js & nodemon server.js"
+    "build": "node authenServer & node server"
   },
   "author": "",
   "license": "ISC",
