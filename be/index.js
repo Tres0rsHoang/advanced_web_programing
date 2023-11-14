@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import express from 'express';
 import jwt from 'jsonwebtoken';
@@ -52,7 +52,6 @@ app.post('/login', async (req, res) => {
     const reqData = req.body;
     const email = reqData['email'];
     const password = reqData['password'];
-    res.json({"messages": email});
 
     const id = await authenPassword(email, password);
     if (id) {
