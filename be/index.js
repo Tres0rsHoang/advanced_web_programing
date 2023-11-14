@@ -195,6 +195,55 @@ app.get('/profile', authenToken, async (req, res) => {
     }
 });
 
+app.patch('/profile', authenToken, async (req, res) => {
+    let reqData = req.body;
+
+    if (typeof(req.body) == "string") {
+        reqData = JSON.parse(req.body);
+    }
+
+    const authorizationHeader = req.headers['authorization'];
+    const accessToken = authorizationHeader.split(' ')[1];
+
+    const refreshTokenId = jwt.decode(accessToken)['refresh_token_id'];
+    const userIdSql = "SELECT user_id FROM refresh_authen WHERE id = ?";
+    const userIdParams = [refreshTokenId];
+
+    const userIdQueryResult = await databaseQuery(dbConnection, userIdSql, userIdParams).catch(err => {
+        res.status(500).json({ "message": "Server error" });
+    });
+
+    const userId = userIdQueryResult[0]['user_id'];
+
+    if (reqData['password']) {
+        const hashPassword = await bcrypt.hash(reqData['password'], parseInt(process.env.SALT_ROUNDS)).catch(err => console.error(err.message));
+        reqData['password'] = hashPassword;
+    }
+
+    const sql = "UPDATE `user`"
+
+    let setSql = "SET";
+
+    const whereSql = "WHERE id = ?";
+
+    const params = [userId];
+
+    Object.keys(reqData).forEach(function(key){
+        setSql += ` ${key} = "${reqData[key]}",`;
+    });
+
+    setSql = setSql.slice(0, -1); 
+
+    const result = await databaseQuery(dbConnection, `${sql} ${setSql} ${whereSql}`, params).catch(err => res.status(500).json({"Error": err}));
+    
+    if (result.changedRows == 1) {
+        res.status(200).json({"messages" : "Update user profile successfully"});
+    }
+    else {
+        res.status(200).json({"messages" : "Update user profile fail (error query)"});
+    }
+});
+
 app.get('/', (req, res) => {
     res.send('Server is running...');
 });
