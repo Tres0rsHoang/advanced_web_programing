@@ -8,11 +8,16 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { IconButton } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { KeyboardBackspace } from '@mui/icons-material';
 
 
 const defaultTheme = createTheme();
 
 const SignUp = () => {
+  const navigate = useNavigate();
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -24,11 +29,19 @@ const SignUp = () => {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      <IconButton 
+          aria-label="back" 
+          size="small" 
+          sx={{alignItems: 'start', mt: 4, ml: 3, color: '#3f51b5'}} 
+          onClick={() => navigate(-1)}
+        >
+          <KeyboardBackspace fontSize="large" />
+        </IconButton>
       <Container component="main" maxWidth="sm">
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 8,
+            marginTop: 2,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -81,12 +94,34 @@ const SignUp = () => {
                   autoComplete="new-password"
                 />
               </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="confirmPassword"
+                  label="Confirm Password"
+                  type="password"
+                  id="confirmPassword"
+                  autoComplete="confirm-password"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="phone"
+                  label="Phone Number"
+                  type="tel"
+                  id="phone"
+                  autoComplete="phone"
+                />
+              </Grid>
             </Grid>
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2, padding: '14px' }}
             >
               Sign Up
             </Button>
