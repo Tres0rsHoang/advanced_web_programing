@@ -49,7 +49,8 @@ async function createRefreshToken(userId) {
 }
 
 app.post('/login', async (req, res) => {
-    const reqData = JSON.parse(req.body);
+    var stringReq = JSON.stringify(req.body);
+    const reqData = JSON.parse(stringReq);
     const email = reqData['email'];
     const password = reqData['password'];
 
@@ -127,7 +128,8 @@ app.get('/logout', authenToken, async (req, res) => {
 });
 
 app.post('/register', async (req, res) => {
-    const reqData = JSON.parse(req.body);
+    var stringReq = JSON.stringify(req.body);
+    const reqData = JSON.parse(stringReq);
 
     const id = uuidv4();
     const email = reqData['email'];
