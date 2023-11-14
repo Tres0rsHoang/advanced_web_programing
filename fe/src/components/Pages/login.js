@@ -10,10 +10,15 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { IconButton } from '@mui/material';
+import { KeyboardBackspace } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 
 const defaultTheme = createTheme();
 const Login = () => {
+  const navigate = useNavigate();
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -26,11 +31,19 @@ const Login = () => {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      <IconButton 
+          aria-label="back" 
+          size="small" 
+          sx={{alignItems: 'start', mt: 4, ml: 3, color: '#3f51b5'}} 
+          onClick={() => navigate(-1)}
+        >
+          <KeyboardBackspace fontSize="large" />
+        </IconButton>
       <Container component="main" maxWidth="sm">
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 8,
+            marginTop: 4,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -68,7 +81,7 @@ const Login = () => {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2, padding: '14px' }}
             >
               Sign In
             </Button>
