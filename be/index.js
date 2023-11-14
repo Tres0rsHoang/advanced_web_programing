@@ -49,16 +49,17 @@ async function createRefreshToken(userId) {
 }
 
 app.post('/login', async (req, res) => {
-    const reqData = req.body;
+    const reqData = JSON.parse(req.body);
     const email = reqData['email'];
     const password = reqData['password'];
 
     const id = await authenPassword(email, password);
+
     if (id) {
         const refreshTokenId = await createRefreshToken(id);
         const accessToken = jwt.sign(
             { "refresh_token_id": refreshTokenId },
-            process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '5s' }
+            process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '10s' }
         );
         res.json({ 'access_token': accessToken });
     }
@@ -118,15 +119,15 @@ app.get('/logout', authenToken, async (req, res) => {
         const sql = "UPDATE refresh_authen SET is_revoked = 1 WHERE id = ?";
         const params = [refreshTokenId];
 
-        await databaseQuery(dbConnection, sql, params).catch(err=> res.status(500).json({"Error": err}));
+        await databaseQuery(dbConnection, sql, params).catch(err => res.status(500).json({ "Error": err }));
 
-        res.json({"message" : "Logout successfully"});
+        res.json({ "message": "Logout successfully" });
     });
 
 });
 
 app.post('/register', async (req, res) => {
-    const reqData = req.body;
+    const reqData = JSON.parse(req.body);
 
     const id = uuidv4();
     const email = reqData['email'];
@@ -159,18 +160,29 @@ app.post('/register', async (req, res) => {
 });
 
 app.get('/profile', authenToken, async (req, res) => {
-    const userId = req.body.user_id;
-    const sql = "SELECT * FROM `user` WHERE id = ?"
-    const params = [userId];
-    
-    const results = await databaseQuery(dbConnection, sql, params).catch(err => {
-        res.status(500).json({"message" : "Server error"});
+    const authorizationHeader = req.headers['authorization'];
+    const accessToken = authorizationHeader.split(' ')[1];
+
+    const refreshTokenId = jwt.decode(accessToken)['refresh_token_id'];
+
+    const userIdSql = "SELECT user_id FROM refresh_authen WHERE id = ?";
+    const userIdParams = [refreshTokenId];
+    const userId = await databaseQuery(dbConnection, userIdSql, userIdParams).catch(err => {
+        res.status(500).json({ "message": "Server error" });
     });
 
-    if ( results.length <= 0 ) res.status(200).json({"message" : "Invalid user id"});
+    if (userId.length > 0) {
+        const sql = "SELECT * FROM `user` WHERE id = ?"
+        const params = [userId[0]["user_id"]];
+
+        const results = await databaseQuery(dbConnection, sql, params).catch(err => {
+            res.status(500).json({ "message": "Server error" });
+        });
+
+        res.status(200).json(results[0]);
+    }
     else {
-        const userInformation = results[0];
-        res.status(200).json(userInformation);
+        res.status(200).json({ "message": "Invalid access token" });
     }
 });
 
