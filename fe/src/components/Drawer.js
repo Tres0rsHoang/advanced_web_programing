@@ -34,14 +34,17 @@ export default function Drawer() {
   };
 
   const handleLogout = () => {
-    axios.get(LOGOUT_URL, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('access_token')
-      }
-    }); 
-    localStorage.removeItem('user');
-    localStorage.removeItem('access_token');
+    if (user) {
+      axios.get(LOGOUT_URL, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+        }
+      }); 
+      localStorage.removeItem('user');
+      localStorage.removeItem('access_token');
+    }
+    
     navigate('/');
   }
 
