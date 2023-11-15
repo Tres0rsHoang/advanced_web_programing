@@ -17,7 +17,7 @@ import axios from '../../api/axios';
 import AuthContext from '../../context/AuthProvider';
 
 const LOGIN_URL = '/login';
-const Auth_URL = '/profile;'
+const Auth_URL = '/profile';
 
 const defaultTheme = createTheme();
 const Login = () => {
@@ -61,24 +61,6 @@ const Login = () => {
       console.log(JSON.stringify(response?.data));
       const accessToken = response?.data?.access_token;
       localStorage.setItem("access_token", accessToken);
-
-      try {
-        const response = await axios.post(Auth_URL, params, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer' + accessToken
-          }
-        }); 
-        
-        console.log(JSON.stringify(response?.data));
-        localStorage.setItem("user", JSON.stringify(response.data));
-      } catch (err) {
-        if (!err?.response) {
-            setErrMsg('No Server Response');
-        } else {
-            setErrMsg('Get current user failed');
-        }
-      }
 
       setAuth({ email, password, accessToken });
       setEmail('');

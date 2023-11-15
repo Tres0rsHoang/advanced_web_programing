@@ -9,7 +9,34 @@
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "/"
+            "dest": "/",
+            "use": "@vercel/node"
+        }
+    ],
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "index.js"
+        }
+    ],
+    "headers": [
+        {
+            "source": "/(.*)",
+            "headers": [
+                {
+                    "key": "Access-Control-Allow-Origin",
+                    "value": "*"
+                }
+            ]
+        },
+        {
+            "source": "/advanced-web-programing.vercel.app/(.*)",
+            "headers": [
+                {
+                    "key": "Access-Control-Allow-Origin",
+                    "value": "*"
+                }
+            ]
         }
     ]
 }

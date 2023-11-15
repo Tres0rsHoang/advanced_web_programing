@@ -11,9 +11,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { KeyboardBackspace } from '@mui/icons-material';
-import { useRef } from 'react';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios from '../../api/axios';
 
 
@@ -96,6 +94,7 @@ const SignUp = () => {
         setErrMsg("Invalid Entry!");
         return;
     }
+
     try {
       const params = {
         "email": email,
