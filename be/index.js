@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import cors from "cors";
 import dotenv from 'dotenv';
 import express from 'express';
 import jwt from 'jsonwebtoken';
@@ -11,6 +12,8 @@ dotenv.config();
 const app = express();
 
 app.use(express.json());
+
+app.use(cors());  
 
 const dbConnection = await databaseConnection("AuthenServer", {
     host: process.env.DATABASE_HOST,
@@ -48,7 +51,7 @@ async function createRefreshToken(userId) {
     return refreshTokenId;
 }
 
-app.post('/login', async (req, res) => {
+app.post('/login', async function(req, res, next) {
     let reqData = req.body;
 
     if (typeof(req.body) == "string") {
@@ -64,7 +67,7 @@ app.post('/login', async (req, res) => {
         const refreshTokenId = await createRefreshToken(id);
         const accessToken = jwt.sign(
             { "refresh_token_id": refreshTokenId },
-            process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '10s' }
+            process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '5m' }
         );
         res.json({ 'access_token': accessToken });
     }
@@ -73,7 +76,7 @@ app.post('/login', async (req, res) => {
     }
 });
 
-app.get('/refreshToken', authenToken, async (req, res) => {
+app.get('/refreshToken', authenToken, async function(req, res, next) {
     const authorizationHeader = req.headers['authorization'];
     const accessToken = authorizationHeader.split(' ')[1];
     jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET_KEY, async (err, data) => {
@@ -96,7 +99,7 @@ app.get('/refreshToken', authenToken, async (req, res) => {
                     }
                     const accessToken = jwt.sign(
                         { "refresh_token_id": refreshTokenId },
-                        process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '100s' }
+                        process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '5m' }
                     );
                     res.status(200).json({ "access_token": accessToken });
                 });
@@ -111,7 +114,7 @@ app.get('/refreshToken', authenToken, async (req, res) => {
     });
 });
 
-app.get('/logout', authenToken, async (req, res) => {
+app.get('/logout', authenToken, async function(req, res, next) {
     const authorizationHeader = req.headers['authorization'];
     const accessToken = authorizationHeader.split(' ')[1];
 
@@ -131,12 +134,12 @@ app.get('/logout', authenToken, async (req, res) => {
 
 });
 
-app.post('/register', async (req, res) => {
+app.post('/register', async function(req, res, next) {
     let reqData = req.body;
 
     if (typeof(req.body) == "string") {
         reqData = JSON.parse(req.body);
-    }
+    }    
 
     const id = uuidv4();
     const email = reqData['email'];
@@ -168,7 +171,7 @@ app.post('/register', async (req, res) => {
     }
 });
 
-app.get('/profile', authenToken, async (req, res) => {
+app.get('/profile', authenToken, async function(req, res, next){
     const authorizationHeader = req.headers['authorization'];
     const accessToken = authorizationHeader.split(' ')[1];
 
@@ -195,7 +198,7 @@ app.get('/profile', authenToken, async (req, res) => {
     }
 });
 
-app.patch('/profile', authenToken, async (req, res) => {
+app.patch('/profile', authenToken, async function(req, res, next) {
     let reqData = req.body;
 
     if (typeof(req.body) == "string") {
@@ -244,7 +247,7 @@ app.patch('/profile', authenToken, async (req, res) => {
     }
 });
 
-app.get('/', (req, res) => {
+app.get('/', function(req, res, next) {
     res.send('Server is running...');
 });
 

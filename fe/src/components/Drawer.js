@@ -11,6 +11,9 @@ import ListItemText from '@mui/material/ListItemText';
 import { AccountCircle, ExitToApp, Home, Inventory, ListAlt, Menu, Person, PersonAdd, SupervisorAccount } from '@mui/icons-material';
 import { Link, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import axios from '../api/axios';
+
+const LOGOUT_URL ='/logout';
 
 export default function Drawer() {
   const [state, setState] = useState(false);
@@ -31,7 +34,14 @@ export default function Drawer() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('username');
+    axios.get(LOGOUT_URL, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+      }
+    }); 
+    localStorage.removeItem('user');
+    localStorage.removeItem('access_token');
     navigate('/');
   }
 

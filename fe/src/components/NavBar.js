@@ -2,6 +2,9 @@ import { AppBar, Box, Button, Tab, Tabs, Toolbar, Typography, useMediaQuery, use
 import React, { useState } from 'react'
 import Drawer from './Drawer';
 import { useNavigate } from 'react-router-dom';
+import axios from '../api/axios';
+
+const LOGOUT_URL ='/logout';
 
 const NavBar = () => {
   const [value, setValue] = useState();
@@ -12,7 +15,15 @@ const NavBar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem('username');
+    axios.get(LOGOUT_URL, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+      }
+    }); 
+    localStorage.removeItem('user');
+    localStorage.removeItem('access_token');
+    
     navigate('/');
   }
 
