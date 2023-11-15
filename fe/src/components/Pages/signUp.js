@@ -47,7 +47,6 @@ const SignUp = () => {
   const [validLastName, setValidLastName] = useState(false);
 
   const [errMsg, setErrMsg] = useState('');
-  const [success, setSuccess] = useState(false);
 
   const navigate = useNavigate();
 
@@ -112,7 +111,11 @@ const SignUp = () => {
 
       console.log(response?.data);
       console.log(JSON.stringify(response))
-      setSuccess(true);
+
+      if(response?.data.message === "Email already exist") {
+        setErrMsg('Email already exists!');
+        return;
+      }
       //clear state and controlled inputs
       //need value attrib on inputs for this
       setEmail('');
@@ -121,6 +124,8 @@ const SignUp = () => {
       setPhoneNumber('');
       setFirstName('');
       setLastName('');
+
+      navigate("/login");
     } catch (err) {
         if (!err?.response) {
             setErrMsg('No Server Response');
@@ -143,14 +148,6 @@ const SignUp = () => {
         >
         <KeyboardBackspace fontSize="large" />
       </IconButton>
-      {success ? (
-                <section>
-                    <h1>Success!</h1>
-                    <p>
-                        <a href="/login">Sign In</a>
-                    </p>
-                </section>
-      ) : (
         <Container component="main" maxWidth="sm">
           <CssBaseline />
           <Box
@@ -296,7 +293,6 @@ const SignUp = () => {
             </Box>
           </Box>
         </Container>
-      )}
     </ThemeProvider>
   );
 }

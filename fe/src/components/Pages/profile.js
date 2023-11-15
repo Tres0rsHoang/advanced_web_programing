@@ -13,7 +13,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const EDIT_PROFILE_URL = '/profile'
+const Auth_URL = '/profile';
 
 const EMAIL_REGEX = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const PHONE_REGEX = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
@@ -21,6 +21,8 @@ const NAME_REGEX = /\b([A-ZÀ-ÿ][-,a-z. ']+[ ]*)+/;
 
 const Profile = () => {
   const errRef = useRef();
+  const successRef = useRef();
+  const navigate = useNavigate();
   
   const user = JSON.parse(localStorage.getItem('user'));
 
@@ -37,8 +39,8 @@ const Profile = () => {
   const [validLastName, setValidLastName] = useState(false);
 
   const [errMsg, setErrMsg] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
-  const navigate = useNavigate();
 
   useEffect(() => {
       setValidEmail(EMAIL_REGEX.test(email));
@@ -64,15 +66,41 @@ const Profile = () => {
     e.preventDefault();
 
     try {
+      const params = {
+        "email": email,
+        "phone_number": phoneNumber,
+        "first_name": firstName,
+        "last_name": lastName
+      };
 
-      const response = await axios.patch(EDIT_PROFILE_URL, {
+      const response = await axios.patch(Auth_URL, params, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer' + localStorage.getItem("access_token")
+          'Authorization': 'Bearer ' + localStorage.getItem("access_token")
         }
       }); 
       
       console.log(JSON.stringify(response?.data));
+
+      try {
+        const response = await axios.get(Auth_URL, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem("access_token")
+          }
+        }); 
+        
+        console.log(JSON.stringify(response?.data));
+        localStorage.setItem("user", JSON.stringify(response.data));
+      } catch (err) {
+        if (!err?.response) {
+            setErrMsg('No Server Response');
+        } else {
+            setErrMsg('Get current user failed');
+        }
+      }
+      setSuccessMessage('Edit profile successful');
+      navigate("/profile");
     } catch (err) {
       if (!err?.response) {
         console.log('No Server Response');
@@ -96,7 +124,8 @@ const Profile = () => {
               alignItems: 'center',
             }}
           >
-            <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>  
+            <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
+            <p ref={successRef} className={successMessage ? "successMsg" : "offscreen"} aria-live="assertive">{successMessage}</p>  
             <Typography component="h1" variant="h4" sx={{mb: '20px'}}>
               User Profile
             </Typography>

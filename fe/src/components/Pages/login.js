@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useContext } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -14,7 +14,6 @@ import { IconButton } from '@mui/material';
 import { KeyboardBackspace } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../api/axios';
-import AuthContext from '../../context/AuthProvider';
 
 const LOGIN_URL = '/login';
 const Auth_URL = '/profile';
@@ -23,14 +22,12 @@ const defaultTheme = createTheme();
 const Login = () => {
   const navigate = useNavigate();
 
-  const { setAuth } = useContext(AuthContext);
   const userRef = useRef();
   const errRef = useRef();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errMsg, setErrMsg] = useState('');
-  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     userRef.current.focus();
@@ -62,10 +59,27 @@ const Login = () => {
       const accessToken = response?.data?.access_token;
       localStorage.setItem("access_token", accessToken);
 
-      setAuth({ email, password, accessToken });
+      try {
+        const response = await axios.get(Auth_URL, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + accessToken
+          }
+        }); 
+        
+        console.log(JSON.stringify(response?.data));
+        localStorage.setItem("user", JSON.stringify(response.data));
+      } catch (err) {
+        if (!err?.response) {
+            setErrMsg('No Server Response');
+        } else {
+            setErrMsg('Get current user failed');
+        }
+      }
+
       setEmail('');
       setPassword('');
-      setSuccess(true);
+      navigate("/");
     } catch (err) {
       if (!err?.response) {
           setErrMsg('No Server Response');
@@ -87,15 +101,6 @@ const Login = () => {
         >
         <KeyboardBackspace fontSize="large" />
       </IconButton>
-      {success ? (
-                <section>
-                    <h1>You are logged in!</h1>
-                    <br />
-                    <p>
-                        <a href="/">Go to Home</a>
-                    </p>
-                </section>
-      ) : (
         <Container component="main" maxWidth="sm">
           <CssBaseline />
           <Box
@@ -163,7 +168,6 @@ const Login = () => {
             </Box>
           </Box>
         </Container>
-      )}
     </ThemeProvider>
   );
 }

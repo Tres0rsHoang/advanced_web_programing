@@ -20,3 +20,14 @@
     opacity: 0.8;
     border: 1px solid red;
 }
+
+.successMsg {
+    background-color: rgb(220, 252, 233);
+    color: green;
+    font-weight: bold;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    opacity: 0.8;
+    border: 1px solid green;
+}
