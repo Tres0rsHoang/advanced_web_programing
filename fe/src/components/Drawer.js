@@ -8,11 +8,15 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { AccountCircle, ExitToApp, Home, Inventory, ListAlt, Menu, PersonAdd, SupervisorAccount } from '@mui/icons-material';
+import { AccountCircle, ExitToApp, Home, Inventory, ListAlt, Menu, Person, PersonAdd, SupervisorAccount } from '@mui/icons-material';
 import { Link, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 export default function Drawer() {
   const [state, setState] = useState(false);
+  const navigate = useNavigate();
+
+  const user = JSON.parse(localStorage.getItem('user'));
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -26,6 +30,11 @@ export default function Drawer() {
     setState(open);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('username');
+    navigate('/');
+  }
+
   const iconMapping = {
     'Home': <Home />,
     'Landing': <ListAlt />,
@@ -33,7 +42,8 @@ export default function Drawer() {
     'About Us': <SupervisorAccount />,
     'Login': <AccountCircle />,
     'Sign Up': <PersonAdd />,
-    'Logout': <ExitToApp />
+    'Logout': <ExitToApp />,
+    'Profile': <Person />
   };
 
   const urlMapping = {
@@ -43,7 +53,8 @@ export default function Drawer() {
     'About Us': '/aboutUs',
     'Login': '/login',
     'Sign Up': '/signUp',
-    'Logout': '/logout'
+    'Logout': '/logout',
+    'Profile': '/profile'
   }
 
   const list = () => (
@@ -74,8 +85,9 @@ export default function Drawer() {
         ))}
       </List>
       <Divider />
-      <List>
-        {['Login', 'Sign Up'].map((text) => (
+      {user ? (
+        <List>
+        {['Profile'].map((text) => (
           <ListItem key={text} component={Link} disablePadding href={urlMapping[text]} sx={{ color: 'black'}}>
             <ListItemButton>
               <ListItemIcon>
@@ -86,10 +98,24 @@ export default function Drawer() {
           </ListItem>
         ))}
       </List>
+      ) : (
+        <List>
+          {['Login', 'Sign Up'].map((text) => (
+            <ListItem key={text} component={Link} disablePadding href={urlMapping[text]} sx={{ color: 'black'}}>
+              <ListItemButton>
+                <ListItemIcon>
+                  {iconMapping[text]}
+                </ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      )}
       <Divider />
       <List sx={{ mt: '20px' }}>
         {['Logout'].map((text) => (
-          <ListItem key={text} component={Link} disablePadding href={urlMapping[text]} sx={{ color: 'black'}}>
+          <ListItem key={text} component={Link} disablePadding onClick={handleLogout} sx={{ color: 'black'}}>
             <ListItemButton>
               <ListItemIcon>
                 {iconMapping[text]}

@@ -1,0 +1,22 @@
+.instructions {
+    font-size: 13px;
+    color: red;
+    position: relative;
+    margin-top: 5px;
+}
+
+.offscreen {
+    position: absolute;
+    left: -9999px;
+}
+
+.errmsg {
+    background-color: rgb(252, 220, 224);
+    color: red;
+    font-weight: bold;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    opacity: 0.8;
+    border: 1px solid red;
+}
