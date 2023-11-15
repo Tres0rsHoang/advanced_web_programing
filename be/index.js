@@ -67,7 +67,7 @@ app.post('/login', async function(req, res, next) {
         const refreshTokenId = await createRefreshToken(id);
         const accessToken = jwt.sign(
             { "refresh_token_id": refreshTokenId },
-            process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '10s' }
+            process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '5m' }
         );
         res.json({ 'access_token': accessToken });
     }
@@ -99,7 +99,7 @@ app.get('/refreshToken', authenToken, async function(req, res, next) {
                     }
                     const accessToken = jwt.sign(
                         { "refresh_token_id": refreshTokenId },
-                        process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '100s' }
+                        process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '5m' }
                     );
                     res.status(200).json({ "access_token": accessToken });
                 });
