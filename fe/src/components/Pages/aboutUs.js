@@ -1,13 +1,15 @@
 import { Typography } from '@mui/material';
 import React from 'react'
 import NavBar from '../NavBar';
+import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 
 const AboutUs = () => {
   return (
-    <div>
-        <NavBar />
-        <Typography variant='h5' sx={{ml: '30px', mt: '100px', fontWeight: 'bold'}}>About Us</Typography>
-    </div>
+    <React.Fragment>
+      <CssBaseline />
+      <NavBar />
+      <Typography variant='h5' sx={{ml: '30px', mt: '100px', fontWeight: 'bold'}}>About Us</Typography>
+    </React.Fragment>
   )
 }
 
