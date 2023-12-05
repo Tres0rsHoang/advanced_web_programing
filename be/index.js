@@ -15,17 +15,12 @@ app.use(express.json());
 
 app.use(cors());  
 
-const dbConnection = await databaseConnection("AuthenServer", {
-    host: process.env.DATABASE_HOST,
-    user: process.env.DATABASE_USER,
-    password: process.env.DATABASE_PASS,
-    database: process.env.DATABASE_NAME
-}).catch(err => { console.log(err) });
+const databaseRequest = await databaseConnection();
 
 async function authenPassword(email, password) {
-    const sql = "SELECT id, `password` FROM `user` WHERE email = ?";
-    const params = [email];
-    const result = await databaseQuery(dbConnection, sql, params);
+    const sql =`SELECT id, password FROM [user] WHERE email = '${email}'`;
+
+    var result = await databaseQuery(databaseRequest, sql);
 
     if (result.length > 0) {
         const hash = result[0]['password'];
@@ -43,10 +38,9 @@ async function createRefreshToken(userId) {
         process.env.REFRESH_TOKEN_SECRET_KEY,
         { expiresIn: "7d" }
     )
-    const sql = "INSERT INTO refresh_authen (id, user_id, token, is_revoked) VALUES ( ?, ?, ?, ?)";
-    const params = [refreshTokenId, userId, refreshToken, false];
-
-    await databaseQuery(dbConnection, sql, params).catch(err => console.err(err));
+    const sql = `INSERT INTO [refresh_authen] (id, user_id, token, is_revoked) VALUES ( '${refreshTokenId}', '${userId}', '${refreshToken}', 0)`;
+    
+    await databaseQuery(databaseRequest, sql);
 
     return refreshTokenId;
 }
@@ -85,9 +79,10 @@ app.get('/refreshToken', authenToken, async function(req, res, next) {
             throw err;
         }
         const refreshTokenId = data['refresh_token_id'];
-        const sql = "SELECT * FROM refresh_authen WHERE id = ?";
-        const params = [refreshTokenId];
-        const result = await databaseQuery(dbConnection, sql, params).catch(err => console.err(err));
+        const sql = `SELECT * FROM refresh_authen WHERE id = '${refreshTokenId}'`;
+
+        const result = await databaseQuery(databaseRequest, sql);
+
         if (result.length > 0) {
             const refreshToken = result[0]['token'];
             const refreshTokenRevoked = result[0]['is_revoked'];
@@ -124,10 +119,9 @@ app.get('/logout', authenToken, async function(req, res, next) {
             throw err;
         }
         const refreshTokenId = data['refresh_token_id'];
-        const sql = "UPDATE refresh_authen SET is_revoked = 1 WHERE id = ?";
-        const params = [refreshTokenId];
+        const sql = `UPDATE [refresh_authen] SET is_revoked = 1 WHERE id = '${refreshTokenId}'`;
 
-        await databaseQuery(dbConnection, sql, params).catch(err => res.status(500).json({ "Error": err }));
+        await databaseQuery(databaseRequest, sql);
 
         res.json({ "message": "Logout successfully" });
     });
@@ -148,25 +142,17 @@ app.post('/register', async function(req, res, next) {
     const password = reqData['password'];
     const phoneNumber = reqData['phone_number'];
 
-    const sql = "SELECT * FROM `user` WHERE email = ?";
-    const params = [email];
-
-    const results = await databaseQuery(dbConnection, sql, params).catch(err => {
-        console.err(err);
-        res.status(500).json({ "message": "Server error" });
-    });
+    const sql = `SELECT * FROM [user] WHERE email = '${email}'`;
+    
+    const results = await databaseQuery(databaseRequest, sql);
 
     if (results.length > 0) {
         res.status(200).json({ "message": "Email already exist" });
     }
     else {
         const hashPassword = await bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS)).catch(err => console.error(err.message));
-        const sql = "INSERT INTO `user`(id, email, `password`, phone_number, first_name, last_name) VALUES ( ?, ?, ?, ?, ?, ?)";
-        const params = [id, email, hashPassword, phoneNumber, firstName, lastName];
-        databaseQuery(dbConnection, sql, params).catch(err => {
-            console.err(err);
-            res.status(500).json({ "message": "Create fail" });
-        });
+        const sql = `INSERT INTO [user](id, email, password, phone_number, first_name, last_name) VALUES ( '${id}', '${email}', '${hashPassword}', '${phoneNumber}', '${firstName}', '${lastName}')`;
+        await databaseQuery(databaseRequest, sql);
         res.status(200).json({ "message": "Create success" });
     }
 });
@@ -177,19 +163,13 @@ app.get('/profile', authenToken, async function(req, res, next){
 
     const refreshTokenId = jwt.decode(accessToken)['refresh_token_id'];
 
-    const userIdSql = "SELECT user_id FROM refresh_authen WHERE id = ?";
-    const userIdParams = [refreshTokenId];
-    const userId = await databaseQuery(dbConnection, userIdSql, userIdParams).catch(err => {
-        res.status(500).json({ "message": "Server error" });
-    });
+    const userIdSql = `SELECT user_id FROM [refresh_authen] WHERE id = '${refreshTokenId}'`;
+    const userId = await databaseQuery(databaseRequest, userIdSql);
 
     if (userId.length > 0) {
-        const sql = "SELECT * FROM `user` WHERE id = ?"
-        const params = [userId[0]["user_id"]];
-
-        const results = await databaseQuery(dbConnection, sql, params).catch(err => {
-            res.status(500).json({ "message": "Server error" });
-        });
+        const sql = `SELECT * FROM [user] WHERE id = '${userId[0]["user_id"]}'`;
+        
+        const results = await databaseQuery(databaseRequest, sql);
 
         res.status(200).json(results[0]);
     }
@@ -209,12 +189,9 @@ app.patch('/profile', authenToken, async function(req, res, next) {
     const accessToken = authorizationHeader.split(' ')[1];
 
     const refreshTokenId = jwt.decode(accessToken)['refresh_token_id'];
-    const userIdSql = "SELECT user_id FROM refresh_authen WHERE id = ?";
-    const userIdParams = [refreshTokenId];
-
-    const userIdQueryResult = await databaseQuery(dbConnection, userIdSql, userIdParams).catch(err => {
-        res.status(500).json({ "message": "Server error" });
-    });
+    const userIdSql = `SELECT user_id FROM [refresh_authen] WHERE id = '${refreshTokenId}'`;
+    
+    const userIdQueryResult = await databaseQuery(databaseRequest, userIdSql);
 
     const userId = userIdQueryResult[0]['user_id'];
 
@@ -223,32 +200,29 @@ app.patch('/profile', authenToken, async function(req, res, next) {
         reqData['password'] = hashPassword;
     }
 
-    const sql = "UPDATE `user`"
+    const sql = "UPDATE [user]"
 
     let setSql = "SET";
 
-    const whereSql = "WHERE id = ?";
+    const whereSql = `WHERE id = '${userId}'`;
 
     const params = [userId];
 
     Object.keys(reqData).forEach(function(key){
-        setSql += ` ${key} = "${reqData[key]}",`;
+        setSql += ` ${key} = '${reqData[key]}',`;
     });
 
     setSql = setSql.slice(0, -1); 
 
-    const result = await databaseQuery(dbConnection, `${sql} ${setSql} ${whereSql}`, params).catch(err => res.status(500).json({"Error": err}));
-    
-    if (result.changedRows == 1) {
-        res.status(200).json({"messages" : "Update user profile successfully"});
-    }
-    else {
+    const result = await databaseQuery(databaseRequest, `${sql} ${setSql} ${whereSql}`).catch(err => {
         res.status(200).json({"messages" : "Update user profile fail (error query)"});
-    }
+    });
+
+    res.status(200).json({"messages" : "Update user profile successfully"});
 });
 
-app.get('/', function(req, res, next) {
-    res.send('Server is running...');
+app.get('/', async function(req, res, next) {
+    res.send("Server is running...");
 });
 
 export default app;

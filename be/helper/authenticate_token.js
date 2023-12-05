@@ -9,7 +9,6 @@ export default function authenToken(req, res, next) {
             res.status(403).json({"Error": err});
             throw err;
         }
-        console.log(err, data);
         next();
     })
 }
