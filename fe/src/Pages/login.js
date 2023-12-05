@@ -13,81 +13,65 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { IconButton } from '@mui/material';
 import { KeyboardBackspace } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import axios from '../../api/axios';
-
-const LOGIN_URL = '/login';
-const Auth_URL = '/profile';
+import { getCurrentUserApi, loginApi } from '../api/authService';
+import { toast } from "react-toastify";
 
 const defaultTheme = createTheme();
 const Login = () => {
   const navigate = useNavigate();
 
   const userRef = useRef();
-  const errRef = useRef();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errMsg, setErrMsg] = useState('');
 
   useEffect(() => {
     userRef.current.focus();
   }, [])
 
   useEffect(() => {
-      setErrMsg('');
   }, [email, password])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if(!email || !password) {
+      toast.error("Email/Password is required!");
+      return;
+    }
 
     try {
-      const params = {
-        "email": email,
-        "password": password
-      };
+      let response = await loginApi(email, password);
+      console.log(response);
 
-      console.log(email);
-      console.log(password);
-
-      const response = await axios.post(LOGIN_URL, params, {
-        headers: {
-          'Content-Type': 'application/json'
+      if (response && response.access_token) {
+        const accessToken = response.access_token;
+        localStorage.setItem("access_token", accessToken);
+      } else {
+        if (response && response.data.error) {
+          toast.error(response.data.error);
         }
-      }); 
-      
-      console.log(JSON.stringify(response?.data));
-      const accessToken = response?.data?.access_token;
-      localStorage.setItem("access_token", accessToken);
+      }
 
       try {
-        const response = await axios.get(Auth_URL, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + accessToken
-          }
-        }); 
+        const currentUser = await getCurrentUserApi();
         
-        console.log(JSON.stringify(response?.data));
-        localStorage.setItem("user", JSON.stringify(response.data));
+        console.log(JSON.stringify(currentUser));
+        localStorage.setItem("user", JSON.stringify(response));
       } catch (err) {
         if (!err?.response) {
-            setErrMsg('No Server Response');
+            toast.error('No Server Response');
         } else {
-            setErrMsg('Get current user failed');
+            toast.error('Get current user failed');
         }
       }
-
-      setEmail('');
-      setPassword('');
-      navigate("/");
-    } catch (err) {
-      if (!err?.response) {
-          setErrMsg('No Server Response');
-      } else {
-          setErrMsg('Login Failed');
-      }
-      errRef.current.focus();
+    } catch {
+      toast.error("Server not responding...");
+      return;
     }
+
+    setEmail('');
+    setPassword('');
+    navigate("/");
 }
 
 
@@ -111,7 +95,6 @@ const Login = () => {
               alignItems: 'center',
             }}
           >
-            <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
             <Typography component="h1" variant="h4">
               Sign in
             </Typography>

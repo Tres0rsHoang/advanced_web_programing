@@ -12,7 +12,8 @@ import { IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { KeyboardBackspace } from '@mui/icons-material';
 import { useEffect, useRef, useState } from 'react';
-import axios from '../../api/axios';
+import { toast } from 'react-toastify';
+import { signUpApi } from '../api/authService';
 
 
 const defaultTheme = createTheme();
@@ -21,8 +22,6 @@ const EMAIL_REGEX = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const PHONE_REGEX = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
 const NAME_REGEX = /\b([A-ZÀ-ÿ][-,a-z. ']+[ ]*)+/;
-
-const REGISTER_URL = '/register';
 
 const SignUp = () => {
   const userRef = useRef();
@@ -45,8 +44,6 @@ const SignUp = () => {
 
   const [lastName, setLastName] = useState('');
   const [validLastName, setValidLastName] = useState(false);
-
-  const [errMsg, setErrMsg] = useState('');
 
   const navigate = useNavigate();
 
@@ -76,7 +73,6 @@ const SignUp = () => {
   }, [lastName])
 
   useEffect(() => {
-      setErrMsg('');
   }, [email, password, matchPwd, phoneNumber, firstName, lastName])
 
 
@@ -90,30 +86,19 @@ const SignUp = () => {
     const v5 = NAME_REGEX.test(lastName);
 
     if (!v1 || !v2 || !v3 || !v4 || !v5) {
-        setErrMsg("Invalid Entry!");
+        toast.error("Invalid Entry!");
         return;
     }
 
     try {
-      const params = {
-        "email": email,
-        "password": password,
-        "phone_number": phoneNumber,
-        "first_name": firstName,
-        "last_name": lastName
-      };
 
-      const response = await axios.post(REGISTER_URL, params, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await signUpApi(email, password, phoneNumber, firstName, lastName);
 
       console.log(response?.data);
       console.log(JSON.stringify(response))
 
       if(response?.data.message === "Email already exist") {
-        setErrMsg('Email already exists!');
+        toast.error('Email already exists!');
         return;
       }
       //clear state and controlled inputs
@@ -128,11 +113,11 @@ const SignUp = () => {
       navigate("/login");
     } catch (err) {
         if (!err?.response) {
-            setErrMsg('No Server Response');
+          toast.error('Server not responding...');
         } else if (err.response?.status === 409) {
-            setErrMsg('Email already exists!');
+          toast.error('Email already exists!');
         } else {
-            setErrMsg('Registration Failed!')
+          toast.error('Registration Failed!')
         }
         errRef.current.focus();
     }
@@ -158,7 +143,6 @@ const SignUp = () => {
               alignItems: 'center',
             }}
           >
-            <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>  
             <Typography component="h1" variant="h4">
               Sign up
             </Typography>

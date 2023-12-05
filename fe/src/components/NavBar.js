@@ -2,9 +2,8 @@ import { AppBar, Box, Button, Tab, Tabs, Toolbar, Typography, useMediaQuery, use
 import React, { useState } from 'react'
 import Drawer from './Drawer';
 import { useNavigate } from 'react-router-dom';
-import axios from '../api/axios';
-
-const LOGOUT_URL ='/logout';
+import { toast } from 'react-toastify';
+import { logoutApi } from '../api/authService';
 
 const NavBar = () => {
   const [value, setValue] = useState();
@@ -14,19 +13,15 @@ const NavBar = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (user) {
-      axios.get(LOGOUT_URL, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('access_token')
-        }
-      }); 
+      await logoutApi();
       localStorage.removeItem('user');
       localStorage.removeItem('access_token');
     }
     
     navigate('/');
+    toast.success("Logout successful!")
   }
 
   return (
