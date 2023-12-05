@@ -1,4 +1,4 @@
-export default async function(connection, query, params) {
+export default async function(request, query) {
     return new Promise(
         (resolve, reject) => {
             const handler = (error, result) => {
@@ -6,9 +6,9 @@ export default async function(connection, query, params) {
                     reject(error);
                     throw error;
                 }
-                resolve(result);
-            }
-            connection.query(query, params, handler);
+                resolve(result['recordset']);
+            };
+            request.query(query, handler);
         }
     );
 }
