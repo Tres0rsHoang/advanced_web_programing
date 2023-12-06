@@ -166,6 +166,7 @@ app.post('/register', async function(req, res, next) {
             res.status(200).json({ "message": "Error when send verify email" });    
             console.log(err);
         });
+
         await databaseQuery(databaseRequest, sql);
         res.status(200).json({ "message": "Send verify email success" });
     }
@@ -262,7 +263,8 @@ app.post('/reset-password', async function (req, res, next) {
     const resetPasswordUrl = process.env.SITE_URL + `/reset-password?email=${email}&reset-code=${resetPasswordCode}`;
     const emailSubject = 'Reset your password';
     const emailContent = `<p>Please click to this link to reset your password: <a href='${resetPasswordUrl}'>Click here to reset</a></p>`;
-    await sendMail(email, emailSubject, emailContent);
+    const result = await sendMail(email, emailSubject, emailContent);
+    console.log(result);
     res.send("Password reset email sent");
 });
 
