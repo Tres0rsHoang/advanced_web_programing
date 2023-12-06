@@ -157,11 +157,16 @@ app.post('/register', async function(req, res, next) {
     else {
         const hashPassword = await bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS)).catch(err => console.error(err.message));
         const sql = `INSERT INTO [user](id, email, password, phone_number, first_name, last_name, is_verify) VALUES ( '${id}', '${email}', '${hashPassword}', '${phoneNumber}', '${firstName}', '${lastName}', 0)`;
-        const verifyUrl = req.protocol + '://' + req.get('host') + req.originalUrl + '/verify-email?userId=' +id;
-        await sendMail(email, verifyUrl).catch((err) => {
+
+        const verifyUrl = req.protocol + '://' + req.get('host') + req.originalUrl + '/verify-email?userId=' + id;
+        const emailSubject = 'Verify your resgister';
+        const emailContent = `<p>Please click to this link to verify your email: <a href='${verifyUrl}'>Click here to verify</a></p>`;
+ 
+        await sendMail(email, emailSubject, emailContent).catch((err) => {
             res.status(200).json({ "message": "Error when send verify email" });    
             console.log(err);
         });
+
         await databaseQuery(databaseRequest, sql);
         res.status(200).json({ "message": "Send verify email success" });
     }
@@ -236,6 +241,56 @@ app.get('/register/verify-email', async function(req, res, next) {
     const sql = `UPDATE [user] SET is_verify = 1 WHERE id = '${userId}'`;
     await databaseQuery(databaseRequest, sql);
     res.send("Verify successfully");
+});
+
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min);
+}
+
+app.post('/reset-password', async function (req, res, next) {
+    let reqData = req.body;
+
+    if (typeof(req.body) == "string") {
+        reqData = JSON.parse(req.body);
+    }
+    const resetPasswordCode = getRandomInt(1000, 9999);
+    const email = reqData['email'];
+    const sql = `UPDATE [user] SET reset_password_code = ${resetPasswordCode} WHERE email = '${email}'`;
+    await databaseQuery(databaseRequest, sql);
+
+    const resetPasswordUrl = process.env.SITE_URL + `/reset-password?email=${email}&reset-code=${resetPasswordCode}`;
+    const emailSubject = 'Reset your password';
+    const emailContent = `<p>Please click to this link to reset your password: <a href='${resetPasswordUrl}'>Click here to reset</a></p>`;
+    const result = await sendMail(email, emailSubject, emailContent);
+    console.log(result);
+    res.send(result);
+});
+
+app.patch('/confirm-reset-password', async function (req, res, next) {
+    let reqData = req.body;
+
+    if (typeof(req.body) == "string") {
+        reqData = JSON.parse(req.body);
+    }
+
+    const resetPasswordCode = reqData['reset_code'];
+    const email = reqData['email'];
+    const newPassword = reqData['new_password'];
+    const hashPassword = await bcrypt.hash(newPassword, parseInt(process.env.SALT_ROUNDS)).catch(err => console.error(err.message));
+
+    const sql = `SELECT COUNT(1) FROM [user] WHERE email = '${email}' AND reset_password_code = ${resetPasswordCode}`;
+    const result = await databaseQuery(databaseRequest, sql);
+
+    if (result != 0) {
+        const sql = `UPDATE [user] SET password = '${hashPassword}', reset_password_code = NULL WHERE email = '${email}'`;
+        await databaseQuery(databaseRequest, sql);
+        res.status(200).json({"messages" : "Change password successfully"})
+    }
+    else {
+        res.status(200).json({"messages" : "Fail to change password"});
+    }
 });
 
 app.get('/', async function(req, res, next) {

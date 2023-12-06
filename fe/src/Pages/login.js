@@ -24,7 +24,7 @@ import { gapi } from 'gapi-script';
 const defaultTheme = createTheme();
 const FacebookClientID = '679614957611578';
 const GoogleClientID = '355691189679-g1bqbv7ar8r0bcii90alovankquv19vu.apps.googleusercontent.com';
-const GoogleClientSerect = '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';
+//const GoogleClientSerect = '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';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -175,7 +175,7 @@ const Login = () => {
               </Button>
               <Grid container>
                 <Grid item xs>
-                  <Link href="#" variant="body2">
+                  <Link href="/resetPassword" variant="body2">
                     Forgot password?
                   </Link>
                 </Grid>
