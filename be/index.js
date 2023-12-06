@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import authenToken from "./helper/authenticate_token.js";
 import databaseConnection from './helper/database_connection.js';
 import databaseQuery from './helper/database_query.js';
+import sendMail from './helper/send_email.js';
 
 dotenv.config();
 const app = express();
@@ -18,7 +19,7 @@ app.use(cors());
 const databaseRequest = await databaseConnection();
 
 async function authenPassword(email, password) {
-    const sql =`SELECT id, password FROM [user] WHERE email = '${email}'`;
+    const sql =`SELECT id, password, is_verify FROM [user] WHERE email = '${email}'`;
 
     var result = await databaseQuery(databaseRequest, sql);
 
@@ -26,6 +27,7 @@ async function authenPassword(email, password) {
         const hash = result[0]['password'];
         const id = result[0]['id'];
         const res = await bcrypt.compare(password, hash).catch(err => console.log(err.message));
+        if (result[0]['is_verify'] == 0) return "unverify_email";
         if (res) return id;
     }
     return null;
@@ -57,6 +59,9 @@ app.post('/login', async function(req, res, next) {
 
     const id = await authenPassword(email, password);
 
+    if (id == 'unverify_email') {
+        res.status(200).json({ "message": "Unverify email" });
+    }
     if (id) {
         const refreshTokenId = await createRefreshToken(id);
         const accessToken = jwt.sign(
@@ -151,9 +156,14 @@ app.post('/register', async function(req, res, next) {
     }
     else {
         const hashPassword = await bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS)).catch(err => console.error(err.message));
-        const sql = `INSERT INTO [user](id, email, password, phone_number, first_name, last_name) VALUES ( '${id}', '${email}', '${hashPassword}', '${phoneNumber}', '${firstName}', '${lastName}')`;
+        const sql = `INSERT INTO [user](id, email, password, phone_number, first_name, last_name, is_verify) VALUES ( '${id}', '${email}', '${hashPassword}', '${phoneNumber}', '${firstName}', '${lastName}', 0)`;
+        const verifyUrl = req.protocol + '://' + req.get('host') + req.originalUrl + '/verify-email?userId=' +id;
+        await sendMail(email, verifyUrl).catch((err) => {
+            res.status(200).json({ "message": "Error when send verify email" });    
+            console.log(err);
+        });
         await databaseQuery(databaseRequest, sql);
-        res.status(200).json({ "message": "Create success" });
+        res.status(200).json({ "message": "Send verify email success" });
     }
 });
 
@@ -219,6 +229,13 @@ app.patch('/profile', authenToken, async function(req, res, next) {
     });
 
     res.status(200).json({"messages" : "Update user profile successfully"});
+});
+
+app.get('/register/verify-email', async function(req, res, next) {
+    const userId = req.query.userId;
+    const sql = `UPDATE [user] SET is_verify = 1 WHERE id = '${userId}'`;
+    await databaseQuery(databaseRequest, sql);
+    res.send("Verify successfully");
 });
 
 app.get('/', async function(req, res, next) {

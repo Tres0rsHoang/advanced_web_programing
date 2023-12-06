@@ -1,17 +1,17 @@
-import { useRef, useState, useEffect } from 'react';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { IconButton } from '@mui/material';
 import { KeyboardBackspace } from '@mui/icons-material';
+import { IconButton } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import Container from '@mui/material/Container';
+import CssBaseline from '@mui/material/CssBaseline';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Grid from '@mui/material/Grid';
+import Link from '@mui/material/Link';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../api/axios';
 
@@ -45,10 +45,7 @@ const Login = () => {
         "email": email,
         "password": password
       };
-
-      console.log(email);
-      console.log(password);
-
+      
       const response = await axios.post(LOGIN_URL, params, {
         headers: {
           'Content-Type': 'application/json'
@@ -56,35 +53,41 @@ const Login = () => {
       }); 
       
       console.log(JSON.stringify(response?.data));
-      const accessToken = response?.data?.access_token;
-      localStorage.setItem("access_token", accessToken);
-
-      try {
-        const response = await axios.get(Auth_URL, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + accessToken
-          }
-        }); 
-        
-        console.log(JSON.stringify(response?.data));
-        localStorage.setItem("user", JSON.stringify(response.data));
-      } catch (err) {
-        if (!err?.response) {
-            setErrMsg('No Server Response');
-        } else {
-            setErrMsg('Get current user failed');
-        }
+      if (response?.data?.message === "Password or email is not correct") {
+        setErrMsg(response?.data?.message);
       }
+      else if (response?.data?.message === "Unverify email") {
+        setErrMsg(response?.data?.message);
+      }
+      else {
+        const accessToken = response?.data?.access_token;
+        localStorage.setItem("access_token", accessToken);
 
-      setEmail('');
-      setPassword('');
-      navigate("/");
+        try {
+          const response = await axios.get(Auth_URL, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + accessToken
+            }
+          }); 
+          
+          console.log(JSON.stringify(response?.data));
+          localStorage.setItem("user", JSON.stringify(response.data));
+        } catch (err) {
+          if (!err?.response) {
+              setErrMsg('No Server Response');
+          } else {
+              setErrMsg('Get current user failed');
+          }
+        }
+
+        setEmail('');
+        setPassword('');
+        navigate("/");
+      }
     } catch (err) {
       if (!err?.response) {
           setErrMsg('No Server Response');
-      } else {
-          setErrMsg('Login Failed');
       }
       errRef.current.focus();
     }
