@@ -27,10 +27,10 @@ const Profile = () => {
   const [phoneNumber, setPhoneNumber] = useState(user ? user.phone_number : '');
   const [validPhoneNumber, setValidPhoneNumber] = useState(false);
 
-  const [firstName, setFirstName] = useState(user ? user.first_name : '');
+  const [firstName, setFirstName] = useState(user ? user.first_name || user.givenName : '');
   const [validFirstName, setValidFirstName] = useState(false);
 
-  const [lastName, setLastName] = useState(user ? user.last_name : '');
+  const [lastName, setLastName] = useState(user ? user.last_name || user.familyName : '');
   const [validLastName, setValidLastName] = useState(false);
 
   useEffect(() => {

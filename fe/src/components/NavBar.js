@@ -1,19 +1,28 @@
-import { AppBar, Box, Button, Tab, Tabs, Toolbar, Typography, useMediaQuery, useTheme } from '@mui/material';
-import React, { useContext, useState } from 'react'
+import { AppBar, Box, Button, Toolbar, Typography, useMediaQuery, useTheme } from '@mui/material';
+import React, { useContext } from 'react'
 import Drawer from './Drawer';
 import { useNavigate } from 'react-router-dom';
-import { logoutApi } from '../api/authService';
 import { UserContext } from '../context/userContext';
+import { GoogleLogout } from 'react-google-login';
 
 const NavBar = () => {
   const theme = useTheme();
   const isMatch = useMediaQuery(theme.breakpoints.down('md'));
+
+  const GoogleClientID = '355691189679-g1bqbv7ar8r0bcii90alovankquv19vu.apps.googleusercontent.com';
   
   const navigate = useNavigate();
 
   const { user, logout } = useContext(UserContext);
 
   const handleLogout = async () => {
+    if (user.auth) {
+      logout();
+      navigate('/');
+    }
+  }
+
+  const onSuccess = () => {
     if (user.auth) {
       logout();
       navigate('/');
@@ -60,7 +69,15 @@ const NavBar = () => {
                   {user && user.auth === true ? (
                     <Box sx={{ marginLeft: "auto" }}>
                       <Typography sx={{ ml: 'auto'}} variant='contained' >Hello, {user.email}</Typography>
-                      <Button sx={{ marginLeft: "30px" }} variant='contained' onClick={handleLogout}>Logout{" "}</Button>
+                      {user.authGoogle ? (
+                        <GoogleLogout
+                          clientId={GoogleClientID}
+                          buttonText='Logout'
+                          onLogoutSuccess={onSuccess}
+                        />
+                      ) : (
+                        <Button sx={{ marginLeft: "30px" }} variant='contained' onClick={handleLogout}>Logout{" "}</Button>
+                      )}
                     </Box>
                   ) : (
                     <Box sx={{ marginLeft: "auto" }}>

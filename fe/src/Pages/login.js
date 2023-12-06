@@ -11,13 +11,21 @@ import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUserApi, loginApi } from '../api/authService';
 import { toast } from "react-toastify";
 import { UserContext } from '../context/userContext';
+import { FacebookLoginButton } from 'react-social-login-buttons';
+import { LoginSocialFacebook } from 'reactjs-social-login';
+import { GoogleLogin } from 'react-google-login';
+import { gapi } from 'gapi-script';
 
 const defaultTheme = createTheme();
+const FacebookClientID = '679614957611578';
+const GoogleClientID = '355691189679-g1bqbv7ar8r0bcii90alovankquv19vu.apps.googleusercontent.com';
+const GoogleClientSerect = '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';
+
 const Login = () => {
   const navigate = useNavigate();
 
@@ -26,7 +34,19 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const { loginContext } = useContext(UserContext);
+  const { loginContext, ggLoginContext } = useContext(UserContext);
+
+  useEffect(() => {
+    function start() {
+      gapi.client.init({
+        clientId: GoogleClientID,
+        scope: ""
+      })
+    };
+
+    gapi.load('client:auth2', start);
+  });
+
 
   useEffect(() => {
     userRef.current.focus();
@@ -77,8 +97,20 @@ const Login = () => {
       toast.error("Server not responding...");
       return;
     }
-}
+  }
 
+  const onSuccess = (res) => {
+    ggLoginContext(res.profileObj.email, res.accessToken);
+    localStorage.setItem('user', JSON.stringify(res.profileObj));
+    setEmail('');
+    setPassword('');
+    navigate("/");
+    //console.log("Login success! Current user: ", res);
+  }
+
+  const onFailure = (res) => {
+    console.log("Login failed! Res: ", res);
+  }
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -153,6 +185,33 @@ const Login = () => {
                   </Link>
                 </Grid>
               </Grid>
+            </Box>
+            <Box sx={{
+              marginTop: 4,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}>
+            <LoginSocialFacebook
+              appId={FacebookClientID}
+              onResolve={(response) => {
+                console.log(response);
+              }}
+              onReject={(error) => {
+                console.log(error);
+              }}
+            >
+              <FacebookLoginButton/>
+            </LoginSocialFacebook>
+
+            <GoogleLogin
+              clientId={GoogleClientID}
+              buttonText='Log in with Google'
+              onSuccess={onSuccess}
+              onFailure={onFailure}
+              cookiePolicy={'single_host_origin'}
+              isSignedIn={true}
+            />
             </Box>
           </Box>
         </Container>
