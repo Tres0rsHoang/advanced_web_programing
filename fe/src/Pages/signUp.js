@@ -1,16 +1,15 @@
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { IconButton } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 import { KeyboardBackspace } from '@mui/icons-material';
+import { IconButton } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import CssBaseline from '@mui/material/CssBaseline';
+import Grid from '@mui/material/Grid';
+import Link from '@mui/material/Link';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { signUpApi } from '../api/authService';
@@ -71,10 +70,6 @@ const SignUp = () => {
   useEffect(() => {
     setValidLastName(NAME_REGEX.test(lastName));
   }, [lastName])
-
-  useEffect(() => {
-  }, [email, password, matchPwd, phoneNumber, firstName, lastName])
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
