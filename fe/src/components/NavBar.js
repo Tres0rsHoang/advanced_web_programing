@@ -13,7 +13,7 @@ const NavBar = () => {
   
   const navigate = useNavigate();
 
-  const { user, logout } = useContext(UserContext);
+  const { user, logout, ggLogout } = useContext(UserContext);
 
   const handleLogout = async () => {
     if (user.auth) {
@@ -24,7 +24,7 @@ const NavBar = () => {
 
   const onSuccess = () => {
     if (user.auth) {
-      logout();
+      ggLogout();
       navigate('/');
     }
   }
@@ -65,7 +65,6 @@ const NavBar = () => {
                     <Tab label='Services' />
                     <Tab label='Contact' />
                   </Tabs> */}
-                  
                   {user && user.auth === true ? (
                     <Box sx={{ marginLeft: "auto" }}>
                       <Typography sx={{ ml: 'auto'}} variant='contained' >Hello, {user.email}</Typography>

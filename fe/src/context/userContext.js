@@ -38,8 +38,18 @@ const UserProvider = ({ children }) => {
         }));
     };
 
+    const ggLogout = async () => {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("user");
+        setUser((user) => ({
+        email: '',
+        auth: false,
+        authGoogle: false
+        }));
+    };
+
     return (
-        <UserContext.Provider value={{ user, loginContext, ggLoginContext, logout }}>
+        <UserContext.Provider value={{ user, loginContext, ggLoginContext, logout, ggLogout }}>
         {children}
         </UserContext.Provider>
     );
