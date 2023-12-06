@@ -13,69 +13,83 @@ import Typography from '@mui/material/Typography';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getCurrentUserApi, loginApi } from '../api/authService';
-import { toast } from "react-toastify";
-import { UserContext } from '../context/userContext';
+import axios from '../../api/axios';
+
+const LOGIN_URL = '/login';
+const Auth_URL = '/profile';
 
 const defaultTheme = createTheme();
 const Login = () => {
   const navigate = useNavigate();
 
   const userRef = useRef();
+  const errRef = useRef();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  const { loginContext } = useContext(UserContext);
+  const [errMsg, setErrMsg] = useState('');
 
   useEffect(() => {
     userRef.current.focus();
   }, [])
 
   useEffect(() => {
+      setErrMsg('');
   }, [email, password])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if(!email || !password) {
-      toast.error("Email/Password is required!");
-      return;
-    }
 
     try {
-      let response = await loginApi(email, password);
-      //console.log(response);
+      const params = {
+        "email": email,
+        "password": password
+      };
+      
+      const response = await axios.post(LOGIN_URL, params, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }); 
+      
+      console.log(JSON.stringify(response?.data));
+      if (response?.data?.message === "Password or email is not correct") {
+        setErrMsg(response?.data?.message);
+      }
+      else if (response?.data?.message === "Unverify email") {
+        setErrMsg(response?.data?.message);
+      }
+      else {
+        const accessToken = response?.data?.access_token;
+        localStorage.setItem("access_token", accessToken);
 
-      if (response && response.data.access_token) {
-        loginContext(email, response.data.access_token);
-        
         try {
-          let response = await getCurrentUserApi();
-          console.log(response);
-    
-          if (response && response.data) {
-            localStorage.setItem('user', JSON.stringify(response.data));
-          } else {
-            if (response && response.data.error) {
-              toast.error(response.data.error);
+          const response = await axios.get(Auth_URL, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + accessToken
             }
+          }); 
+          
+          console.log(JSON.stringify(response?.data));
+          localStorage.setItem("user", JSON.stringify(response.data));
+        } catch (err) {
+          if (!err?.response) {
+              setErrMsg('No Server Response');
+          } else {
+              setErrMsg('Get current user failed');
           }
-        } catch {
-          toast.error("Server not responding...");
-          return;
         }
 
         setEmail('');
         setPassword('');
         navigate("/");
-      } else {
-        if (response && response.data.error) {
-          toast.error(response.data.error);
-        }
       }
-    } catch {
-      toast.error("Server not responding...");
-      return;
+    } catch (err) {
+      if (!err?.response) {
+          setErrMsg('No Server Response');
+      }
+      errRef.current.focus();
     }
   }
 
@@ -100,6 +114,7 @@ const Login = () => {
               alignItems: 'center',
             }}
           >
+            <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
             <Typography component="h1" variant="h4">
               Sign in
             </Typography>

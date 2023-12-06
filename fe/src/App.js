@@ -1,6 +1,4 @@
-import { useContext, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 import ConfirmResetPassword from './components/Pages/ConfirmResetPassword';
 import AboutUs from './components/Pages/aboutUs';
@@ -11,18 +9,8 @@ import Products from './components/Pages/products';
 import Profile from './components/Pages/profile';
 import ResetPassword from './components/Pages/resetPassword';
 import SignUp from './components/Pages/signUp';
-import { UserContext } from './context/userContext';
 
 function App() {
-  const { loginContext } = useContext(UserContext);
-  const user = JSON.parse(localStorage.getItem('user'));
-
-  useEffect(() => {
-    if(localStorage.getItem("access_token")) {
-      loginContext(user.email, localStorage.getItem("access_token"))
-    }
-  }, [])
-
   return (
     <div className="App">
       <Routes>
