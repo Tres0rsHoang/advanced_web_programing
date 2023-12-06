@@ -11,15 +11,15 @@ import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { useContext, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getCurrentUserApi, loginApi } from '../api/authService';
-import { toast } from "react-toastify";
-import { UserContext } from '../context/userContext';
-import { FacebookLoginButton } from 'react-social-login-buttons';
-import { LoginSocialFacebook } from 'reactjs-social-login';
-import { GoogleLogin } from 'react-google-login';
 import { gapi } from 'gapi-script';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { GoogleLogin } from 'react-google-login';
+import { useNavigate } from 'react-router-dom';
+import { FacebookLoginButton } from 'react-social-login-buttons';
+import { toast } from "react-toastify";
+import { LoginSocialFacebook } from 'reactjs-social-login';
+import { getCurrentUserApi, loginApi } from '../api/authService';
+import { UserContext } from '../context/userContext';
 
 const defaultTheme = createTheme();
 const FacebookClientID = '679614957611578';
@@ -175,7 +175,7 @@ const Login = () => {
               </Button>
               <Grid container>
                 <Grid item xs>
-                  <Link href="#" variant="body2">
+                  <Link href="/resetPassword" variant="body2">
                     Forgot password?
                   </Link>
                 </Grid>

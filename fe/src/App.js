@@ -1,16 +1,18 @@
+import { useContext, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
+import AboutUs from './Pages/aboutUs';
+import ConfirmResetPassword from './Pages/confirmResetPassword';
 import Home from './Pages/home';
 import Landing from './Pages/landing';
 import Login from './Pages/login';
-import SignUp from './Pages/signUp';
 import Products from './Pages/products';
-import AboutUs from './Pages/aboutUs';
 import Profile from './Pages/profile';
+import ResetPassword from './Pages/resetPassword';
+import SignUp from './Pages/signUp';
 import NavBar from './components/NavBar';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useContext, useEffect } from 'react';
 import { UserContext } from './context/userContext';
 
 function App() {
@@ -35,6 +37,8 @@ function App() {
           <Route path='/products' element={<Products />} />
           <Route path='/aboutUs' element={<AboutUs />} />
           <Route path='/profile' element={<Profile />} />
+          <Route path='/resetPassword' element={<ResetPassword />} />
+          <Route path='/reset-password' element={<ConfirmResetPassword />} />
         </Routes>    
       </div>
       <ToastContainer
