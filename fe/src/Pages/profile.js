@@ -1,13 +1,13 @@
 import * as React from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
-import NavBar from '../NavBar';
+import NavBar from '../components/NavBar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import axios from '../../api/axios';
+import axios from '../api/axios';
 import { useRef } from 'react';
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -32,10 +32,10 @@ const Profile = () => {
   const [phoneNumber, setPhoneNumber] = useState(user ? user.phone_number : '');
   const [validPhoneNumber, setValidPhoneNumber] = useState(false);
 
-  const [firstName, setFirstName] = useState(user ? user.first_name : '');
+  const [firstName, setFirstName] = useState(user ? user.first_name || user.givenName : '');
   const [validFirstName, setValidFirstName] = useState(false);
 
-  const [lastName, setLastName] = useState(user ? user.last_name : '');
+  const [lastName, setLastName] = useState(user ? user.last_name || user.familyName : '');
   const [validLastName, setValidLastName] = useState(false);
 
   const [errMsg, setErrMsg] = useState('');

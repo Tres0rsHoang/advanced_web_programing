@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from '../../api/axios';
+import axios from '../api/axios';
 
 const RESET_PASSWORD_URL = '/reset-password';
 
