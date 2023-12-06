@@ -11,8 +11,8 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from '../../api/axios';
+import { toast } from 'react-toastify';
+import { signUpApi } from '../api/authService';
 
 
 const defaultTheme = createTheme();
@@ -21,8 +21,6 @@ const EMAIL_REGEX = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const PHONE_REGEX = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
 const NAME_REGEX = /\b([A-ZÀ-ÿ][-,a-z. ']+[ ]*)+/;
-
-const REGISTER_URL = '/register';
 
 const SignUp = () => {
   const userRef = useRef();
@@ -45,8 +43,6 @@ const SignUp = () => {
 
   const [lastName, setLastName] = useState('');
   const [validLastName, setValidLastName] = useState(false);
-
-  const [errMsg, setErrMsg] = useState('');
 
   const navigate = useNavigate();
 
@@ -75,11 +71,6 @@ const SignUp = () => {
     setValidLastName(NAME_REGEX.test(lastName));
   }, [lastName])
 
-  useEffect(() => {
-    setErrMsg('');
-  }, [email, password, matchPwd, phoneNumber, firstName, lastName])
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     // if button enabled with JS hack
@@ -90,30 +81,19 @@ const SignUp = () => {
     const v5 = NAME_REGEX.test(lastName);
 
     if (!v1 || !v2 || !v3 || !v4 || !v5) {
-      setErrMsg("Invalid Entry!");
-      return;
+        toast.error("Invalid Entry!");
+        return;
     }
 
     try {
-      const params = {
-        "email": email,
-        "password": password,
-        "phone_number": phoneNumber,
-        "first_name": firstName,
-        "last_name": lastName
-      };
 
-      const response = await axios.post(REGISTER_URL, params, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await signUpApi(email, password, phoneNumber, firstName, lastName);
 
       console.log(response?.data);
       console.log(JSON.stringify(response))
 
-      if (response?.data.message === "Email already exist") {
-        setErrMsg('Email already exists!');
+      if(response?.data.message === "Email already exist") {
+        toast.error('Email already exists!');
         return;
       }
       //clear state and controlled inputs
@@ -127,14 +107,14 @@ const SignUp = () => {
 
       navigate("/login");
     } catch (err) {
-      if (!err?.response) {
-        setErrMsg('No Server Response');
-      } else if (err.response?.status === 409) {
-        setErrMsg('Email already exists!');
-      } else {
-        setErrMsg('Registration Failed!')
-      }
-      errRef.current.focus();
+        if (!err?.response) {
+          toast.error('Server not responding...');
+        } else if (err.response?.status === 409) {
+          toast.error('Email already exists!');
+        } else {
+          toast.error('Registration Failed!')
+        }
+        errRef.current.focus();
     }
   }
 
@@ -148,88 +128,87 @@ const SignUp = () => {
       >
         <KeyboardBackspace fontSize="large" />
       </IconButton>
-      <Container component="main" maxWidth="sm">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 2,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
-          <Typography component="h1" variant="h4">
-            Sign up
-          </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="given-name"
-                  name="firstName"
-                  required
-                  fullWidth
-                  id="firstName"
-                  label="First Name"
-                  autoFocus
-                  ref={userRef}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  value={firstName}
-                  aria-invalid={validFirstName ? "false" : "true"}
-                  aria-describedby="firstNameNote"
-                />
-                <p id="firstNameNote" className={firstName && !validFirstName ? "instructions" : "offscreen"}>
-                  Invalid first name
-                </p>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
-                  onChange={(e) => setLastName(e.target.value)}
-                  value={lastName}
-                  aria-invalid={validLastName ? "false" : "true"}
-                  aria-describedby="lastNameNote"
-                />
-                <p id="lastNameNote" className={lastName && !validLastName ? "instructions" : "offscreen"}>
-                  Invalid last name
-                </p>
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                  onChange={(e) => setEmail(e.target.value)}
-                  value={email}
-                  aria-invalid={validEmail ? "false" : "true"}
-                  aria-describedby="emailNote"
-                />
-                <p id="emailNote" className={email && !validEmail ? "instructions" : "offscreen"}>
-                  Invalid email
-                </p>
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="new-password"
-                  onChange={(e) => setPassword(e.target.value)}
-                  value={password}
-                  aria-invalid={validPassword ? "false" : "true"}
-                  aria-describedby="passwordNote"
+        <Container component="main" maxWidth="sm">
+          <CssBaseline />
+          <Box
+            sx={{
+              marginTop: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <Typography component="h1" variant="h4">
+              Sign up
+            </Typography>
+            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    autoComplete="given-name"
+                    name="firstName"
+                    required
+                    fullWidth
+                    id="firstName"
+                    label="First Name"
+                    autoFocus
+                    ref={userRef}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    value={firstName}
+                    aria-invalid={validFirstName ? "false" : "true"}
+                    aria-describedby="firstNameNote"
+                  />
+                  <p id="firstNameNote" className={firstName && !validFirstName ? "instructions" : "offscreen"}>
+                    Invalid first name
+                  </p>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="lastName"
+                    label="Last Name"
+                    name="lastName"
+                    autoComplete="family-name"
+                    onChange={(e) => setLastName(e.target.value)}
+                    value={lastName}
+                    aria-invalid={validLastName ? "false" : "true"}
+                    aria-describedby="lastNameNote"
+                  />
+                  <p id="lastNameNote" className={lastName && !validLastName ? "instructions" : "offscreen"}>
+                    Invalid last name
+                  </p>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="email"
+                    label="Email Address"
+                    name="email"
+                    autoComplete="email"
+                    onChange={(e) => setEmail(e.target.value)}
+                    value={email}
+                    aria-invalid={validEmail ? "false" : "true"}
+                    aria-describedby="emailNote"
+                  />
+                  <p id="emailNote" className={email && !validEmail ? "instructions" : "offscreen"}>
+                    Invalid email
+                  </p>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    name="password"
+                    label="Password"
+                    type="password"
+                    id="password"
+                    autoComplete="new-password"
+                    onChange={(e) => setPassword(e.target.value)}
+                    value={password}
+                    aria-invalid={validPassword ? "false" : "true"}
+                    aria-describedby="passwordNote"
                 />
                 <p id="passwordNote" className={password && !validPassword ? "instructions" : "offscreen"}>
                   8 to 24 characters.<br />

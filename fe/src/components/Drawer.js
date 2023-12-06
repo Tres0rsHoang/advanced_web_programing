@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Box from '@mui/material/Box';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import Button from '@mui/material/Button';
@@ -11,15 +11,14 @@ import ListItemText from '@mui/material/ListItemText';
 import { AccountCircle, ExitToApp, Home, Inventory, ListAlt, Menu, Person, PersonAdd, SupervisorAccount } from '@mui/icons-material';
 import { Link, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import axios from '../api/axios';
-
-const LOGOUT_URL ='/logout';
+import { logoutApi } from '../api/authService';
+import { UserContext } from '../context/userContext';
 
 export default function Drawer() {
   const [state, setState] = useState(false);
   const navigate = useNavigate();
 
-  const user = JSON.parse(localStorage.getItem('user'));
+  const { user, logout } = useContext(UserContext);
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -33,16 +32,11 @@ export default function Drawer() {
     setState(open);
   };
 
-  const handleLogout = () => {
-    axios.get(LOGOUT_URL, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('access_token')
-      }
-    }); 
-    localStorage.removeItem('user');
-    localStorage.removeItem('access_token');
-    navigate('/');
+  const handleLogout = async () => {
+    if (user.auth) {
+      logout(); 
+      navigate('/');
+    }
   }
 
   const iconMapping = {

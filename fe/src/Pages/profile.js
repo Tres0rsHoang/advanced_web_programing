@@ -1,27 +1,22 @@
 import * as React from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
-import NavBar from '../NavBar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import axios from '../../api/axios';
-import { useRef } from 'react';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-const Auth_URL = '/profile';
+import { getCurrentUserApi, updateUserProfileApi } from '../api/authService';
+import { toast } from 'react-toastify';
 
 const EMAIL_REGEX = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const PHONE_REGEX = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
 const NAME_REGEX = /\b([A-ZÀ-ÿ][-,a-z. ']+[ ]*)+/;
 
 const Profile = () => {
-  const errRef = useRef();
-  const successRef = useRef();
   const navigate = useNavigate();
   
   const user = JSON.parse(localStorage.getItem('user'));
@@ -37,10 +32,6 @@ const Profile = () => {
 
   const [lastName, setLastName] = useState(user ? user.last_name : '');
   const [validLastName, setValidLastName] = useState(false);
-
-  const [errMsg, setErrMsg] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-
 
   useEffect(() => {
       setValidEmail(EMAIL_REGEX.test(email));
@@ -58,48 +49,26 @@ const Profile = () => {
     setValidLastName(NAME_REGEX.test(lastName));
   }, [lastName])
 
-  useEffect(() => {
-      setErrMsg('');
-  }, [email, phoneNumber, firstName, lastName])
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const params = {
-        "email": email,
-        "phone_number": phoneNumber,
-        "first_name": firstName,
-        "last_name": lastName
-      };
-
-      const response = await axios.patch(Auth_URL, params, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem("access_token")
-        }
-      }); 
-      
-      console.log(JSON.stringify(response?.data));
+      await updateUserProfileApi(email, phoneNumber, firstName, lastName);
+      //console.log(JSON.stringify(response));
 
       try {
-        const response = await axios.get(Auth_URL, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem("access_token")
-          }
-        }); 
+        const response = await getCurrentUserApi();
         
-        console.log(JSON.stringify(response?.data));
+        console.log(response);
         localStorage.setItem("user", JSON.stringify(response.data));
       } catch (err) {
         if (!err?.response) {
-            setErrMsg('No Server Response');
+            toast.error('No Server Response');
         } else {
-            setErrMsg('Get current user failed');
+          toast.error('Get current user failed');
         }
       }
-      setSuccessMessage('Edit profile successful');
+      toast.success('Edit profile successful');
       navigate("/profile");
     } catch (err) {
       if (!err?.response) {
@@ -113,7 +82,6 @@ const Profile = () => {
   return (
     <React.Fragment>
       <CssBaseline />
-      <NavBar />
       <Container component="main" maxWidth="sm">
           <CssBaseline />
           <Box
@@ -124,8 +92,6 @@ const Profile = () => {
               alignItems: 'center',
             }}
           >
-            <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
-            <p ref={successRef} className={successMessage ? "successMsg" : "offscreen"} aria-live="assertive">{successMessage}</p>  
             <Typography component="h1" variant="h4" sx={{mb: '20px'}}>
               User Profile
             </Typography>
