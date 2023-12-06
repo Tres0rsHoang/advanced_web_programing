@@ -1,12 +1,14 @@
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
+import ConfirmResetPassword from './components/Pages/ConfirmResetPassword';
+import AboutUs from './components/Pages/aboutUs';
 import Home from './components/Pages/home';
 import Landing from './components/Pages/landing';
 import Login from './components/Pages/login';
-import SignUp from './components/Pages/signUp';
 import Products from './components/Pages/products';
-import AboutUs from './components/Pages/aboutUs';
 import Profile from './components/Pages/profile';
+import ResetPassword from './components/Pages/resetPassword';
+import SignUp from './components/Pages/signUp';
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path='/products' element={<Products />} />
         <Route path='/aboutUs' element={<AboutUs />} />
         <Route path='/profile' element={<Profile />} />
+        <Route path='/resetPassword' element={<ResetPassword />} />
+        <Route path='/reset-password' element={<ConfirmResetPassword />} />
       </Routes>
     </div>
   );
