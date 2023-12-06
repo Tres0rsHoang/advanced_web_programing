@@ -265,7 +265,7 @@ app.post('/reset-password', async function (req, res, next) {
     const emailContent = `<p>Please click to this link to reset your password: <a href='${resetPasswordUrl}'>Click here to reset</a></p>`;
     const result = await sendMail(email, emailSubject, emailContent);
     console.log(result);
-    res.send("Password reset email sent");
+    res.send(result);
 });
 
 app.patch('/confirm-reset-password', async function (req, res, next) {
