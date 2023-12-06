@@ -10,8 +10,19 @@ import Profile from './Pages/profile';
 import NavBar from './components/NavBar';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useContext, useEffect } from 'react';
+import { UserContext } from './context/userContext';
 
 function App() {
+  const { loginContext } = useContext(UserContext);
+  const user = JSON.parse(localStorage.getItem('user'));
+
+  useEffect(() => {
+    if(localStorage.getItem("access_token")) {
+      loginContext(user.email, localStorage.getItem("access_token"))
+    }
+  }, [])
+
   return (
     <>
       <div className="App">

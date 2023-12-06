@@ -3,13 +3,13 @@ import axios from "./axios";
 const loginApi = (email, password) => {
     return axios.post("/login", {email, password}, {
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       }
     });
 }
 
 const logoutApi = () => {
-  return axios.post("/logout", {
+  return axios.get("/logout", {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + localStorage.getItem('access_token')
@@ -35,7 +35,14 @@ const getCurrentUserApi = () => {
 }
 
 const updateUserProfileApi = (email, phoneNumber, firstName, lastName) => {
-  return axios.patch("/profile", {email, phoneNumber, firstName, lastName}, {
+  const params = {
+    "email": email,
+    "phone_number": phoneNumber,
+    "first_name": firstName,
+    "last_name": lastName
+  };
+  
+  return axios.patch("/profile", params, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + localStorage.getItem("access_token")

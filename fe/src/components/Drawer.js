@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Box from '@mui/material/Box';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import Button from '@mui/material/Button';
@@ -12,12 +12,13 @@ import { AccountCircle, ExitToApp, Home, Inventory, ListAlt, Menu, Person, Perso
 import { Link, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { logoutApi } from '../api/authService';
+import { UserContext } from '../context/userContext';
 
 export default function Drawer() {
   const [state, setState] = useState(false);
   const navigate = useNavigate();
 
-  const user = JSON.parse(localStorage.getItem('user'));
+  const { user, logout } = useContext(UserContext);
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -32,13 +33,10 @@ export default function Drawer() {
   };
 
   const handleLogout = async () => {
-    if (user) {
-      await logoutApi(); 
-      localStorage.removeItem('user');
-      localStorage.removeItem('access_token');
+    if (user.auth) {
+      logout(); 
+      navigate('/');
     }
-    
-    navigate('/');
   }
 
   const iconMapping = {

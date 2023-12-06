@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useContext } from 'react';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -15,6 +15,7 @@ import { KeyboardBackspace } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUserApi, loginApi } from '../api/authService';
 import { toast } from "react-toastify";
+import { UserContext } from '../context/userContext';
 
 const defaultTheme = createTheme();
 const Login = () => {
@@ -24,6 +25,8 @@ const Login = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const { loginContext } = useContext(UserContext);
 
   useEffect(() => {
     userRef.current.focus();
@@ -41,37 +44,39 @@ const Login = () => {
 
     try {
       let response = await loginApi(email, password);
-      console.log(response);
+      //console.log(response);
 
-      if (response && response.access_token) {
-        const accessToken = response.access_token;
-        localStorage.setItem("access_token", accessToken);
+      if (response && response.data.access_token) {
+        loginContext(email, response.data.access_token);
+        
+        try {
+          let response = await getCurrentUserApi();
+          console.log(response);
+    
+          if (response && response.data) {
+            localStorage.setItem('user', JSON.stringify(response.data));
+          } else {
+            if (response && response.data.error) {
+              toast.error(response.data.error);
+            }
+          }
+        } catch {
+          toast.error("Server not responding...");
+          return;
+        }
+
+        setEmail('');
+        setPassword('');
+        navigate("/");
       } else {
         if (response && response.data.error) {
           toast.error(response.data.error);
-        }
-      }
-
-      try {
-        const currentUser = await getCurrentUserApi();
-        
-        console.log(JSON.stringify(currentUser));
-        localStorage.setItem("user", JSON.stringify(response));
-      } catch (err) {
-        if (!err?.response) {
-            toast.error('No Server Response');
-        } else {
-            toast.error('Get current user failed');
         }
       }
     } catch {
       toast.error("Server not responding...");
       return;
     }
-
-    setEmail('');
-    setPassword('');
-    navigate("/");
 }
 
 

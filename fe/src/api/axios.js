@@ -2,12 +2,14 @@ import axios from "axios";
 
 const instance =  axios.create({
     baseURL: 'https://advanced-web-programing.vercel.app'
+    //baseURL: 'http://localhost:9000'
 });
 
 axios.interceptors.response.use(function (response) {
     return response.data ? response.data : {statusCode: response.status };
 
 }, function (error) {
+    console.log(error.response)
     let res = {};
 
     if(error.response) {
