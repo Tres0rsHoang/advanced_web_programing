@@ -65,7 +65,7 @@ const NavBar = () => {
                     <Tab label='Services' />
                     <Tab label='Contact' />
                   </Tabs> */}
-                  {user && user.auth === true ? (
+                  {user && user.auth ? (
                     <Box sx={{ marginLeft: "auto" }}>
                       <Typography sx={{ ml: 'auto'}} variant='contained' >Hello, {user.email}</Typography>
                       {user.authGoogle ? (
@@ -73,6 +73,9 @@ const NavBar = () => {
                           clientId={GoogleClientID}
                           buttonText='Logout'
                           onLogoutSuccess={onSuccess}
+                          render={renderProps => (
+                            <Button onClick={renderProps.onClick}  sx={{ marginLeft: "30px" }} variant='contained'>Logout</Button>
+                          )}
                         />
                       ) : (
                         <Button sx={{ marginLeft: "30px" }} variant='contained' onClick={handleLogout}>Logout{" "}</Button>

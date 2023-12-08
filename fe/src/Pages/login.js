@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { getCurrentUserApi, loginApi } from '../api/authService';
 import { toast } from "react-toastify";
 import { UserContext } from '../context/userContext';
-import { FacebookLoginButton } from 'react-social-login-buttons';
+import { FacebookLoginButton, GoogleLoginButton } from 'react-social-login-buttons';
 import { LoginSocialFacebook } from 'reactjs-social-login';
 import { GoogleLogin } from 'react-google-login';
 import { gapi } from 'gapi-script';

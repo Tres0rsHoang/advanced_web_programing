@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Box from '@mui/material/Box';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import Button from '@mui/material/Button';
@@ -11,15 +11,16 @@ import ListItemText from '@mui/material/ListItemText';
 import { AccountCircle, ExitToApp, Home, Inventory, ListAlt, Menu, Person, PersonAdd, SupervisorAccount } from '@mui/icons-material';
 import { Link, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import axios from '../api/axios';
-
-const LOGOUT_URL ='/logout';
+import { UserContext } from '../context/userContext';
+import { GoogleLogout } from 'react-google-login';
 
 export default function Drawer() {
   const [state, setState] = useState(false);
   const navigate = useNavigate();
 
-  const user = JSON.parse(localStorage.getItem('user'));
+  const { user, logout, ggLogout } = useContext(UserContext);
+
+  const GoogleClientID = '355691189679-g1bqbv7ar8r0bcii90alovankquv19vu.apps.googleusercontent.com';
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -34,15 +35,17 @@ export default function Drawer() {
   };
 
   const handleLogout = () => {
-    axios.get(LOGOUT_URL, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('access_token')
-      }
-    }); 
-    localStorage.removeItem('user');
-    localStorage.removeItem('access_token');
-    navigate('/');
+    if (user.auth) {
+      logout();
+      navigate('/');
+    }
+  }
+
+  const onSuccess = () => {
+    if (user.auth) {
+      ggLogout();
+      navigate('/');
+    }
   }
 
   const iconMapping = {
@@ -95,7 +98,7 @@ export default function Drawer() {
         ))}
       </List>
       <Divider />
-      {user ? (
+      {user && user.auth ? (
         <List>
         {['Profile'].map((text) => (
           <ListItem key={text} component={Link} disablePadding href={urlMapping[text]} sx={{ color: 'black'}}>
@@ -124,16 +127,32 @@ export default function Drawer() {
       )}
       <Divider />
       <List sx={{ mt: '20px' }}>
-        {['Logout'].map((text) => (
-          <ListItem key={text} component={Link} disablePadding onClick={handleLogout} sx={{ color: 'black'}}>
-            <ListItemButton>
-              <ListItemIcon>
-                {iconMapping[text]}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+      {user.authGoogle ? (
+        <GoogleLogout
+          clientId={GoogleClientID}
+          buttonText='Logout'
+          onLogoutSuccess={onSuccess}
+          render={renderProps => (
+            <ListItem key='Logout' component={Link} onClick={renderProps.onClick} disablePadding  sx={{ color: 'black'}}>
+              <ListItemButton>
+                <ListItemIcon>
+                  {iconMapping['Logout']}
+                </ListItemIcon>
+                <ListItemText primary={'Logout'} />
+              </ListItemButton>
+            </ListItem>
+          )}
+        />
+        ) : (
+            <ListItem key='Logout' component={Link} disablePadding onClick={handleLogout} sx={{ color: 'black'}}>
+              <ListItemButton>
+                <ListItemIcon>
+                  {iconMapping['Logout']}
+                </ListItemIcon>
+                <ListItemText primary={'Logout'} />
+              </ListItemButton>
+            </ListItem>
+        )}
       </List>
     </Box>
   );
