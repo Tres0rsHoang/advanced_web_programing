@@ -99,7 +99,8 @@ export default function Drawer() {
       </List>
       <Divider />
       {user && user.auth ? (
-        <List>
+        <>
+          <List>
         {['Profile'].map((text) => (
           <ListItem key={text} component={Link} disablePadding href={urlMapping[text]} sx={{ color: 'black'}}>
             <ListItemButton>
@@ -110,9 +111,39 @@ export default function Drawer() {
             </ListItemButton>
           </ListItem>
         ))}
-      </List>
+       </List>
+       <Divider />
+       <List sx={{ mt: '20px' }}>
+       {user.auth && user.authGoogle ? (
+         <GoogleLogout
+           clientId={GoogleClientID}
+           buttonText='Logout'
+           onLogoutSuccess={onSuccess}
+           render={renderProps => (
+             <ListItem key='Logout' component={Link} onClick={renderProps.onClick} disablePadding  sx={{ color: 'black'}}>
+               <ListItemButton>
+                 <ListItemIcon>
+                   {iconMapping['Logout']}
+                 </ListItemIcon>
+                 <ListItemText primary={'Logout'} />
+               </ListItemButton>
+             </ListItem>
+           )}
+         />
+         ) : (
+             <ListItem key='Logout' component={Link} disablePadding onClick={handleLogout} sx={{ color: 'black'}}>
+               <ListItemButton>
+                 <ListItemIcon>
+                   {iconMapping['Logout']}
+                 </ListItemIcon>
+                 <ListItemText primary={'Logout'} />
+               </ListItemButton>
+             </ListItem>
+         )}
+       </List>
+        </>
       ) : (
-        <List>
+          <List>
           {['Login', 'Sign Up'].map((text) => (
             <ListItem key={text} component={Link} disablePadding href={urlMapping[text]} sx={{ color: 'black'}}>
               <ListItemButton>
@@ -125,35 +156,6 @@ export default function Drawer() {
           ))}
         </List>
       )}
-      <Divider />
-      <List sx={{ mt: '20px' }}>
-      {user.authGoogle ? (
-        <GoogleLogout
-          clientId={GoogleClientID}
-          buttonText='Logout'
-          onLogoutSuccess={onSuccess}
-          render={renderProps => (
-            <ListItem key='Logout' component={Link} onClick={renderProps.onClick} disablePadding  sx={{ color: 'black'}}>
-              <ListItemButton>
-                <ListItemIcon>
-                  {iconMapping['Logout']}
-                </ListItemIcon>
-                <ListItemText primary={'Logout'} />
-              </ListItemButton>
-            </ListItem>
-          )}
-        />
-        ) : (
-            <ListItem key='Logout' component={Link} disablePadding onClick={handleLogout} sx={{ color: 'black'}}>
-              <ListItemButton>
-                <ListItemIcon>
-                  {iconMapping['Logout']}
-                </ListItemIcon>
-                <ListItemText primary={'Logout'} />
-              </ListItemButton>
-            </ListItem>
-        )}
-      </List>
     </Box>
   );
 

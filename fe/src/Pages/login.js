@@ -201,7 +201,7 @@ const Login = () => {
                 console.log(error);
               }}
             >
-              <FacebookLoginButton/>
+              <FacebookLoginButton />
             </LoginSocialFacebook>
 
             <GoogleLogin
