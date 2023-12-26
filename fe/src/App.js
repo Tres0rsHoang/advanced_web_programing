@@ -1,7 +1,9 @@
+import { useContext, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import './App.css';
-import ConfirmResetPassword from './Pages/ConfirmResetPassword';
 import AboutUs from './Pages/aboutUs';
+import ConfirmResetPassword from './Pages/confirmResetPassword';
 import Home from './Pages/home';
 import Landing from './Pages/landing';
 import Login from './Pages/login';
@@ -9,8 +11,6 @@ import Products from './Pages/products';
 import Profile from './Pages/profile';
 import ResetPassword from './Pages/resetPassword';
 import SignUp from './Pages/signUp';
-import { ToastContainer } from 'react-toastify';
-import { useContext, useEffect } from 'react';
 import { UserContext } from './context/userContext';
 
 function App() {

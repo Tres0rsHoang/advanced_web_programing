@@ -11,9 +11,9 @@ const UserProvider = ({ children }) => {
     const loginContext = (email, token) => {
         localStorage.setItem("access_token", token);
         setUser((user) => ({
-        email: email,
-        auth: true,
-        authGoogle: false
+            email: email,
+            auth: true,
+            authGoogle: false
         }));
     };
 
@@ -55,4 +55,4 @@ const UserProvider = ({ children }) => {
     );
 }
 
-export { UserContext, UserProvider};
+export { UserContext, UserProvider };
