@@ -1,26 +1,57 @@
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
-import Home from './components/Pages/home';
-import Landing from './components/Pages/landing';
-import Login from './components/Pages/login';
-import SignUp from './components/Pages/signUp';
-import Products from './components/Pages/products';
-import AboutUs from './components/Pages/aboutUs';
-import Profile from './components/Pages/profile';
+import ConfirmResetPassword from './Pages/ConfirmResetPassword';
+import AboutUs from './Pages/aboutUs';
+import Home from './Pages/home';
+import Landing from './Pages/landing';
+import Login from './Pages/login';
+import Products from './Pages/products';
+import Profile from './Pages/profile';
+import ResetPassword from './Pages/resetPassword';
+import SignUp from './Pages/signUp';
+import { ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { handleRefresh } from './redux/actions/userAction';
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if(localStorage.getItem('token')) {
+      dispatch(handleRefresh());
+    }
+  }, []);
+
   return (
-    <div className="App">
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/landing' element={<Landing />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/signUp' element={<SignUp />} />
-        <Route path='/products' element={<Products />} />
-        <Route path='/aboutUs' element={<AboutUs />} />
-        <Route path='/profile' element={<Profile />} />
-      </Routes>
-    </div>
+    <>
+      <div className="App">
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/landing' element={<Landing />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/signUp' element={<SignUp />} />
+          <Route path='/products' element={<Products />} />
+          <Route path='/aboutUs' element={<AboutUs />} />
+          <Route path='/profile' element={<Profile />} />
+          <Route path='/resetPassword' element={<ResetPassword />} />
+          <Route path='/reset-password' element={<ConfirmResetPassword />} />
+        </Routes>
+      </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+    </>
   );
 }
 

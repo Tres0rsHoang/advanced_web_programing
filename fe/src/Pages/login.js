@@ -1,95 +1,84 @@
-import { useRef, useState, useEffect } from 'react';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { IconButton } from '@mui/material';
 import { KeyboardBackspace } from '@mui/icons-material';
+import { IconButton } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import Container from '@mui/material/Container';
+import CssBaseline from '@mui/material/CssBaseline';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Grid from '@mui/material/Grid';
+import Link from '@mui/material/Link';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from '../../api/axios';
-
-const LOGIN_URL = '/login';
-const Auth_URL = '/profile';
+import { toast } from "react-toastify";
+import { FacebookLoginButton } from 'react-social-login-buttons';
+import { LoginSocialFacebook } from 'reactjs-social-login';
+import { GoogleLogin } from 'react-google-login';
+import { gapi } from 'gapi-script';
+import { useDispatch, useSelector } from 'react-redux';
+import { handleLoginRedux, handleGoogleLoginRedux } from '../redux/actions/userAction';
 
 const defaultTheme = createTheme();
+const FacebookClientID = '679614957611578';
+const GoogleClientID = '355691189679-g1bqbv7ar8r0bcii90alovankquv19vu.apps.googleusercontent.com';
+//const GoogleClientSerect = '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';
+
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const userRef = useRef();
-  const errRef = useRef();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errMsg, setErrMsg] = useState('');
+
+  const account = useSelector(state => state.user.account);
+
+  useEffect(() => {
+    function start() {
+      gapi.client.init({
+        clientId: GoogleClientID,
+        scope: ""
+      })
+    };
+
+    gapi.load('client:auth2', start);
+  });
+
 
   useEffect(() => {
     userRef.current.focus();
   }, [])
 
   useEffect(() => {
-      setErrMsg('');
-  }, [email, password])
+  }, [email, password]);
+
+  useEffect(() => {
+    if(account && account.auth === true) {
+      navigate('/');
+    }
+  }, [account]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    try {
-      const params = {
-        "email": email,
-        "password": password
-      };
-
-      console.log(email);
-      console.log(password);
-
-      const response = await axios.post(LOGIN_URL, params, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }); 
-      
-      console.log(JSON.stringify(response?.data));
-      const accessToken = response?.data?.access_token;
-      localStorage.setItem("access_token", accessToken);
-
-      try {
-        const response = await axios.get(Auth_URL, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + accessToken
-          }
-        }); 
-        
-        console.log(JSON.stringify(response?.data));
-        localStorage.setItem("user", JSON.stringify(response.data));
-      } catch (err) {
-        if (!err?.response) {
-            setErrMsg('No Server Response');
-        } else {
-            setErrMsg('Get current user failed');
-        }
-      }
-
-      setEmail('');
-      setPassword('');
-      navigate("/");
-    } catch (err) {
-      if (!err?.response) {
-          setErrMsg('No Server Response');
-      } else {
-          setErrMsg('Login Failed');
-      }
-      errRef.current.focus();
+    if(!email || !password) {
+      toast.error("Email/Password is required!");
+      return;
     }
-}
 
+    dispatch(handleLoginRedux(email, password));
+  }
+
+  const onSuccess = async (res) => {
+    dispatch(handleGoogleLoginRedux(res));
+  }
+
+  const onFailure = (res) => {
+    console.log("Login failed! Res: ", res);
+  }
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -111,7 +100,6 @@ const Login = () => {
               alignItems: 'center',
             }}
           >
-            <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
             <Typography component="h1" variant="h4">
               Sign in
             </Typography>
@@ -155,7 +143,7 @@ const Login = () => {
               </Button>
               <Grid container>
                 <Grid item xs>
-                  <Link href="#" variant="body2">
+                  <Link href="/resetPassword" variant="body2">
                     Forgot password?
                   </Link>
                 </Grid>
@@ -165,6 +153,33 @@ const Login = () => {
                   </Link>
                 </Grid>
               </Grid>
+            </Box>
+            <Box sx={{
+              marginTop: 4,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}>
+            <LoginSocialFacebook
+              appId={FacebookClientID}
+              onResolve={(response) => {
+                console.log(response);
+              }}
+              onReject={(error) => {
+                console.log(error);
+              }}
+            >
+              <FacebookLoginButton />
+            </LoginSocialFacebook>
+
+            <GoogleLogin
+              clientId={GoogleClientID}
+              buttonText='Log in with Google'
+              onSuccess={onSuccess}
+              onFailure={onFailure}
+              cookiePolicy={'single_host_origin'}
+              isSignedIn={true}
+            />
             </Box>
           </Box>
         </Container>

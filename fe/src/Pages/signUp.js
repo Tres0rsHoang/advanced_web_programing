@@ -1,18 +1,19 @@
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { IconButton } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 import { KeyboardBackspace } from '@mui/icons-material';
+import { IconButton } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import CssBaseline from '@mui/material/CssBaseline';
+import Grid from '@mui/material/Grid';
+import Link from '@mui/material/Link';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import axios from '../../api/axios';
+import { toast } from 'react-toastify';
+import { signUpApi } from '../api/authService';
+import { useNavigate } from 'react-router-dom';
 
 
 const defaultTheme = createTheme();
@@ -21,8 +22,6 @@ const EMAIL_REGEX = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const PHONE_REGEX = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
 const NAME_REGEX = /\b([A-ZÀ-ÿ][-,a-z. ']+[ ]*)+/;
-
-const REGISTER_URL = '/register';
 
 const SignUp = () => {
   const userRef = useRef();
@@ -45,8 +44,6 @@ const SignUp = () => {
 
   const [lastName, setLastName] = useState('');
   const [validLastName, setValidLastName] = useState(false);
-
-  const [errMsg, setErrMsg] = useState('');
 
   const navigate = useNavigate();
 
@@ -75,11 +72,6 @@ const SignUp = () => {
     setValidLastName(NAME_REGEX.test(lastName));
   }, [lastName])
 
-  useEffect(() => {
-      setErrMsg('');
-  }, [email, password, matchPwd, phoneNumber, firstName, lastName])
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     // if button enabled with JS hack
@@ -90,30 +82,19 @@ const SignUp = () => {
     const v5 = NAME_REGEX.test(lastName);
 
     if (!v1 || !v2 || !v3 || !v4 || !v5) {
-        setErrMsg("Invalid Entry!");
+        toast.error("Invalid Entry!");
         return;
     }
 
     try {
-      const params = {
-        "email": email,
-        "password": password,
-        "phone_number": phoneNumber,
-        "first_name": firstName,
-        "last_name": lastName
-      };
 
-      const response = await axios.post(REGISTER_URL, params, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await signUpApi(email, password, phoneNumber, firstName, lastName);
 
       console.log(response?.data);
       console.log(JSON.stringify(response))
 
       if(response?.data.message === "Email already exist") {
-        setErrMsg('Email already exists!');
+        toast.error('Email already exists!');
         return;
       }
       //clear state and controlled inputs
@@ -128,11 +109,11 @@ const SignUp = () => {
       navigate("/login");
     } catch (err) {
         if (!err?.response) {
-            setErrMsg('No Server Response');
+          toast.error('Server not responding...');
         } else if (err.response?.status === 409) {
-            setErrMsg('Email already exists!');
+          toast.error('Email already exists!');
         } else {
-            setErrMsg('Registration Failed!')
+          toast.error('Registration Failed!')
         }
         errRef.current.focus();
     }
@@ -158,7 +139,6 @@ const SignUp = () => {
               alignItems: 'center',
             }}
           >
-            <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>  
             <Typography component="h1" variant="h4">
               Sign up
             </Typography>
