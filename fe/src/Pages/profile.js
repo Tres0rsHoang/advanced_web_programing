@@ -76,7 +76,7 @@ const Profile = () => {
       const response = await axios.patch(Auth_URL, params, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem("access_token")
+          'Authorization': 'Bearer ' + localStorage.getItem("token")
         }
       }); 
       
@@ -86,7 +86,7 @@ const Profile = () => {
         const response = await axios.get(Auth_URL, {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem("access_token")
+            'Authorization': 'Bearer ' + localStorage.getItem("token")
           }
         }); 
         

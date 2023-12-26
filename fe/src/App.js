@@ -9,19 +9,20 @@ import Products from './Pages/products';
 import Profile from './Pages/profile';
 import ResetPassword from './Pages/resetPassword';
 import SignUp from './Pages/signUp';
-import { ToastContainer } from 'react-toastify';
-import { useContext, useEffect } from 'react';
-import { UserContext } from './context/userContext';
+import { ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { handleRefresh } from './redux/actions/userAction';
 
 function App() {
-  const { loginContext } = useContext(UserContext);
-  const user = JSON.parse(localStorage.getItem('user'));
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if(localStorage.getItem("access_token")) {
-      loginContext(user.email, localStorage.getItem("access_token"))
+    if(localStorage.getItem('token')) {
+      dispatch(handleRefresh());
     }
-  }, [])
+  }, []);
 
   return (
     <>
