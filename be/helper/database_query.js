@@ -4,6 +4,7 @@ export default async function(request, query) {
             const handler = (error, result) => {
                 if (error) {
                     reject(error);
+                    console.log(`ERROR SQL: ${query}`);
                     throw error;
                 }
                 resolve(result['recordset']);
