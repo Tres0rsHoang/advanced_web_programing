@@ -1,39 +1,29 @@
 import { AppBar, Box, Button,Toolbar, Typography, useMediaQuery, useTheme } from '@mui/material';
-import React, { useContext } from 'react'
+import React, { useEffect } from 'react'
 import Drawer from './Drawer';
+import AccountMenu from './AccountMenu';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../context/userContext';
-import { GoogleLogout } from 'react-google-login';
 
 const NavBar = () => {
   const theme = useTheme();
   const isMatch = useMediaQuery(theme.breakpoints.down('md'));
 
-  const GoogleClientID = '355691189679-g1bqbv7ar8r0bcii90alovankquv19vu.apps.googleusercontent.com';
-  
+  const user = useSelector(state => state.user.account);
+
   const navigate = useNavigate();
-
-  const { user, logout, ggLogout } = useContext(UserContext);
-
-  const handleLogout = async () => {
-    if (user.auth) {
-      logout();
-      navigate('/');
+  
+  useEffect(() => {
+    if(user && user.auth === false){
+        navigate('/');
     }
-  }
-
-  const onSuccess = () => {
-    if (user.auth) {
-      ggLogout();
-      navigate('/');
-    }
-  }
+  }, [user]);
 
   return (<>
     { (window.location.pathname !== '/login' && window.location.pathname !== '/signUp' ) &&
       <>
         <React.Fragment>
-          <AppBar sx={{ background: "#063970"}}>
+          <AppBar sx={{ background: "#063970", padding: '8px 0 8px 0'}}>
             { 
               isMatch? (
                   <Box 
@@ -43,43 +33,16 @@ const NavBar = () => {
                       justifyContent: 'space-between',
                       padding: '15px'}}
                   >
-                    <Typography sx={{ ml: '20px', mr: '50px', fontWeight: 'bold'}}>APP_NAME</Typography>
+                    <Typography variant="h6" sx={{ ml: '20px', mr: '50px', fontWeight: 'bold'}}>CLASSROOM</Typography>
                     <Drawer />
                   </Box>
               ) : (
                 <Toolbar>
                   <Drawer />
-                  <Typography sx={{ ml: '20px', mr: '50px', fontWeight: 'bold'}}>APP_NAME</Typography>
-                  {/* <Tabs 
-                    textColor='inherit' 
-                    value={value} 
-                    onChange={(e, value) => setValue(value)} 
-                    TabIndicatorProps={{
-                      style: {
-                        backgroundColor: "white"
-                      }
-                    }}
-                  >
-                    <Tab label='Home'/>
-                    <Tab label='About' />
-                    <Tab label='Services' />
-                    <Tab label='Contact' />
-                  </Tabs> */}
+                  <Typography variant="h6" sx={{ ml: '20px', mr: '50px', fontWeight: 'bold'}}>CLASSROOM</Typography>
                   {user && user.auth ? (
                     <Box sx={{ marginLeft: "auto" }}>
-                      <Typography sx={{ ml: 'auto'}} variant='contained' >Hello, {user.email}</Typography>
-                      {user.authGoogle ? (
-                        <GoogleLogout
-                          clientId={GoogleClientID}
-                          buttonText='Logout'
-                          onLogoutSuccess={onSuccess}
-                          render={renderProps => (
-                            <Button onClick={renderProps.onClick}  sx={{ marginLeft: "30px" }} variant='contained'>Logout</Button>
-                          )}
-                        />
-                      ) : (
-                        <Button sx={{ marginLeft: "30px" }} variant='contained' onClick={handleLogout}>Logout{" "}</Button>
-                      )}
+                      <AccountMenu />
                     </Box>
                   ) : (
                     <Box sx={{ marginLeft: "auto" }}>

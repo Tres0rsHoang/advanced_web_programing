@@ -12,7 +12,7 @@ const logoutApi = () => {
   return axios.get("/logout", {
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+      'Authorization': 'Bearer ' + localStorage.getItem('token')
     }
   });
 }
@@ -29,7 +29,7 @@ const getCurrentUserApi = () => {
     return axios.get("/profile", {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem("access_token")
+          'Authorization': 'Bearer ' + localStorage.getItem("token")
         }
       }); 
 }
@@ -45,7 +45,7 @@ const updateUserProfileApi = (email, phoneNumber, firstName, lastName) => {
   return axios.patch("/profile", params, {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem("access_token")
+        'Authorization': 'Bearer ' + localStorage.getItem("token")
       }
     }); 
 }

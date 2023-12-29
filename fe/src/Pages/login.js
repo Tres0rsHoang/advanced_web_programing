@@ -11,15 +11,15 @@ import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getCurrentUserApi, loginApi } from '../api/authService';
 import { toast } from "react-toastify";
-import { UserContext } from '../context/userContext';
-import { FacebookLoginButton, GoogleLoginButton } from 'react-social-login-buttons';
+import { FacebookLoginButton } from 'react-social-login-buttons';
 import { LoginSocialFacebook } from 'reactjs-social-login';
 import { GoogleLogin } from 'react-google-login';
 import { gapi } from 'gapi-script';
+import { useDispatch, useSelector } from 'react-redux';
+import { handleLoginRedux, handleGoogleLoginRedux } from '../redux/actions/userAction';
 
 const defaultTheme = createTheme();
 const FacebookClientID = '679614957611578';
@@ -28,13 +28,14 @@ const GoogleClientID = '355691189679-g1bqbv7ar8r0bcii90alovankquv19vu.apps.googl
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const userRef = useRef();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const { loginContext, ggLoginContext } = useContext(UserContext);
+  const account = useSelector(state => state.user.account);
 
   useEffect(() => {
     function start() {
@@ -53,7 +54,13 @@ const Login = () => {
   }, [])
 
   useEffect(() => {
-  }, [email, password])
+  }, [email, password]);
+
+  useEffect(() => {
+    if(account && account.auth === true) {
+      navigate('/');
+    }
+  }, [account]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,50 +69,11 @@ const Login = () => {
       return;
     }
 
-    try {
-      let response = await loginApi(email, password);
-      //console.log(response);
-
-      if (response && response.data.access_token) {
-        loginContext(email, response.data.access_token);
-        
-        try {
-          let response = await getCurrentUserApi();
-          console.log(response);
-    
-          if (response && response.data) {
-            localStorage.setItem('user', JSON.stringify(response.data));
-          } else {
-            if (response && response.data.error) {
-              toast.error(response.data.error);
-            }
-          }
-        } catch {
-          toast.error("Server not responding...");
-          return;
-        }
-
-        setEmail('');
-        setPassword('');
-        navigate("/");
-      } else {
-        if (response && response.data.error) {
-          toast.error(response.data.error);
-        }
-      }
-    } catch {
-      toast.error("Server not responding...");
-      return;
-    }
+    dispatch(handleLoginRedux(email, password));
   }
 
-  const onSuccess = (res) => {
-    ggLoginContext(res.profileObj.email, res.accessToken);
-    localStorage.setItem('user', JSON.stringify(res.profileObj));
-    setEmail('');
-    setPassword('');
-    navigate("/");
-    //console.log("Login success! Current user: ", res);
+  const onSuccess = async (res) => {
+    dispatch(handleGoogleLoginRedux(res));
   }
 
   const onFailure = (res) => {
