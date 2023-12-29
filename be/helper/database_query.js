@@ -5,9 +5,14 @@ export default async function(request, query) {
                 if (error) {
                     reject(error);
                     console.log(`ERROR SQL: ${query}`);
-                    throw error;
+                    return;
                 }
-                resolve(result['recordset']);
+                if (result['recordset']) {
+                    resolve(result['recordset']);
+                    return;
+                }
+                resolve(result['rowsAffected'][0]);
+                
             };
             request.query(query, handler);
         }

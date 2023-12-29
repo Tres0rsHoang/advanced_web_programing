@@ -77,20 +77,36 @@ classroomRouter.get('/join', authenToken, async function(req, res, next) {
             res.status(200).json({'messages': "You already in this class"});
             return;
         }
-        if (type == "student") {
-            sql = `INSERT INTO classroom_student VALUES ('${currentUser}', '${classId}', 0)`;
 
-            await databaseQuery(databaseRequest, sql);
+        if (type == "student") {
+            sql = `UPDATE classroom_student
+            SET is_removed = 0
+            WHERE classroom_id = '${classId}'
+            AND student_id = '${currentUser}'`;
+
+            var sqlResult = await databaseQuery(databaseRequest, sql);
+
+            if (sqlResult == 0) {
+                sql = `INSERT INTO classroom_student VALUES ('${currentUser}', '${classId}', 0)`;
+                await databaseQuery(databaseRequest, sql);
+            }
 
             res.status(200).json({
                 "messages": "Join class successfully"
             });
         }
         else if (type == "teacher") {
-            sql = `INSERT INTO classroom_teacher VALUES ('${currentUser}', '${classId}', 0)`;
+            sql = `UPDATE classroom_teacher
+            SET is_deleted = 0
+            WHERE classroom_id = '${classId}'
+            AND teacher_id = '${currentUser}'`;
 
-            await databaseQuery(databaseRequest, sql);
+            var sqlResult = await databaseQuery(databaseRequest, sql);
 
+            if (sqlResult == 0) {
+                sql = `INSERT INTO classroom_teacher VALUES ('${currentUser}', '${classId}', 0)`;
+                await databaseQuery(databaseRequest, sql);
+            }
             res.status(200).json({
                 "messages": "Join class successfully"
             });
