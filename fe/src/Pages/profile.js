@@ -1,7 +1,6 @@
 import * as React from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
-import NavBar from '../components/NavBar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
@@ -12,6 +11,7 @@ import { useRef } from 'react';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import MiniDrawer from '../components/Drawer';
 
 const Auth_URL = '/profile';
 
@@ -113,12 +113,12 @@ const Profile = () => {
   return (
     <React.Fragment>
       <CssBaseline />
-      <NavBar />
+      <MiniDrawer>
       <Container component="main" maxWidth="sm">
           <CssBaseline />
           <Box
             sx={{
-              marginTop: 14,
+              marginTop: '20px',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -214,6 +214,7 @@ const Profile = () => {
             </Box>
           </Box>
         </Container>
+      </MiniDrawer>
       </React.Fragment>
   );
 }
