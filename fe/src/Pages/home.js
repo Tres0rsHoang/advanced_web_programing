@@ -1,14 +1,61 @@
-import React from 'react'
-import { Typography } from '@mui/material';
-import NavBar from '../components/NavBar';
+import React, { useEffect } from 'react'
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
+import MiniDrawer from '../components/Drawer';
+import { Box, Grid } from '@mui/material';
+import ClassCard from '../components/ClassCard';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
+  const user = useSelector(state => state.user.account);
+
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if(user && user.auth === false){
+        navigate('/login');
+    }
+  }, [user]);
+
   return (
     <React.Fragment>
       <CssBaseline />
-      <NavBar />
-      <Typography variant='h5' sx={{ml: '30px', mt: '100px', fontWeight: 'bold'}}>Home Page</Typography>
+      <MiniDrawer>
+      <Box sx={{margin: '20px', ml: '30px'}}>
+        <Grid container spacing={3} >
+            <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                <ClassCard />
+            </Grid>
+            <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                <ClassCard />
+            </Grid>
+            <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                <ClassCard />
+            </Grid>
+            <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                <ClassCard />
+            </Grid>
+            <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                <ClassCard />
+            </Grid>
+            <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                <ClassCard />
+            </Grid>
+            <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                <ClassCard />
+            </Grid>
+            <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                <ClassCard />
+            </Grid>
+            <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                <ClassCard />
+            </Grid>
+            <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                <ClassCard />
+            </Grid>
+        </Grid>
+      </Box>
+      </MiniDrawer>
     </React.Fragment>
   )
 }
