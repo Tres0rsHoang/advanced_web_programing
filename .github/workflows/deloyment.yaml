@@ -5,16 +5,18 @@ on:
 jobs:
   server-deployment:
     name: Deploy
-    runs-on: ubuntu-latest
-    steps:
-      - name: 🚚 Get latest code
-        uses: actions/checkout@v3
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        node-version: [14.x, 16.x, 18.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
-      - name: 📂 Sync files
-        uses: samkirkland/ftp-deploy-action@4.0.0
-        with:
-          server: www.bao-home-server.site
-          username: ftpUserConnection
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp
-          server-dir: /ftpUserConnection/AdvantageWebServer/advanced_web_programing/
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm i
+    - run: npm start
