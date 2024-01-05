@@ -5,11 +5,16 @@ on:
 jobs:
   server-deployment:
     name: Deploy
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
-      - name: Open be folder
-        run: cd be
-      - name: Node install package
-        run: npm i
-      - name: Node start
-        run: npm start
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v3
+
+      - name: 📂 Sync files
+        uses: ./
+        with:
+          server: www.bao-home-server.site
+          username: ftpUserConnection
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          server-dir: /ftpUserConnection/AdvantageWebServer/advanced_web_programing
