@@ -31,7 +31,7 @@ app.use(function (req, res, next) {
     next();
 })
 
-app.use(cors());  
+app.use(cors());
 
 app.use('/auth', authenRouter);
 
@@ -42,7 +42,12 @@ app.use('/classroom', classroomRouter);
 app.use('/classroom/grade', gradeRouter);
 
 app.get('/', function (req, res, next) {
-    res.send("Server is running...;")
+    res.send("Server is running...");
+});
+
+app.set('port', process.env.PORT || 9000);
+var server = app.listen(app.get('port'), function() {
+  console.log('Express server listening on port ' + server.address().port);
 });
 
 export default app;

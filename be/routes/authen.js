@@ -6,39 +6,11 @@ import authenToken from "../helper/authenticate_token.js";
 import databaseConnection from '../helper/database_connection.js';
 import databaseQuery from '../helper/database_query.js';
 import sendMail from '../helper/send_email.js';
+import { authenPassword, createRefreshToken } from '../ultis/authen_utils.js';
 
 const authenRouter = express.Router();
 
 const databaseRequest = await databaseConnection();
-
-async function authenPassword(email, password) {
-    const sql =`SELECT id, password, is_verify FROM [user] WHERE email = '${email}'`;
-
-    var result = await databaseQuery(databaseRequest, sql);
-
-    if (result.length > 0) {
-        const hash = result[0]['password'];
-        const id = result[0]['id'];
-        const res = await bcrypt.compare(password, hash).catch(err => console.log(err.message));
-        if (result[0]['is_verify'] == 0) return "unverify_email";
-        if (res) return id;
-    }
-    return null;
-}
-
-async function createRefreshToken(userId) {
-    const refreshTokenId = uuidv4();
-    const refreshToken = jwt.sign(
-        { "id": refreshTokenId },
-        process.env.REFRESH_TOKEN_SECRET_KEY,
-        { expiresIn: "7d" }
-    )
-    const sql = `INSERT INTO [refresh_authen] (id, user_id, token, is_revoked) VALUES ( '${refreshTokenId}', '${userId}', '${refreshToken}', 0)`;
-    
-    await databaseQuery(databaseRequest, sql);
-
-    return refreshTokenId;
-}
 
 authenRouter.post('/login', async function(req, res, next) {
     let reqData = req.body;

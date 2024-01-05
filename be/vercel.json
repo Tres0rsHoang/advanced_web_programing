@@ -6,30 +6,24 @@
             "use": "@vercel/node"
         }
     ],
-    "rewrites": [
+    "routes": [
         {
-            "source": "/(.*)",
-            "destination": "index.js"
-        }
-    ],
-    "headers": [
-        {
-            "source": "/(.*)",
-            "headers": [
-                {
-                    "key": "Access-Control-Allow-Origin",
-                    "value": "*"
-                }
-            ]
-        },
-        {
-            "source": "/advanced-web-programing.vercel.app/(.*)",
-            "headers": [
-                {
-                    "key": "Access-Control-Allow-Origin",
-                    "value": "*"
-                }
-            ]
+            "src": "/(.*)",
+            "dest": "index.js",
+            "methods": [
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE",
+                "PATCH",
+                "OPTIONS"
+            ],
+            "headers": {
+                "Access-Control-Allow-Origin": "http://localhost:3000",
+                "Access-Control-Allow-Methods": "POST, GET, OPTIONS, DELETE, OPTIONS, PATCH",
+                "Access-Control-Max-Age": "86400",
+                "Connection": "open"
+            }
         }
     ]
 }

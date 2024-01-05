@@ -4,16 +4,16 @@ import { Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
-import ConfirmResetPassword from './Pages/ConfirmResetPassword';
+import Grade from './Pages/classDetail/grade';
+import People from './Pages/classDetail/people';
+import Stream from './Pages/classDetail/stream';
+import ConfirmResetPassword from './Pages/confirmResetPassword';
 import Home from './Pages/home';
 import Login from './Pages/login';
 import Profile from './Pages/profile';
 import ResetPassword from './Pages/resetPassword';
 import SignUp from './Pages/signUp';
 import { handleRefresh } from './redux/actions/userAction';
-import Stream from './Pages/classDetail/stream';
-import People from './Pages/classDetail/people';
-import Grade from './Pages/classDetail/grade';
 
 function App() {
   const dispatch = useDispatch();

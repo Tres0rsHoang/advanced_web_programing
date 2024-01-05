@@ -1,0 +1,15 @@
+name: Home-Server Deployment
+on:
+  push:
+    branches: [master]
+jobs:
+  server-deployment:
+    name: Deploy
+    runs-on: windows-latest
+    steps:
+      - name: Open be folder
+        run: cd be
+      - name: Node install package
+        run: npm i
+      - name: Node start
+        run: npm start

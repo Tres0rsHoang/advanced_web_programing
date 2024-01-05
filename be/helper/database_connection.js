@@ -25,7 +25,7 @@ export default async function () {
                 }
                 var request = new sql.Request();
                 resolve(request);
-            };
+            }
             sql.connect(config, handler);
         }
     );

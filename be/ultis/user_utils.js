@@ -4,7 +4,7 @@ import databaseQuery from '../helper/database_query.js';
 
 const databaseRequest = await databaseConnection();
 
-export default async function getCurrentUserId(req, res) {
+export async function getCurrentUserId(req, res) {
     const authorizationHeader = req.headers['authorization'];
     const accessToken = authorizationHeader.split(' ')[1];
     const refreshTokenId = jwt.decode(accessToken)['refresh_token_id'];

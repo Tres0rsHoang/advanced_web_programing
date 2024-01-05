@@ -12,7 +12,8 @@ profileRouter.get('/', authenToken, async function(req, res, next){
     const authorizationHeader = req.headers['authorization'];
     const accessToken = authorizationHeader.split(' ')[1];
 
-    const refreshTokenId = jwt.decode(accessToken)['refresh_token_id'];
+    var refreshTokenId = await jwt.decode(accessToken);
+    refreshTokenId = refreshTokenId['refresh_token_id'];
 
     const userIdSql = `SELECT user_id FROM [refresh_authen] WHERE id = '${refreshTokenId}'`;
     const userId = await databaseQuery(databaseRequest, userIdSql);
