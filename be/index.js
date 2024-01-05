@@ -42,7 +42,7 @@ app.use('/classroom', classroomRouter);
 app.use('/classroom/grade', gradeRouter);
 
 app.get('/', function (req, res, next) {
-    res.send("Server is running...");
+    res.send("Home server is running...");
 });
 
 app.set('port', process.env.PORT || 9000);
