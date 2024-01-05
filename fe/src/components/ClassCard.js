@@ -60,7 +60,7 @@ export default function ClassCard() {
         }
     }}>
       <CardActionArea href='/classDetail/stream'>
-        <CardHeader sx={{backgroundImage: "url('https://mayastepien.nl/googlecalendar/mayastepien-google-pingpong.jpg')"}}
+        <CardHeader sx={{backgroundImage: "url('https://www.gstatic.com/classroom/themes/img_sailing.jpg')", backgroundSize: 'cover'}}
           action={
             <div>
               <IconButton ref={anchorRef}
@@ -141,7 +141,7 @@ export default function ClassCard() {
       </CardActionArea>
       
       <CardContent sx={{display: 'flex', justifyContent: 'flex-end', height: '150px'}}>
-          <Avatar sx={{ bgcolor: indigo[300], mt: '-50px', height: '70px', width: '70px', fontSize: '30px' }} aria-label="recipe">
+          <Avatar sx={{ bgcolor: '#0074cc', mt: '-50px', height: '70px', width: '70px', fontSize: '30px' }} aria-label="recipe">
             K
           </Avatar>
       </CardContent>
