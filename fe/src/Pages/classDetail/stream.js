@@ -1,10 +1,10 @@
 import React from 'react'
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
-import { Avatar, Box, Button, Card, CardContent, CardHeader, Divider, Grid, IconButton, Paper, Tab, Tabs, TextField, Typography, styled, useMediaQuery } from '@mui/material';
+import { Avatar, Box, Button, Card, CardContent, CardHeader, Divider, Grid, IconButton, Tab, Tabs, TextField, Typography, useMediaQuery } from '@mui/material';
 import MiniDrawer from '../../components/Drawer';
 import { useTheme } from '@mui/material/styles';
 import { ClassOutlined, MoreVert, SendOutlined } from '@mui/icons-material';
-import { blue, grey, indigo } from '@mui/material/colors';
+import { blue, grey } from '@mui/material/colors';
 import { useSelector } from 'react-redux';
 
 export default function Stream() {
@@ -23,8 +23,8 @@ export default function Stream() {
                     value= {0}
                 >
                     <Tab label="Stream" href='/classDetail/stream' sx={{ml: '20px'}} />
-                    <Tab label="Grade" href='/classDetail/grade' />
                     <Tab label="People" href='/classDetail/people' />
+                    <Tab label="Grade" href='/classDetail/grade' />
                 </Tabs>
                 <Divider />
                 <Box sx={{margin: '30px 70px'}}>

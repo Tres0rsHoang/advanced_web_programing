@@ -19,11 +19,11 @@ export default function People() {
                 <Tabs
                     aria-label="nav tabs example"
                     role="navigation"
-                    value= {2}
+                    value= {1}
                 >
                     <Tab label="Stream" href='/classDetail/stream' sx={{ml: '20px'}} />
-                    <Tab label="Grade" href='/classDetail/grade' />
                     <Tab label="People" href='/classDetail/people' />
+                    <Tab label="Grade" href='/classDetail/grade' />
                 </Tabs>
                 <Divider />
                 { 

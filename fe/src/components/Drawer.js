@@ -15,7 +15,7 @@ import React, { useEffect } from 'react';
 import AccountMenu from './AccountMenu';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Add, Apps, ArchiveOutlined, CalendarToday, Home, Menu, SchoolOutlined, Settings, SupervisorAccountOutlined } from '@mui/icons-material';
+import { Add, ArchiveOutlined, CalendarToday, Home, Menu, Notifications, SchoolOutlined, Settings, SupervisorAccountOutlined } from '@mui/icons-material';
 
 const drawerWidth = 260;
 
@@ -84,10 +84,10 @@ export default function MiniDrawer({children}) {
   const urlMapping = {
     'Home': '/',
     'Calendar': '/calendar',
-    'Teaching': '/products',
-    'Enrolled': '/aboutUs',
-    'Archived classes': '/login',
-    'Settings': '/signUp'
+    'Teaching': '/teaching',
+    'Enrolled': '/enrolled',
+    'Archived classes': '/archivedClasses',
+    'Settings': '/settings'
   }
   
   useEffect(() => {
@@ -133,7 +133,7 @@ export default function MiniDrawer({children}) {
                   <IconButton
                     sx={{padding: '10px'}}
                   >
-                    <Apps style={{ fontSize: '30px', color: 'white' }}/>
+                    <Notifications style={{ fontSize: '25px', color: 'white' }}/>
                   </IconButton>
                   <AccountMenu />
                 </Box>
