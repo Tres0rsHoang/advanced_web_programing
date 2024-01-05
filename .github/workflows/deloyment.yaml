@@ -17,6 +17,5 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-    - run: cd be
-    - run: npm i
-    - run: npm start
+    - run: npm i --prefix be/
+    - run: npm start --prefix be/
