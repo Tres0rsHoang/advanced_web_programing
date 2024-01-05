@@ -1,15 +1,21 @@
 name: Home-Server Deployment
 on:
   push:
-    branches: [home-server-deployment]
+    branches: [master, home-server-deployment]
 jobs:
   server-deployment:
     name: Deploy
-    runs-on: windows-latest
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
     steps:
-      - name: Open be folder
-        run: cd be
-      - name: Node install package
-        run: npm i
-      - name: Node start
-        run: npm start
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm i
+      working-directory: be 
