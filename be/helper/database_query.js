@@ -4,9 +4,14 @@ export default async function(request, query) {
             const handler = (error, result) => {
                 if (error) {
                     reject(error);
-                    throw error;
+                    console.log(`ERROR SQL: ${query}`);
+                    return;
                 }
-                resolve(result['recordset']);
+                if (result['recordset']) {
+                    resolve(result['recordset']);
+                    return;
+                }
+                resolve(result['rowsAffected'][0]);  
             };
             request.query(query, handler);
         }

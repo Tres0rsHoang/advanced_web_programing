@@ -1,41 +1,42 @@
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
-import ConfirmResetPassword from './Pages/ConfirmResetPassword';
-import AboutUs from './Pages/aboutUs';
+import Grade from './Pages/classDetail/grade';
+import People from './Pages/classDetail/people';
+import Stream from './Pages/classDetail/stream';
+import ConfirmResetPassword from './Pages/confirmResetPassword';
 import Home from './Pages/home';
-import Landing from './Pages/landing';
 import Login from './Pages/login';
-import Products from './Pages/products';
 import Profile from './Pages/profile';
 import ResetPassword from './Pages/resetPassword';
 import SignUp from './Pages/signUp';
-import { ToastContainer } from 'react-toastify';
-import { useContext, useEffect } from 'react';
-import { UserContext } from './context/userContext';
+import { handleRefresh } from './redux/actions/userAction';
 
 function App() {
-  const { loginContext } = useContext(UserContext);
-  const user = JSON.parse(localStorage.getItem('user'));
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if(localStorage.getItem("access_token")) {
-      loginContext(user.email, localStorage.getItem("access_token"))
+    if(localStorage.getItem('token')) {
+      dispatch(handleRefresh());
     }
-  }, [])
+  }, []);
 
   return (
     <>
       <div className="App">
         <Routes>
           <Route path='/' element={<Home />} />
-          <Route path='/landing' element={<Landing />} />
           <Route path='/login' element={<Login />} />
           <Route path='/signUp' element={<SignUp />} />
-          <Route path='/products' element={<Products />} />
-          <Route path='/aboutUs' element={<AboutUs />} />
           <Route path='/profile' element={<Profile />} />
           <Route path='/resetPassword' element={<ResetPassword />} />
           <Route path='/reset-password' element={<ConfirmResetPassword />} />
+          <Route path='/classDetail/stream' element={<Stream />} />
+          <Route path='/classDetail/grade' element={<Grade />} />
+          <Route path='/classDetail/people' element={<People />} />
         </Routes>
       </div>
       <ToastContainer

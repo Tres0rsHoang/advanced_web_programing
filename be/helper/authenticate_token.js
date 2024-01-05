@@ -7,7 +7,6 @@ export default function authenToken(req, res, next) {
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET_KEY, (err, data) => {
         if (err) {
             res.status(403).json({"Error": err});
-            throw err;
         }
         next();
     })
