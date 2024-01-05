@@ -17,4 +17,4 @@ jobs:
           username: ftpUserConnection
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
-          server-dir: /ftpUserConnection/AdvantageWebServer/advanced_web_programing
+          server-dir: /ftpUserConnection/AdvantageWebServer/advanced_web_programing/
