@@ -12,8 +12,8 @@ import ResetPassword from './Pages/resetPassword';
 import SignUp from './Pages/signUp';
 import { handleRefresh } from './redux/actions/userAction';
 import Stream from './Pages/classDetail/stream';
-import ClassWork from './Pages/classDetail/classWork';
 import People from './Pages/classDetail/people';
+import Grade from './Pages/classDetail/grade';
 
 function App() {
   const dispatch = useDispatch();
@@ -35,7 +35,7 @@ function App() {
           <Route path='/resetPassword' element={<ResetPassword />} />
           <Route path='/reset-password' element={<ConfirmResetPassword />} />
           <Route path='/classDetail/stream' element={<Stream />} />
-          <Route path='/classDetail/classWork' element={<ClassWork />} />
+          <Route path='/classDetail/grade' element={<Grade />} />
           <Route path='/classDetail/people' element={<People />} />
         </Routes>
       </div>

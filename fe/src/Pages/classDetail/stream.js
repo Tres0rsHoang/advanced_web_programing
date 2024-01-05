@@ -4,22 +4,14 @@ import { Avatar, Box, Button, Card, CardContent, CardHeader, Divider, Grid, Icon
 import MiniDrawer from '../../components/Drawer';
 import { useTheme } from '@mui/material/styles';
 import { ClassOutlined, MoreVert, SendOutlined } from '@mui/icons-material';
-import { blue, indigo } from '@mui/material/colors';
+import { blue, grey, indigo } from '@mui/material/colors';
 import { useSelector } from 'react-redux';
 
 export default function Stream() {
     const theme = useTheme();
-    const isMatch = useMediaQuery(theme.breakpoints.down('md'));
+    const isMatch = useMediaQuery(theme.breakpoints.down('lg'));
 
     const user = useSelector(state => state.user.account);
-
-    const Item = styled(Paper)(({ theme }) => ({
-        backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-        ...theme.typography.body2,
-        padding: theme.spacing(1),
-        textAlign: 'center',
-        color: theme.palette.text.secondary,
-      }));
 
     return (
         <React.Fragment>
@@ -31,7 +23,7 @@ export default function Stream() {
                     value= {0}
                 >
                     <Tab label="Stream" href='/classDetail/stream' sx={{ml: '20px'}} />
-                    <Tab label="Classwork" href='/classDetail/classWork' />
+                    <Tab label="Grade" href='/classDetail/grade' />
                     <Tab label="People" href='/classDetail/people' />
                 </Tabs>
                 <Divider />
@@ -39,7 +31,8 @@ export default function Stream() {
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <Card 
-                                sx={{backgroundImage: "url('https://mayastepien.nl/googlecalendar/mayastepien-google-pingpong.jpg')",
+                                sx={{backgroundImage: "url('https://www.gstatic.com/classroom/themes/img_sailing.jpg')",
+                                backgroundSize: 'cover',
                                 height: '250px',
                                 display: 'flex',
                                 alignItems: 'flex-end',
@@ -58,19 +51,107 @@ export default function Stream() {
                         </Grid>
                         { 
                             isMatch? (
-                                <Grid item xs={12} md={8}>
-                                    <Item>xs=6 md=4</Item>
-                                    <Item>xs=6 md=4</Item>
-                                    <Item>xs=6 md=4</Item>
-                                    <Item>xs=6 md=4</Item>
-                                    <Item>xs=6 md=4</Item>
-                                    <Item>xs=6 md=4</Item>
-                                    <Item>xs=6 md=4</Item>
-                                    <Item>xs=6 md=4</Item>  
+                                <Grid item md={12} lg={9}>
+                                    <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', borderRadius: '10px', boxShadow: 3, color: grey[500], ":hover":{cursor: 'pointer', color: '#02579A'}}}>
+                                        <CardContent sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
+                                            <Avatar src={user.imageUrl} sx={{ width: 40, height: 40, background: blue[500], mr: '30px', ml: '10px' }}>{user.firstName.charAt(0)}</Avatar>
+                                            <Typography gutterBottom component="div" sx={{fontSize: '15px', margin: '10px 0', fontWeight: 500}}>
+                                                Announce something to your class
+                                            </Typography>
+                                        </CardContent>
+                                    </Card>
+                                    <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', boxShadow: 0, borderRadius: '10px'}}>
+                                        <CardHeader
+                                            avatar={
+                                            <Avatar sx={{ bgcolor: '#02579A', ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
+                                                <ClassOutlined />
+                                            </Avatar>
+                                            }
+                                            action={
+                                            <IconButton aria-label="settings">
+                                                <MoreVert />
+                                            </IconButton>
+                                            }
+                                            title={<Typography gutterBottom component="div" sx={{fontSize: '16px', fontWeight: 500, mt: '5px'}}>
+                                                Khánh Nguyễn Huy posted a new material: Final project submission (Deadline Jan 8 10pm)
+                                            </Typography>}
+                                            subheader={<Typography gutterBottom component="div" sx={{fontSize: '13px', fontWeight: 200}}>
+                                                Dec 29
+                                            </Typography>}
+                                        />
+                                    </Card>
+
+                                    <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', boxShadow: 0, borderRadius: '10px'}}>
+                                        <CardHeader
+                                            avatar={
+                                            <Avatar sx={{ bgcolor: '#02579A', ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
+                                                <ClassOutlined />
+                                            </Avatar>
+                                            }
+                                            action={
+                                            <IconButton aria-label="settings">
+                                                <MoreVert />
+                                            </IconButton>
+                                            }
+                                            title={<Typography gutterBottom component="div" sx={{fontSize: '16px', fontWeight: 500, mt: '5px'}}>
+                                                Khánh Nguyễn Huy posted a new material: Final project submission (Deadline Jan 8 10pm)
+                                            </Typography>}
+                                            subheader={<Typography gutterBottom component="div" sx={{fontSize: '13px', fontWeight: 200}}>
+                                                Dec 29
+                                            </Typography>}
+                                        />
+                                        <Divider />
+                                        <CardContent sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
+                                            <Typography gutterBottom component="div" sx={{fontSize: '15px', margin: '10px 0 0 10px', fontWeight: 500}}>
+                                                9 class comments
+                                            </Typography>
+                                        </CardContent>
+                                    </Card>
+                                    
+                                    <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', boxShadow: 0, borderRadius: '10px'}}>
+                                        <CardHeader
+                                            avatar={
+                                            <Avatar sx={{ bgcolor: '#02579A', ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
+                                                K
+                                            </Avatar>
+                                            }
+                                            action={
+                                            <IconButton aria-label="settings">
+                                                <MoreVert />
+                                            </IconButton>
+                                            }
+                                            title={<Typography gutterBottom component="div" sx={{fontSize: '16px', fontWeight: 500, mt: '5px'}}>
+                                                Khánh Nguyễn Huy
+                                            </Typography>}
+                                            subheader={<Typography gutterBottom component="div" sx={{fontSize: '13px', fontWeight: 200}}>
+                                                Dec 29
+                                            </Typography>}
+                                        />
+                                        <CardContent sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
+                                            <Typography gutterBottom component="div" sx={{fontSize: '14px', fontWeight: 500, ml: '10px'}}>
+                                                Is any team interested in earning additional points for the seminar? Kindly share your topic introduction on our Facebook group:&nbsp; 
+                                                <a href='https://www.facebook.com/groups/908384604383645'>https://www.facebook.com/groups/908384604383645</a>.
+                                            </Typography>
+                                        </CardContent>
+                                        <Divider />
+                                        <CardContent sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
+                                            <Avatar src={user.imageUrl} sx={{ width: 40, height: 40, background: blue[500], mr: '30px', ml: '10px' }}>{user.firstName.charAt(0)}</Avatar>
+                                            <TextField fullWidth placeholder='Add class comment...'
+                                                InputProps={{
+                                                    style: {
+                                                    borderRadius: "40px",
+                                                    fontSize: '14px',
+                                                }
+                                            }} />
+                                            <IconButton>
+                                                <SendOutlined sx={{ml: '10px'}}/>
+                                            </IconButton>
+                                        </CardContent>
+                                    </Card>  
                                 </Grid>
                             ) : (
                                 <>
-                                    <Grid item xs={0} md={3}>
+                                <Grid item md={0} lg={3}>
                                     <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', boxShadow: 0, borderRadius: '10px'}}>
                                         <CardContent sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
                                             <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
@@ -91,7 +172,7 @@ export default function Stream() {
                                             sx={{width: '85%', 
                                             margin: ' 0 20px 20px 20px', 
                                             fontWeight: 'bold',
-                                            backgroundColor: indigo[500]}}
+                                            backgroundColor: '#02579A'}}
                                         >
                                             Join
                                         </Button>
@@ -111,105 +192,105 @@ export default function Stream() {
                                             </p>
                                         </CardContent>
                                     </Card>
-                                    </Grid>
-                                    <Grid item xs={12} md={9}>
-                                        <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', borderRadius: '10px', boxShadow: 3}}>
-                                            <CardContent sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
-                                                <Avatar src={user.imageUrl} sx={{ width: 40, height: 40, background: blue[500], mr: '30px', ml: '10px' }}>{user.firstName.charAt(0)}</Avatar>
-                                                <Typography gutterBottom component="div" sx={{fontSize: '15px', margin: '10px 0', fontWeight: 500}}>
-                                                    Announce something to your class
-                                                </Typography>
-                                            </CardContent>
-                                        </Card>
-                                        <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', boxShadow: 0, borderRadius: '10px'}}>
-                                            <CardHeader
-                                                avatar={
-                                                <Avatar sx={{ bgcolor: indigo[500], ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
-                                                    <ClassOutlined />
-                                                </Avatar>
-                                                }
-                                                action={
-                                                <IconButton aria-label="settings">
-                                                    <MoreVert />
-                                                </IconButton>
-                                                }
-                                                title={<Typography gutterBottom component="div" sx={{fontSize: '16px', fontWeight: 500, mt: '5px'}}>
-                                                    Khánh Nguyễn Huy posted a new material: Final project submission (Deadline Jan 8 10pm)
-                                                </Typography>}
-                                                subheader={<Typography gutterBottom component="div" sx={{fontSize: '13px', fontWeight: 200}}>
-                                                    Dec 29
-                                                </Typography>}
-                                            />
-                                        </Card>
+                                </Grid>
+                                <Grid item md={12} lg={9}>
+                                    <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', borderRadius: '10px', boxShadow: 3, color: grey[500], ":hover":{cursor: 'pointer', color: '#02579A'}}}>
+                                        <CardContent sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
+                                            <Avatar src={user.imageUrl} sx={{ width: 40, height: 40, background: blue[500], mr: '30px', ml: '10px' }}>{user.firstName.charAt(0)}</Avatar>
+                                            <Typography gutterBottom component="div" sx={{fontSize: '15px', margin: '10px 0', fontWeight: 500}}>
+                                                Announce something to your class
+                                            </Typography>
+                                        </CardContent>
+                                    </Card>
+                                    <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', boxShadow: 0, borderRadius: '10px', ":hover":{cursor: 'pointer', backgroundColor: '#e6f5fe'}}}>
+                                        <CardHeader
+                                            avatar={
+                                            <Avatar sx={{ bgcolor: '#02579A', ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
+                                                <ClassOutlined />
+                                            </Avatar>
+                                            }
+                                            action={
+                                            <IconButton aria-label="settings">
+                                                <MoreVert />
+                                            </IconButton>
+                                            }
+                                            title={<Typography gutterBottom component="div" sx={{fontSize: '16px', fontWeight: 500, mt: '5px'}}>
+                                                Khánh Nguyễn Huy posted a new material: Final project submission (Deadline Jan 8 10pm)
+                                            </Typography>}
+                                            subheader={<Typography gutterBottom component="div" sx={{fontSize: '13px', fontWeight: 200}}>
+                                                Dec 29
+                                            </Typography>}
+                                        />
+                                    </Card>
 
-                                        <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', boxShadow: 0, borderRadius: '10px'}}>
-                                            <CardHeader
-                                                avatar={
-                                                <Avatar sx={{ bgcolor: indigo[500], ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
-                                                    <ClassOutlined />
-                                                </Avatar>
+                                    <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', boxShadow: 0, borderRadius: '10px', ":hover":{cursor: 'pointer', backgroundColor: '#e6f5fe'}}}>
+                                        <CardHeader
+                                            avatar={
+                                            <Avatar sx={{ bgcolor: '#02579A', ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
+                                                <ClassOutlined />
+                                            </Avatar>
+                                            }
+                                            action={
+                                            <IconButton aria-label="settings">
+                                                <MoreVert />
+                                            </IconButton>
+                                            }
+                                            title={<Typography gutterBottom component="div" sx={{fontSize: '16px', fontWeight: 500, mt: '5px'}}>
+                                                Khánh Nguyễn Huy posted a new material: Final project submission (Deadline Jan 8 10pm)
+                                            </Typography>}
+                                            subheader={<Typography gutterBottom component="div" sx={{fontSize: '13px', fontWeight: 200}}>
+                                                Dec 29
+                                            </Typography>}
+                                        />
+                                        <Divider />
+                                        <CardContent sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
+                                            <Typography gutterBottom component="div" sx={{fontSize: '15px', margin: '10px 0 0 10px', fontWeight: 500}}>
+                                                9 class comments
+                                            </Typography>
+                                        </CardContent>
+                                    </Card>
+                                    
+                                    <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', boxShadow: 0, borderRadius: '10px'}}>
+                                        <CardHeader
+                                            avatar={
+                                            <Avatar sx={{ bgcolor: '#02579A', ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
+                                                K
+                                            </Avatar>
+                                            }
+                                            action={
+                                            <IconButton aria-label="settings">
+                                                <MoreVert />
+                                            </IconButton>
+                                            }
+                                            title={<Typography gutterBottom component="div" sx={{fontSize: '16px', fontWeight: 500, mt: '5px'}}>
+                                                Khánh Nguyễn Huy
+                                            </Typography>}
+                                            subheader={<Typography gutterBottom component="div" sx={{fontSize: '13px', fontWeight: 200}}>
+                                                Dec 29
+                                            </Typography>}
+                                        />
+                                        <CardContent sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
+                                            <Typography gutterBottom component="div" sx={{fontSize: '14px', fontWeight: 500, ml: '10px'}}>
+                                                Is any team interested in earning additional points for the seminar? Kindly share your topic introduction on our Facebook group:&nbsp; 
+                                                <a href='https://www.facebook.com/groups/908384604383645'>https://www.facebook.com/groups/908384604383645</a>.
+                                            </Typography>
+                                        </CardContent>
+                                        <Divider />
+                                        <CardContent sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
+                                            <Avatar src={user.imageUrl} sx={{ width: 40, height: 40, background: blue[500], mr: '30px', ml: '10px' }}>{user.firstName.charAt(0)}</Avatar>
+                                            <TextField fullWidth placeholder='Add class comment...'
+                                                InputProps={{
+                                                    style: {
+                                                    borderRadius: "40px",
+                                                    fontSize: '14px',
                                                 }
-                                                action={
-                                                <IconButton aria-label="settings">
-                                                    <MoreVert />
-                                                </IconButton>
-                                                }
-                                                title={<Typography gutterBottom component="div" sx={{fontSize: '16px', fontWeight: 500, mt: '5px'}}>
-                                                    Khánh Nguyễn Huy posted a new material: Final project submission (Deadline Jan 8 10pm)
-                                                </Typography>}
-                                                subheader={<Typography gutterBottom component="div" sx={{fontSize: '13px', fontWeight: 200}}>
-                                                    Dec 29
-                                                </Typography>}
-                                            />
-                                            <Divider />
-                                            <CardContent sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
-                                                <Typography gutterBottom component="div" sx={{fontSize: '15px', margin: '10px 0 0 10px', fontWeight: 500}}>
-                                                    9 class comments
-                                                </Typography>
-                                            </CardContent>
-                                        </Card>
-                                        
-                                        <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', boxShadow: 0, borderRadius: '10px'}}>
-                                            <CardHeader
-                                                avatar={
-                                                <Avatar sx={{ bgcolor: indigo[500], ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
-                                                    K
-                                                </Avatar>
-                                                }
-                                                action={
-                                                <IconButton aria-label="settings">
-                                                    <MoreVert />
-                                                </IconButton>
-                                                }
-                                                title={<Typography gutterBottom component="div" sx={{fontSize: '16px', fontWeight: 500, mt: '5px'}}>
-                                                    Khánh Nguyễn Huy
-                                                </Typography>}
-                                                subheader={<Typography gutterBottom component="div" sx={{fontSize: '13px', fontWeight: 200}}>
-                                                    Dec 29
-                                                </Typography>}
-                                            />
-                                            <CardContent sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
-                                                <Typography gutterBottom component="div" sx={{fontSize: '14px', fontWeight: 500, ml: '10px'}}>
-                                                    Is any team interested in earning additional points for the seminar? Kindly share your topic introduction on our Facebook group:&nbsp; 
-                                                    <a href='https://www.facebook.com/groups/908384604383645'>https://www.facebook.com/groups/908384604383645</a>.
-                                                </Typography>
-                                            </CardContent>
-                                            <Divider />
-                                            <CardContent sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
-                                                <Avatar src={user.imageUrl} sx={{ width: 40, height: 40, background: blue[500], mr: '30px', ml: '10px' }}>{user.firstName.charAt(0)}</Avatar>
-                                                <TextField fullWidth placeholder='Add class comment...'
-                                                    InputProps={{
-                                                        style: {
-                                                        borderRadius: "40px",
-                                                        fontSize: '14px',
-                                                    }
-                                                }} />
-                                                <IconButton>
-                                                    <SendOutlined sx={{ml: '10px'}}/>
-                                                </IconButton>
-                                            </CardContent>
-                                        </Card>
-                                    </Grid>
+                                            }} />
+                                            <IconButton>
+                                                <SendOutlined sx={{ml: '10px'}}/>
+                                            </IconButton>
+                                        </CardContent>
+                                    </Card>
+                                </Grid>
                                 </>
                             )
                         }   
