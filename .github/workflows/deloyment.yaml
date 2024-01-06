@@ -1,7 +1,7 @@
 name: Home-Server Deployment
 on:
   push:
-    branches: [master, home-server-deployment]
+    branches: [home-server-deployment]
 jobs:
   server-deployment:
     name: Deploy
