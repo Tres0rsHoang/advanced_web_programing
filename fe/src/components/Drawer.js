@@ -10,12 +10,12 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { AppBar, Box, Link, useMediaQuery } from '@mui/material';
+import { AppBar, Box, Link, Tooltip, useMediaQuery } from '@mui/material';
 import React, { useEffect } from 'react';
 import AccountMenu from './AccountMenu';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Add, Apps, ArchiveOutlined, CalendarToday, Home, Menu, SchoolOutlined, Settings, SupervisorAccountOutlined } from '@mui/icons-material';
+import { Add, ArchiveOutlined, CalendarToday, Home, Menu, Notifications, SchoolOutlined, Settings, SupervisorAccountOutlined } from '@mui/icons-material';
 
 const drawerWidth = 260;
 
@@ -83,11 +83,11 @@ export default function MiniDrawer({children}) {
 
   const urlMapping = {
     'Home': '/',
-    'Calendar': '/calendar',
-    'Teaching': '/products',
-    'Enrolled': '/aboutUs',
-    'Archived classes': '/login',
-    'Settings': '/signUp'
+    'Calendar': '#',
+    'Teaching': '/teacher/teaching',
+    'Enrolled': '/student/enrolled',
+    'Archived classes': '#',
+    'Settings': '#'
   }
   
   useEffect(() => {
@@ -133,7 +133,7 @@ export default function MiniDrawer({children}) {
                   <IconButton
                     sx={{padding: '10px'}}
                   >
-                    <Apps style={{ fontSize: '30px', color: 'white' }}/>
+                    <Notifications style={{ fontSize: '25px', color: 'white' }}/>
                   </IconButton>
                   <AccountMenu />
                 </Box>
@@ -147,6 +147,7 @@ export default function MiniDrawer({children}) {
               <Divider />
               <List>
               {['Home', 'Calendar'].map((text) => (
+                <Tooltip title={text} placement="right" arrow>
                   <ListItem key={text} component={Link} href={urlMapping[text]} disablePadding sx={{ display: 'block', color: 'black', margin: '5px 0 5px 0' }}>
                   <ListItemButton
                       sx={{
@@ -167,11 +168,13 @@ export default function MiniDrawer({children}) {
                       <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
                   </ListItemButton>
                   </ListItem>
+                </Tooltip>
               ))}
               </List>
               <Divider />
               <List>
               {['Teaching'].map((text) => (
+                <Tooltip title={text} placement="right" arrow>
                   <ListItem key={text} component={Link} href={urlMapping[text]} disablePadding sx={{ display: 'block', color: 'black', margin: '5px 0 5px 0' }}>
                   <ListItemButton
                       sx={{
@@ -192,11 +195,13 @@ export default function MiniDrawer({children}) {
                       <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
                   </ListItemButton>
                   </ListItem>
+                </Tooltip>
               ))}
               </List>
               <Divider />
               <List>
               {['Enrolled'].map((text) => (
+                <Tooltip title={text} placement="right" arrow>
                   <ListItem key={text} component={Link} href={urlMapping[text]} disablePadding sx={{ display: 'block', color: 'black', margin: '5px 0 5px 0' }}>
                   <ListItemButton
                       sx={{
@@ -217,11 +222,13 @@ export default function MiniDrawer({children}) {
                       <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
                   </ListItemButton>
                   </ListItem>
+                </Tooltip>
               ))}
               </List>
               <Divider />
               <List>
               {['Archived classes', 'Settings'].map((text) => (
+                <Tooltip title={text} placement="right" arrow>
                   <ListItem key={text} component={Link} href={urlMapping[text]} disablePadding sx={{ display: 'block', color: 'black', margin: '5px 0 5px 0' }}>
                   <ListItemButton
                       sx={{
@@ -242,6 +249,7 @@ export default function MiniDrawer({children}) {
                       <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
                   </ListItemButton>
                   </ListItem>
+                </Tooltip>
               ))}
               </List>
           </Drawer>
@@ -249,105 +257,223 @@ export default function MiniDrawer({children}) {
           <Drawer variant="permanent" open={open}>
               <DrawerHeader />
               <Divider />
-              <List>
-              {['Home', 'Calendar'].map((text) => (
-                  <ListItem key={text} component={Link} href={urlMapping[text]} disablePadding sx={{ display: 'block', color: 'black', margin: '5px 0 5px 0' }}>
-                  <ListItemButton
-                      sx={{
-                      minHeight: 48,
-                      justifyContent: open ? 'initial' : 'center',
-                      px: 2.5,
-                      }}
-                  >
-                      <ListItemIcon
-                      sx={{
-                          minWidth: 0,
-                          mr: open ? 3 : 'auto',
-                          justifyContent: 'center',
-                      }}
+              {
+                open? ( 
+                <>
+                  <List>
+                  {['Home', 'Calendar'].map((text) => (
+                      <ListItem key={text} component={Link} href={urlMapping[text]} disablePadding sx={{ display: 'block', color: 'black', margin: '5px 0 5px 0' }}>
+                      <ListItemButton
+                          sx={{
+                          minHeight: 48,
+                          justifyContent: open ? 'initial' : 'center',
+                          px: 2.5,
+                          }}
                       >
-                      {iconMapping[text]}
-                      </ListItemIcon>
-                      <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                  </ListItemButton>
-                  </ListItem>
-              ))}
-              </List>
-              <Divider />
-              <List>
-              {['Teaching'].map((text) => (
-                  <ListItem key={text} component={Link} href={urlMapping[text]} disablePadding sx={{ display: 'block', color: 'black', margin: '5px 0 5px 0' }}>
-                  <ListItemButton
-                      sx={{
-                      minHeight: 48,
-                      justifyContent: open ? 'initial' : 'center',
-                      px: 2.5,
-                      }}
-                  >
-                      <ListItemIcon
-                      sx={{
-                          minWidth: 0,
-                          mr: open ? 3 : 'auto',
-                          justifyContent: 'center',
-                      }}
+                          <ListItemIcon
+                          sx={{
+                              minWidth: 0,
+                              mr: open ? 3 : 'auto',
+                              justifyContent: 'center',
+                          }}
+                          >
+                          {iconMapping[text]}
+                          </ListItemIcon>
+                          <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                      </ListItemButton>
+                      </ListItem>
+                  ))}
+                  </List>
+                  <Divider />
+                  <List>
+                  {['Teaching'].map((text) => (
+                      <ListItem key={text} component={Link} href={urlMapping[text]} disablePadding sx={{ display: 'block', color: 'black', margin: '5px 0 5px 0' }}>
+                      <ListItemButton
+                          sx={{
+                          minHeight: 48,
+                          justifyContent: open ? 'initial' : 'center',
+                          px: 2.5,
+                          }}
                       >
-                      {iconMapping[text]}
-                      </ListItemIcon>
-                      <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                  </ListItemButton>
-                  </ListItem>
-              ))}
-              </List>
-              <Divider />
-              <List>
-              {['Enrolled'].map((text) => (
-                  <ListItem key={text} component={Link} href={urlMapping[text]} disablePadding sx={{ display: 'block', color: 'black', margin: '5px 0 5px 0' }}>
-                  <ListItemButton
-                      sx={{
-                      minHeight: 48,
-                      justifyContent: open ? 'initial' : 'center',
-                      px: 2.5,
-                      }}
-                  >
-                      <ListItemIcon
-                      sx={{
-                          minWidth: 0,
-                          mr: open ? 3 : 'auto',
-                          justifyContent: 'center',
-                      }}
+                          <ListItemIcon
+                          sx={{
+                              minWidth: 0,
+                              mr: open ? 3 : 'auto',
+                              justifyContent: 'center',
+                          }}
+                          >
+                          {iconMapping[text]}
+                          </ListItemIcon>
+                          <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                      </ListItemButton>
+                      </ListItem>
+                  ))}
+                  </List>
+                  <Divider />
+                  <List>
+                  {['Enrolled'].map((text) => (
+                      <ListItem key={text} component={Link} href={urlMapping[text]} disablePadding sx={{ display: 'block', color: 'black', margin: '5px 0 5px 0' }}>
+                      <ListItemButton
+                          sx={{
+                          minHeight: 48,
+                          justifyContent: open ? 'initial' : 'center',
+                          px: 2.5,
+                          }}
                       >
-                      {iconMapping[text]}
-                      </ListItemIcon>
-                      <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                  </ListItemButton>
-                  </ListItem>
-              ))}
-              </List>
-              <Divider />
-              <List>
-              {['Archived classes', 'Settings'].map((text) => (
-                  <ListItem key={text} component={Link} href={urlMapping[text]} disablePadding sx={{ display: 'block', color: 'black', margin: '5px 0 5px 0' }}>
-                  <ListItemButton
-                      sx={{
-                      minHeight: 48,
-                      justifyContent: open ? 'initial' : 'center',
-                      px: 2.5,
-                      }}
-                  >
-                      <ListItemIcon
-                      sx={{
-                          minWidth: 0,
-                          mr: open ? 3 : 'auto',
-                          justifyContent: 'center',
-                      }}
+                          <ListItemIcon
+                          sx={{
+                              minWidth: 0,
+                              mr: open ? 3 : 'auto',
+                              justifyContent: 'center',
+                          }}
+                          >
+                          {iconMapping[text]}
+                          </ListItemIcon>
+                          <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                      </ListItemButton>
+                      </ListItem>
+                  ))}
+                  </List>
+                  <Divider />
+                  <List>
+                  {['Archived classes', 'Settings'].map((text) => (
+                      <ListItem key={text} component={Link} href={urlMapping[text]} disablePadding sx={{ display: 'block', color: 'black', margin: '5px 0 5px 0' }}>
+                      <ListItemButton
+                          sx={{
+                          minHeight: 48,
+                          justifyContent: open ? 'initial' : 'center',
+                          px: 2.5,
+                          }}
                       >
-                      {iconMapping[text]}
-                      </ListItemIcon>
-                      <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                  </ListItemButton>
-                  </ListItem>
-              ))}
-              </List>
+                          <ListItemIcon
+                          sx={{
+                              minWidth: 0,
+                              mr: open ? 3 : 'auto',
+                              justifyContent: 'center',
+                          }}
+                          >
+                          {iconMapping[text]}
+                          </ListItemIcon>
+                          <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                      </ListItemButton>
+                      </ListItem>
+                  ))}
+                  </List>
+                </>
+                ) : (
+                  <>
+                  <List>
+                  {['Home', 'Calendar'].map((text) => (
+                    <Tooltip title={text} placement="right" arrow>
+                      <ListItem key={text} component={Link} href={urlMapping[text]} disablePadding sx={{ display: 'block', color: 'black', margin: '5px 0 5px 0' }}>
+                      <ListItemButton
+                          sx={{
+                          minHeight: 48,
+                          justifyContent: open ? 'initial' : 'center',
+                          px: 2.5,
+                          }}
+                      >
+                          <ListItemIcon
+                          sx={{
+                              minWidth: 0,
+                              mr: open ? 3 : 'auto',
+                              justifyContent: 'center',
+                          }}
+                          >
+                          {iconMapping[text]}
+                          </ListItemIcon>
+                          <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                      </ListItemButton>
+                      </ListItem>
+                    </Tooltip>
+                  ))}
+                  </List>
+                  <Divider />
+                  <List>
+                  {['Teaching'].map((text) => (
+                    
+                    <Tooltip title={text} placement="right" arrow>
+                      <ListItem key={text} component={Link} href={urlMapping[text]} disablePadding sx={{ display: 'block', color: 'black', margin: '5px 0 5px 0' }}>
+                      <ListItemButton
+                          sx={{
+                          minHeight: 48,
+                          justifyContent: open ? 'initial' : 'center',
+                          px: 2.5,
+                          }}
+                      >
+                          <ListItemIcon
+                          sx={{
+                              minWidth: 0,
+                              mr: open ? 3 : 'auto',
+                              justifyContent: 'center',
+                          }}
+                          >
+                          {iconMapping[text]}
+                          </ListItemIcon>
+                          <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                      </ListItemButton>
+                      </ListItem>
+                    </Tooltip>
+                  ))}
+                  </List>
+                  <Divider />
+                  <List>
+                  {['Enrolled'].map((text) => (
+                    
+                    <Tooltip title={text} placement="right" arrow>
+                      <ListItem key={text} component={Link} href={urlMapping[text]} disablePadding sx={{ display: 'block', color: 'black', margin: '5px 0 5px 0' }}>
+                      <ListItemButton
+                          sx={{
+                          minHeight: 48,
+                          justifyContent: open ? 'initial' : 'center',
+                          px: 2.5,
+                          }}
+                      >
+                          <ListItemIcon
+                          sx={{
+                              minWidth: 0,
+                              mr: open ? 3 : 'auto',
+                              justifyContent: 'center',
+                          }}
+                          >
+                          {iconMapping[text]}
+                          </ListItemIcon>
+                          <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                      </ListItemButton>
+                      </ListItem>
+                    </Tooltip>
+                  ))}
+                  </List>
+                  <Divider />
+                  <List>
+                  {['Archived classes', 'Settings'].map((text) => (
+                    <Tooltip title={text} placement="right" arrow>
+                      <ListItem key={text} component={Link} href={urlMapping[text]} disablePadding sx={{ display: 'block', color: 'black', margin: '5px 0 5px 0' }}>
+                      <ListItemButton
+                          sx={{
+                          minHeight: 48,
+                          justifyContent: open ? 'initial' : 'center',
+                          px: 2.5,
+                          }}
+                      >
+                          <ListItemIcon
+                          sx={{
+                              minWidth: 0,
+                              mr: open ? 3 : 'auto',
+                              justifyContent: 'center',
+                          }}
+                          >
+                          {iconMapping[text]}
+                          </ListItemIcon>
+                          <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                      </ListItemButton>
+                      </ListItem>
+                    </Tooltip>
+                  ))}
+                  </List>
+                </>
+                )
+              }
           </Drawer>
           )
         }

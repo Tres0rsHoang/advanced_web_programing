@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MiniDrawer from '../components/Drawer';
+import { Avatar } from '@mui/material';
 
 const Auth_URL = '/profile';
 
@@ -19,7 +20,7 @@ const EMAIL_REGEX = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const PHONE_REGEX = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
 const NAME_REGEX = /\b([A-ZÀ-ÿ][-,a-z. ']+[ ]*)+/;
 
-const Profile = () => {
+export default function Profile() {
   const errRef = useRef();
   const successRef = useRef();
   const navigate = useNavigate();
@@ -29,8 +30,8 @@ const Profile = () => {
   const [email, setEmail] = useState(user ? user.email : '');
   const [validEmail, setValidEmail] = useState(false);
 
-  const [phoneNumber, setPhoneNumber] = useState(user ? user.phone_number : '');
-  const [validPhoneNumber, setValidPhoneNumber] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState(user.phone_number ? user.phone_number : '');
+  const [validPhoneNumber, setValidPhoneNumber] = useState(true);
 
   const [firstName, setFirstName] = useState(user ? user.first_name || user.givenName : '');
   const [validFirstName, setValidFirstName] = useState(false);
@@ -46,8 +47,9 @@ const Profile = () => {
       setValidEmail(EMAIL_REGEX.test(email));
   }, [email])
 
+  console.log(phoneNumber);
   useEffect(() => {
-    setValidPhoneNumber(PHONE_REGEX.test(phoneNumber));
+    setValidPhoneNumber(PHONE_REGEX.test(phoneNumber) || phoneNumber === '');
   }, [phoneNumber])
 
   useEffect(() => {
@@ -126,8 +128,11 @@ const Profile = () => {
           >
             <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
             <p ref={successRef} className={successMessage ? "successMsg" : "offscreen"} aria-live="assertive">{successMessage}</p>  
-            <Typography component="h1" variant="h4" sx={{mb: '20px'}}>
-              User Profile
+            <Avatar src={user.imageUrl} sx={{ width: 100, height: 100, background: '#02579A'}}>
+                  {firstName.charAt(0)}
+            </Avatar>
+            <Typography gutterBottom component="div" sx={{fontSize: '25px', margin: '20px 0'}}>
+                {firstName} {lastName}
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
               <Grid container spacing={2}>
@@ -185,7 +190,6 @@ const Profile = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
-                    required
                     fullWidth
                     name="phone"
                     label="Phone Number"
@@ -218,5 +222,3 @@ const Profile = () => {
       </React.Fragment>
   );
 }
-
-export default Profile;

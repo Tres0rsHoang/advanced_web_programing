@@ -14,7 +14,8 @@ const CONFIRM_RESET_PASSWORD_URL = '/confirm-reset-password';
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 const defaultTheme = createTheme();
-const ConfirmResetPassword = () => {
+
+export default function ConfirmResetPassword() {
     const navigate = useNavigate();
 
     const errRef = useRef();
@@ -153,5 +154,3 @@ const ConfirmResetPassword = () => {
         </ThemeProvider>
     );
 }
-
-export default ConfirmResetPassword;

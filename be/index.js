@@ -7,6 +7,7 @@ import gradeRouter from "./routes/grade.js";
 import profileRouter from "./routes/profile.js";
 
 dotenv.config();
+
 const app = express();
 
 app.use(express.json());
@@ -43,6 +44,11 @@ app.use('/classroom/grade', gradeRouter);
 
 app.get('/', function (req, res, next) {
     res.send("Server is running...");
+});
+
+app.set('port', process.env.PORT || 9000);
+var server = app.listen(app.get('port'), function() {
+  console.log('Express server listening on port ' + server.address().port);
 });
 
 app.set('port', process.env.PORT || 9000);
