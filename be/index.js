@@ -42,10 +42,10 @@ app.use('/classroom', classroomRouter);
 app.use('/classroom/grade', gradeRouter);
 
 app.get('/', function (req, res, next) {
-    res.send("Home server is running...");
+    res.send("Server is running...");
 });
 
-app.set('port', process.env.PORT || 9000);
+app.set('port', process.env.PORT || 8080);
 var server = app.listen(app.get('port'), function() {
   console.log('Express server listening on port ' + server.address().port);
 });
