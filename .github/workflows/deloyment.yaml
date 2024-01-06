@@ -3,19 +3,16 @@ on:
   push:
     branches: [home-server-deployment]
 jobs:
-  server-deployment:
-    name: Deploy
+  build:
+    name: Build
     runs-on: self-hosted
     strategy:
       matrix:
-        node-version: [16.x, 18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
+        node-version: [18.x]
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm i
-      working-directory: be 
+      - name: checkout repository
+        uses: actions/checkout@home-server-deployment
+      - name: package install
+        run: npm ci
+        working-directory: be
+
