@@ -17,12 +17,11 @@ export const handleLoginRedux = (email, password) => {
         try {
             let response = await loginApi(email.trim(), password);
             if (response && response.data.access_token) {
+                localStorage.setItem('token', response.data.access_token);
                 try {
                 let response2 = await getCurrentUserApi();
-            
                 if (response2 && response2.data) {
-                    localStorage.setItem('token', response.data.access_token);
-                    localStorage.setItem('user', JSON.stringify(response.data));
+                    localStorage.setItem('user', JSON.stringify(response2.data));
                     dispatch({
                         type: FETCH_USER_SUCCESS,
                         data: {

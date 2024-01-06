@@ -3,22 +3,13 @@ import { v4 as uuidv4 } from "uuid";
 import authenToken from "../helper/authenticate_token.js";
 import databaseConnection from '../helper/database_connection.js';
 import databaseQuery from '../helper/database_query.js';
-import getCurrentUserId from "../helper/get_current_user.js";
+import { makeClassCode } from "../ultis/string_utils.js";
+import { isTeacher } from "../ultis/teacher_utils.js";
+import { getCurrentUserId } from "../ultis/user_utils.js";
+
 
 const classroomRouter = express.Router();
 const databaseRequest = await databaseConnection();
-
-function makeClassCode(length) {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const charactersLength = characters.length;
-    let counter = 0;
-    while (counter < length) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-      counter += 1;
-    }
-    return result;
-}
 
 classroomRouter.post('/create', authenToken, async function(req, res, next) {
     let reqData = req.body;
@@ -64,7 +55,7 @@ classroomRouter.get('/join', authenToken, async function(req, res, next) {
         var sql = `SELECT classroom_student.student_id
         FROM classroom_student
         WHERE classroom_student.is_removed = 0
-        AND classroom_student.student_id = 'd59d3e79-72a8-4851-ac3a-e7454069246b'
+        AND classroom_student.student_id = '${currentUser}'
         UNION
         SELECT classroom_teacher.teacher_id
         FROM classroom_teacher
@@ -87,7 +78,17 @@ classroomRouter.get('/join', authenToken, async function(req, res, next) {
             var sqlResult = await databaseQuery(databaseRequest, sql);
 
             if (sqlResult == 0) {
-                sql = `INSERT INTO classroom_student VALUES ('${currentUser}', '${classId}', 0)`;
+                var inClassId = makeClassCode(4);
+
+                while (true) {
+                    inClassId = makeClassCode(4);
+                    sql = `SELECT COUNT(1) as number_of_is_class_id
+                    FROM classroom_student
+                    WHERE classroom_id = '${inClassId}' AND in_class_id = '${inClassId}'`;
+                    var sqlResult = await databaseQuery(databaseRequest, sql);
+                    if (sqlResult[0]['number_of_is_class_id'] == 0) break;
+                }
+                sql = `INSERT INTO classroom_student VALUES ('${currentUser}', '${classId}', 0, '${inClassId}')`;
                 await databaseQuery(databaseRequest, sql);
             }
 
@@ -204,6 +205,11 @@ classroomRouter.get('/detail', authenToken, async function(req,res,next) {
 
     res.status(200).json(result);
 
+});
+
+classroomRouter.post('/updateFile', authenToken, isTeacher, async function(req, res, next) {
+    console.log(req.body);
+    res.send("OK");
 });
 
 export default classroomRouter;

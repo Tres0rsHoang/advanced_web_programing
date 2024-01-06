@@ -11,8 +11,7 @@ export default async function(request, query) {
                     resolve(result['recordset']);
                     return;
                 }
-                resolve(result['rowsAffected'][0]);
-                
+                resolve(result['rowsAffected'][0]);  
             };
             request.query(query, handler);
         }

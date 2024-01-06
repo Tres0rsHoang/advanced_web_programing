@@ -4,7 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
-import ConfirmResetPassword from './Pages/ConfirmResetPassword';
+import ConfirmResetPassword from './Pages/confirmResetPassword';
 import Home from './Pages/home';
 import Login from './Pages/login';
 import Profile from './Pages/profile';
