@@ -10,8 +10,6 @@ jobs:
       matrix:
         node-version: [18.x]
     steps:
-      - name: checkout repository
-        uses: actions/checkout@home-server-deployment
       - name: package install
         run: npm ci
         working-directory: be
