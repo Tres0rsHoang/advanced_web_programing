@@ -7,26 +7,22 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { grey } from '@mui/material/colors';
+import { Typography } from '@mui/material';
 
 const columns = [
-  
-    { field: 'id', label: 'Student ID', width: 150, format: (value) => value.toFixed(2) },
-    { field: 'firstName', label: 'First name', width: 200, format: (value) => value.toFixed(2) },
-    { field: 'lastName', label: 'Last name', width: 250, format: (value) => value.toFixed(2) },
-    { field: 'assignments', label: 'Assignments (30%)', width: 200, format: (value) => value.toFixed(2) },
-    { field: 'midterm', label: 'Midterm Project (30%)', width: 250, format: (value) => value.toFixed(2) },
-    { field: 'final', label: 'Final Project (40%)', width: 200, format: (value) => value.toFixed(2) },
-    { field: 'avg', label: 'Total Grade', width: 200, format: (value) => value.toFixed(2) },
+    { field: 'name', label: 'Name', width: 150, format: (value) => value.toFixed(2) },
+    { field: 'assignments', label: 'Assignments', width: 200, format: (value) => value.toFixed(0) },
+    { field: 'midterm', label: 'Midterm Project', width: 200, format: (value) => value.toFixed(0) },
+    { field: 'final', label: 'Final Project', width: 200, format: (value) => value.toFixed(0) },
 ];
 
-function createData(id, firstName, lastName, assignments, midterm, final) {
-  const avg = assignments * 0.3 + midterm * 0.3 + final * 0.4;
-  return { id, firstName, lastName, assignments, midterm, final, avg };
+function createData(assignments, midterm, final) {
+  return { assignments, midterm, final };
 }
 
-const rows =  createData('20127531', 'Khánh', 'Trương Trọng', 9, 10, 8.5);
+const rows =  createData(30, 30, 40);
 
-export default function StudentGradeTable() {
+export default function GradeStructure() {
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden', boxShadow: 0 }}>
@@ -53,8 +49,8 @@ export default function StudentGradeTable() {
                 return (
                   <TableCell key={column.field} align={column.align} sx={{border: 0.5, borderColor: grey[500]}}>
                     {column.format && typeof value === 'number'
-                            ? column.format(value)
-                            : value}
+                            ? column.format(value) + '%'
+                            : <Typography sx={{fontWeight: 'bold', fontSize: '15px'}}>Scale</Typography>}
                   </TableCell>
                 );
               })}

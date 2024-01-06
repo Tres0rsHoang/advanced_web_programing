@@ -11,9 +11,15 @@ import Profile from './Pages/profile';
 import ResetPassword from './Pages/resetPassword';
 import SignUp from './Pages/signUp';
 import { handleRefresh } from './redux/actions/userAction';
-import Stream from './Pages/classDetail/stream';
-import People from './Pages/classDetail/people';
-import Grade from './Pages/classDetail/grade';
+import Enrolled from './Pages/student/enrolled';
+import Teaching from './Pages/teacher/teaching';
+import StudentStream from './Pages/student/studentClassDetail/stream';
+import StudentGrade from './Pages/student/studentClassDetail/grade';
+import TeacherStream from './Pages/teacher/teacherClassDetail/stream';
+import TeacherGrade from './Pages/teacher/teacherClassDetail/grade';
+import StudentPeople from './Pages/student/studentClassDetail/people';
+import TeacherPeople from './Pages/teacher/teacherClassDetail/people';
+import TeacherGradeReview from './Pages/teacher/teacherClassDetail/gradeReview';
 
 function App() {
   const dispatch = useDispatch();
@@ -34,9 +40,18 @@ function App() {
           <Route path='/profile' element={<Profile />} />
           <Route path='/resetPassword' element={<ResetPassword />} />
           <Route path='/reset-password' element={<ConfirmResetPassword />} />
-          <Route path='/classDetail/stream' element={<Stream />} />
-          <Route path='/classDetail/grade' element={<Grade />} />
-          <Route path='/classDetail/people' element={<People />} />
+          
+          <Route path='/student/enrolled' element={<Enrolled/>} />
+          <Route path='student/classDetail/stream' element={<StudentStream />} />
+          <Route path='student/classDetail/grade' element={<StudentGrade />} />
+          <Route path='student/classDetail/people' element={<StudentPeople />} />
+
+          
+          <Route path='/teacher/teaching' element={<Teaching/>} />
+          <Route path='/teacher/classDetail/stream' element={<TeacherStream />} />
+          <Route path='/teacher/classDetail/people' element={<TeacherPeople />} />
+          <Route path='/teacher/classDetail/grade' element={<TeacherGrade />} />
+          <Route path='/teacher/classDetail/gradeReview' element={<TeacherGradeReview />} />
         </Routes>
       </div>
       <ToastContainer

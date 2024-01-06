@@ -23,7 +23,7 @@ const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const PHONE_REGEX = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
 const NAME_REGEX = /\b([A-ZÀ-ÿ][-,a-z. ']+[ ]*)+/;
 
-const SignUp = () => {
+export default function SignUp() {
   const userRef = useRef();
   const errRef = useRef();
 
@@ -276,5 +276,3 @@ const SignUp = () => {
     </ThemeProvider>
   );
 }
-
-export default SignUp;

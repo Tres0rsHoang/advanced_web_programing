@@ -1,13 +1,13 @@
 import React from 'react'
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import { Avatar, Box, Button, Card, CardContent, CardHeader, Divider, Grid, IconButton, Tab, Tabs, TextField, Typography, useMediaQuery } from '@mui/material';
-import MiniDrawer from '../../components/Drawer';
+import MiniDrawer from '../../../components/Drawer';
 import { useTheme } from '@mui/material/styles';
-import { ClassOutlined, MoreVert, SendOutlined } from '@mui/icons-material';
+import { ClassOutlined, CropFree, MoreVert, SendOutlined } from '@mui/icons-material';
 import { blue, grey } from '@mui/material/colors';
 import { useSelector } from 'react-redux';
 
-export default function Stream() {
+export default function TeacherStream() {
     const theme = useTheme();
     const isMatch = useMediaQuery(theme.breakpoints.down('lg'));
 
@@ -22,16 +22,17 @@ export default function Stream() {
                     role="navigation"
                     value= {0}
                 >
-                    <Tab label="Stream" href='/classDetail/stream' sx={{ml: '20px'}} />
-                    <Tab label="People" href='/classDetail/people' />
-                    <Tab label="Grade" href='/classDetail/grade' />
+                    <Tab label="Stream" href='/teacher/classDetail/stream' sx={{ml: '20px'}} />
+                    <Tab label="People" href='/teacher/classDetail/people' />
+                    <Tab label="Grades" href='/teacher/classDetail/grade' />
+                    <Tab label="Grade Reviews" href='/teacher/classDetail/gradeReview' />
                 </Tabs>
                 <Divider />
                 <Box sx={{margin: '30px 70px'}}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <Card 
-                                sx={{backgroundImage: "url('https://www.gstatic.com/classroom/themes/img_sailing.jpg')",
+                                sx={{backgroundImage: "url('https://www.gstatic.com/classroom/themes/LanguageArts.jpg')",
                                 backgroundSize: 'cover',
                                 height: '250px',
                                 display: 'flex',
@@ -52,7 +53,7 @@ export default function Stream() {
                         { 
                             isMatch? (
                                 <Grid item md={12} lg={9}>
-                                    <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', borderRadius: '10px', boxShadow: 3, color: grey[500], ":hover":{cursor: 'pointer', color: '#02579A'}}}>
+                                    <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', borderRadius: '10px', boxShadow: 3, color: grey[500], ":hover":{cursor: 'pointer', color: '#0C8590'}}}>
                                         <CardContent sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
                                             <Avatar src={user.imageUrl} sx={{ width: 40, height: 40, background: blue[500], mr: '30px', ml: '10px' }}>{user.firstName.charAt(0)}</Avatar>
                                             <Typography gutterBottom component="div" sx={{fontSize: '15px', margin: '10px 0', fontWeight: 500}}>
@@ -60,10 +61,10 @@ export default function Stream() {
                                             </Typography>
                                         </CardContent>
                                     </Card>
-                                    <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', boxShadow: 0, borderRadius: '10px'}}>
+                                    <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', boxShadow: 0, borderRadius: '10px', ":hover":{cursor: 'pointer', backgroundColor: '#e8fcfd'}}}>
                                         <CardHeader
                                             avatar={
-                                            <Avatar sx={{ bgcolor: '#02579A', ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
+                                            <Avatar sx={{ bgcolor: '#0C8590', ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
                                                 <ClassOutlined />
                                             </Avatar>
                                             }
@@ -81,10 +82,10 @@ export default function Stream() {
                                         />
                                     </Card>
 
-                                    <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', boxShadow: 0, borderRadius: '10px'}}>
+                                    <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', boxShadow: 0, borderRadius: '10px', ":hover":{cursor: 'pointer', backgroundColor: '#e8fcfd'}}}>
                                         <CardHeader
                                             avatar={
-                                            <Avatar sx={{ bgcolor: '#02579A', ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
+                                            <Avatar sx={{ bgcolor: '#0C8590', ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
                                                 <ClassOutlined />
                                             </Avatar>
                                             }
@@ -111,7 +112,7 @@ export default function Stream() {
                                     <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', boxShadow: 0, borderRadius: '10px'}}>
                                         <CardHeader
                                             avatar={
-                                            <Avatar sx={{ bgcolor: '#02579A', ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
+                                            <Avatar sx={{ bgcolor: '#0C8590', ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
                                                 K
                                             </Avatar>
                                             }
@@ -154,28 +155,25 @@ export default function Stream() {
                                 <Grid item md={0} lg={3}>
                                     <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', boxShadow: 0, borderRadius: '10px'}}>
                                         <CardContent sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-                                            <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
-                                                <img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQu4UxWpSg6PjTepJhmegG7Qzea86ordRC65Q&usqp=CAU' 
-                                                    alt='meet'
-                                                    style={{marginLeft: '10px',width: '30px', height: '30px', marginRight: '20px'}}
-                                                />
-                                                <Typography gutterBottom component="div" sx={{fontSize: '18px', mt: '5px'}}>
-                                                    Meet
-                                                </Typography>
-                                            </Box>
+                                            <Typography gutterBottom component="div" sx={{fontSize: '18px', mt: '5px', ml: '10px'}}>
+                                                Class code
+                                            </Typography>
                                             
                                             <IconButton>
                                                 <MoreVert />
                                             </IconButton>
                                         </CardContent>
-                                        <Button variant="contained" 
-                                            sx={{width: '85%', 
-                                            margin: ' 0 20px 20px 20px', 
-                                            fontWeight: 'bold',
-                                            backgroundColor: '#02579A'}}
-                                        >
-                                            Join
-                                        </Button>
+                                        <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
+                                            <Typography 
+                                                component="div" 
+                                                sx={{fontSize: '22px', fontWeight: 'bold', margin: '-10px 0 20px 25px ', color: '#0C8590'}}
+                                            >
+                                                p4svlma
+                                            </Typography>
+                                            <IconButton  sx={{mb: '30px', ml: '10px'}}>
+                                                <CropFree sx={{color: '#0C8590'}}/>
+                                            </IconButton>
+                                        </Box>
                                     </Card>
                                     <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', boxShadow: 0, borderRadius: '10px'}}>
                                         <CardContent>
@@ -194,7 +192,7 @@ export default function Stream() {
                                     </Card>
                                 </Grid>
                                 <Grid item md={12} lg={9}>
-                                    <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', borderRadius: '10px', boxShadow: 3, color: grey[500], ":hover":{cursor: 'pointer', color: '#02579A'}}}>
+                                    <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', borderRadius: '10px', boxShadow: 3, color: grey[500], ":hover":{cursor: 'pointer', color: '#0C8590'}}}>
                                         <CardContent sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
                                             <Avatar src={user.imageUrl} sx={{ width: 40, height: 40, background: blue[500], mr: '30px', ml: '10px' }}>{user.firstName.charAt(0)}</Avatar>
                                             <Typography gutterBottom component="div" sx={{fontSize: '15px', margin: '10px 0', fontWeight: 500}}>
@@ -202,10 +200,10 @@ export default function Stream() {
                                             </Typography>
                                         </CardContent>
                                     </Card>
-                                    <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', boxShadow: 0, borderRadius: '10px', ":hover":{cursor: 'pointer', backgroundColor: '#e6f5fe'}}}>
+                                    <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', boxShadow: 0, borderRadius: '10px', ":hover":{cursor: 'pointer', backgroundColor: '#e8fcfd'}}}>
                                         <CardHeader
                                             avatar={
-                                            <Avatar sx={{ bgcolor: '#02579A', ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
+                                            <Avatar sx={{ bgcolor: '#0C8590', ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
                                                 <ClassOutlined />
                                             </Avatar>
                                             }
@@ -223,10 +221,10 @@ export default function Stream() {
                                         />
                                     </Card>
 
-                                    <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', boxShadow: 0, borderRadius: '10px', ":hover":{cursor: 'pointer', backgroundColor: '#e6f5fe'}}}>
+                                    <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', boxShadow: 0, borderRadius: '10px', ":hover":{cursor: 'pointer', backgroundColor: '#e8fcfd'}}}>
                                         <CardHeader
                                             avatar={
-                                            <Avatar sx={{ bgcolor: '#02579A', ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
+                                            <Avatar sx={{ bgcolor: '#0C8590', ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
                                                 <ClassOutlined />
                                             </Avatar>
                                             }
@@ -253,7 +251,7 @@ export default function Stream() {
                                     <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', boxShadow: 0, borderRadius: '10px'}}>
                                         <CardHeader
                                             avatar={
-                                            <Avatar sx={{ bgcolor: '#02579A', ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
+                                            <Avatar sx={{ bgcolor: '#0C8590', ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
                                                 K
                                             </Avatar>
                                             }

@@ -16,7 +16,7 @@ const RESET_PASSWORD_URL = '/reset-password';
 
 const defaultTheme = createTheme();
 
-const ResetPassword = () => {
+export default function ResetPassword() {
   const navigate = useNavigate();
   const userRef = useRef();
   const errRef = useRef();
@@ -117,5 +117,3 @@ const ResetPassword = () => {
     </ThemeProvider>
   );
 }
-
-export default ResetPassword;

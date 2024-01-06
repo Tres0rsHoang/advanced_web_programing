@@ -10,7 +10,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { CardActionArea, ClickAwayListener, Divider, Grow, MenuList, Paper, Popper, MenuItem } from '@mui/material';
 import { AssignmentIndOutlined, FolderOpenOutlined } from '@mui/icons-material';
 
-export default function ClassCard() {
+export default function StudentClassCard() {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
 
@@ -58,7 +58,7 @@ export default function ClassCard() {
             boxShadow: 4
         }
     }}>
-      <CardActionArea href='/classDetail/stream'>
+      <CardActionArea href='/student/classDetail/stream'>
         <CardHeader sx={{backgroundImage: "url('https://www.gstatic.com/classroom/themes/img_sailing.jpg')", backgroundSize: 'cover'}}
           action={
             <div>
@@ -132,7 +132,7 @@ export default function ClassCard() {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap'
-          }}>2310-CLC-AWP-20KTPM2aaaa<br/> 
+          }}>2310-CLC-AWP-20KTPM2<br/> 
             <Typography sx={{color: 'white', fontSize: '14px', ":hover":{textDecoration: 'underline'}}}>Advanced Web Programming</Typography>
           </Typography>}
           subheader={<Typography sx={{color: 'white', fontSize: '14px', ":hover":{textDecoration: 'underline'}}}>Khánh Nguyễn Huy</Typography>}

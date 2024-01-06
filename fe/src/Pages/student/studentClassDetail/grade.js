@@ -1,12 +1,12 @@
 import React from 'react'
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import { Avatar, Box, Button, Card, CardContent, CardHeader, Divider, IconButton, Tab, Tabs, TextField, Typography } from '@mui/material';
-import MiniDrawer from '../../components/Drawer';
-import StudentGradeTable from '../../components/StudentGradeTable';
+import MiniDrawer from '../../../components/Drawer';
+import StudentGradeTable from '../../../components/StudentGradeTable';
 import { Add, MoreVert, SendOutlined } from '@mui/icons-material';
 import { useSelector } from 'react-redux'; 
 
-export default function Grade() {
+export default function StudentGrade() {
     const user = useSelector(state => state.user.account);
 
     return (
@@ -18,9 +18,9 @@ export default function Grade() {
                     role="navigation"
                     value= {2}
                 >
-                    <Tab label="Stream" href='/classDetail/stream' sx={{ml: '20px'}} />
-                    <Tab label="People" href='/classDetail/people' />
-                    <Tab label="Grade" href='/classDetail/grade' />
+                    <Tab label="Stream" href='/student/classDetail/stream' sx={{ml: '20px'}} />
+                    <Tab label="People" href='/student/classDetail/people' />
+                    <Tab label="Grades" href='/student/classDetail/grade' />
                 </Tabs>
                 <Divider />
                 <Box sx={{margin: '40px'}}>
@@ -48,9 +48,12 @@ export default function Grade() {
                                 {user.firstName} {user.lastName}
                             </Typography>}
                         />
-                        <CardContent sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
+                        <CardContent>
                             <Typography gutterBottom component="div" sx={{fontSize: '14px', fontWeight: 500, ml: '10px'}}>
-                                Em đã hoàn thành tất cả yêu cầu mà thầy giao mà sao điểm cuối kì em chỉ có 8.5 vậy thầy ơi
+                                Expectation grade: 9.5 (Final project)
+                            </Typography>
+                            <Typography gutterBottom component="div" sx={{fontSize: '14px', fontWeight: 500, ml: '10px'}}>
+                                Explanation: Em đã hoàn thành đầy đủ chức năng nên em nghĩ em phải được điểm cao hơn ạ
                             </Typography>
                         </CardContent>
                         <Divider />

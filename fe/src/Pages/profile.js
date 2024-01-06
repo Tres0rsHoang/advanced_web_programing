@@ -20,7 +20,7 @@ const EMAIL_REGEX = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const PHONE_REGEX = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
 const NAME_REGEX = /\b([A-ZÀ-ÿ][-,a-z. ']+[ ]*)+/;
 
-const Profile = () => {
+export default function Profile() {
   const errRef = useRef();
   const successRef = useRef();
   const navigate = useNavigate();
@@ -222,5 +222,3 @@ const Profile = () => {
       </React.Fragment>
   );
 }
-
-export default Profile;

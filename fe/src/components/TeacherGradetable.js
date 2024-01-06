@@ -24,9 +24,16 @@ function createData(id, firstName, lastName, assignments, midterm, final) {
   return { id, firstName, lastName, assignments, midterm, final, avg };
 }
 
-const rows =  createData('20127531', 'Khánh', 'Trương Trọng', 9, 10, 8.5);
+const rows =  [
+  createData('20127531', 'Khánh', 'Trương Trọng', 9, 10, 8.5),
+  createData('20127531', 'Khánh', 'Trương Trọng', 9, 10, 8.5),
+  createData('20127531', 'Khánh', 'Trương Trọng', 9, 10, 8.5),
+  createData('20127531', 'Khánh', 'Trương Trọng', 9, 10, 8.5),
+  createData('20127531', 'Khánh', 'Trương Trọng', 9, 10, 8.5),
+  createData('20127531', 'Khánh', 'Trương Trọng', 9, 10, 8.5)
+];
 
-export default function StudentGradeTable() {
+export default function TeacherGradeTable() {
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden', boxShadow: 0 }}>
@@ -47,18 +54,24 @@ export default function StudentGradeTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow key={rows.id}>
-              {columns.map((column) => {
-                const value = rows[column.field];
+            {rows
+              .map((row) => {
                 return (
-                  <TableCell key={column.field} align={column.align} sx={{border: 0.5, borderColor: grey[500]}}>
-                    {column.format && typeof value === 'number'
-                            ? column.format(value)
-                            : value}
-                  </TableCell>
+                  <TableRow key={rows.id}>
+                    {columns.map((column) => {
+                      const value = row[column.field];
+                      return (
+                        <TableCell key={column.field} align={column.align} sx={{border: 0.5, borderColor: grey[500]}}>
+                          {column.format && typeof value === 'number'
+                                  ? column.format(value)
+                                  : value}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
                 );
-              })}
-            </TableRow>
+              })
+            }
           </TableBody>
         </Table>
       </TableContainer>
