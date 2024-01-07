@@ -2,7 +2,7 @@ import React from 'react'
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import MiniDrawer from '../../components/Drawer';
 import { Box, Grid } from '@mui/material';
-import StudentClassCard from '../../components/studentClassCard';
+import StudentClassCard from '../../components/StudentClassCard';
 
 export default function Enrolled() {
 
