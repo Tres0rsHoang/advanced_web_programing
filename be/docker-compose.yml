@@ -1,0 +1,12 @@
+version: "3"
+services:
+  home-sever:
+    build: .
+    ports:
+      - "9000:8080"
+    volumes:
+      - ./:/app:ro
+      - /app/node_modules  
+    env_file:
+      - ./.env
+      

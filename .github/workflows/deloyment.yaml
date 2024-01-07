@@ -3,39 +3,14 @@ on:
   push:
     branches: [home-server-deployment]
 jobs:
-  build:
-    name: Build
-    runs-on: self-hosted
-    strategy:
-      matrix:
-        node-version: [18.x]
-    steps:
-      - name: checkout repository
-        uses: actions/checkout@main
-      - name: package install
-        run: npm ci
-        working-directory: be
-      - name: upload artifact
-        uses: actions/upload-artifact@main
-        with:
-          name: dist
-          path: ./
   deploy:
     name: Deloy
-    needs: build
     runs-on: self-hosted
     steps:
       - name: checkout repository
         uses: actions/checkout@main
-      - name: download artifact
-        uses: actions/download-artifact@main
-        with:
-          name: dist
-          path: ./
-      - name: Sync file to host
-        uses: SamKirkland/FTP-Deploy-Action@4.0.0
-        with:
-          server: www.bao-home-server.site
-          username: ftpUserConnection
-          password: ${{ secrets.ftp_password }}
+      - name: Docker down
+        run: docker-compose down -v
+      - name: Docker up
+        run: docker-compose up -d
         
