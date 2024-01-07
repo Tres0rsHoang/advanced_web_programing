@@ -12,9 +12,9 @@ jobs:
       - name: package install
         working-directory: ./be
         run: npm ci  
-      - name: Docker down
+      - name: docker down
         working-directory: ./be
         run: docker-compose down -v
-      - name: Docker up
+      - name: docker up
         working-directory: ./be
         run: docker-compose up -d
