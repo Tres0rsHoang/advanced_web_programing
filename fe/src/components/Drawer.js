@@ -15,7 +15,9 @@ import React, { useEffect } from 'react';
 import AccountMenu from './AccountMenu';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Add, ArchiveOutlined, CalendarToday, Home, Menu, Notifications, SchoolOutlined, Settings, SupervisorAccountOutlined } from '@mui/icons-material';
+import { ArchiveOutlined, CalendarToday, Home, Menu, SchoolOutlined, Settings, SupervisorAccountOutlined } from '@mui/icons-material';
+import CreateClass from './CreateClass';
+import Notification from './Notification';
 
 const drawerWidth = 260;
 
@@ -65,6 +67,15 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 export default function MiniDrawer({children}) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [openDialog, setOpenDialog] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpenDialog(true);
+  };
+
+  const handleClose = () => {
+    setOpenDialog(false);
+  };
 
   const user = useSelector(state => state.user.account);
 
@@ -97,10 +108,6 @@ export default function MiniDrawer({children}) {
     }
   }, [user]);
 
-  const handleClick = () => {
-
-  }
-
   const handleDrawer= () => {
     setOpen(!open);
   };
@@ -124,17 +131,8 @@ export default function MiniDrawer({children}) {
             </IconButton>
               <Typography variant="h6" sx={{ mr: '50px', fontWeight: 'bold'}}>CLASSROOM</Typography>
                 <Box sx={{ marginLeft: "auto", display: 'flex'}}>
-                  <IconButton
-                    onClick={handleClick}
-                    sx={{padding: '10px'}}
-                  >
-                    <Add style={{ fontSize: '30px', color: 'white' }}/>
-                  </IconButton>
-                  <IconButton
-                    sx={{padding: '10px'}}
-                  >
-                    <Notifications style={{ fontSize: '25px', color: 'white' }}/>
-                  </IconButton>
+                  <CreateClass />
+                  <Notification />
                   <AccountMenu />
                 </Box>
             </Toolbar>

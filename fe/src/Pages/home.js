@@ -4,8 +4,8 @@ import MiniDrawer from '../components/Drawer';
 import { Box, Grid } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import StudentClassCard from '../components/studentClassCard';
-import TeacherClassCard from '../components/teacherClassCard';
+import StudentClassCard from '../components/StudentClassCard';
+import TeacherClassCard from '../components/TeacherClassCard';
 
 export default function Home() {
   const user = useSelector(state => state.user.account);
