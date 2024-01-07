@@ -12,9 +12,6 @@ jobs:
       - name: package install
         working-directory: ./be
         run: npm ci
-      - name: docker info
-        working-directory: ./be
-        run: docker info
       - name: docker down
         working-directory: ./be
         run: docker-compose -f "docker-compose.yml" down -v
