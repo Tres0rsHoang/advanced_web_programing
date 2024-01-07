@@ -9,6 +9,8 @@ jobs:
     steps:
       - name: checkout repository
         uses: actions/checkout@main
+      - name: choose be dir
+        run: cd be
       - name: Docker down
         run: docker-compose down -v
       - name: Docker up
