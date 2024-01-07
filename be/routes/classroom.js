@@ -4,9 +4,7 @@ import authenToken from "../helper/authenticate_token.js";
 import databaseConnection from '../helper/database_connection.js';
 import databaseQuery from '../helper/database_query.js';
 import { makeClassCode } from "../ultis/string_utils.js";
-import { isTeacher } from "../ultis/teacher_utils.js";
 import { getCurrentUserId } from "../ultis/user_utils.js";
-
 
 const classroomRouter = express.Router();
 const databaseRequest = await databaseConnection();
@@ -207,8 +205,16 @@ classroomRouter.get('/detail', authenToken, async function(req,res,next) {
 
 });
 
-classroomRouter.post('/updateFile', authenToken, isTeacher, async function(req, res, next) {
-    console.log(req.body);
+classroomRouter.post('/uploadFile', authenToken, async function(req, res, next) {
+    const form = formidable({});
+
+      form.parse(req, (err, fields, files) => {
+        if (err) {
+          next(err);
+          return;
+        }
+        res.json({ fields, files });
+      });
     res.send("OK");
 });
 

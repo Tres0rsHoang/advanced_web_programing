@@ -1,3 +1,4 @@
+import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from 'dotenv';
 import express from 'express';
@@ -6,10 +7,20 @@ import classroomRouter from "./routes/classroom.js";
 import gradeRouter from "./routes/grade.js";
 import profileRouter from "./routes/profile.js";
 
+
 dotenv.config();
 const app = express();
 
-app.use(express.json());
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.urlencoded());
+app.use(bodyParser.json());
+
+app.use(bodyParser.text({ type: 'text/html' }))
+
+app.use(bodyParser.raw({ type: 'application/vnd.custom-type' }))
 
 // Add headers before the routes are defined
 app.use(function (req, res, next) {
