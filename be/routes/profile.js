@@ -18,7 +18,7 @@ profileRouter.get('/', authenToken, async function(req, res, next){
     FROM [user] WHERE id = '${userId}'`;
     var result = {};
     var information = await databaseQuery(databaseRequest, sql);
-    result['information'] = information;
+    result['information'] = information[0];
     var sql = `SELECT classroom_id, name, subject 
     FROM classroom_teacher t JOIN classroom c ON t.classroom_id = c.id
     WHERE t.teacher_id = '${userId}' AND c.is_active = 1`;
