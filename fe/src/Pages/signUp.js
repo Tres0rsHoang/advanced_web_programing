@@ -25,7 +25,6 @@ const NAME_REGEX = /\b([A-ZÀ-ÿ][-,a-z. ']+[ ]*)+/;
 
 export default function SignUp() {
   const userRef = useRef();
-  const errRef = useRef();
 
   const [email, setEmail] = useState('');
   const [validEmail, setValidEmail] = useState(false);
@@ -115,7 +114,6 @@ export default function SignUp() {
         } else {
           toast.error('Registration Failed!')
         }
-        errRef.current.focus();
     }
   }
 

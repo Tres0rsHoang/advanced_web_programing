@@ -22,15 +22,15 @@ export const handleLoginRedux = (email, password) => {
                 try {
                 let response2 = await getCurrentUserApi();
                 if (response2 && response2.data) {
-                    localStorage.setItem('user', JSON.stringify(response2.data));
+                    localStorage.setItem('user', JSON.stringify(response2.data.information));
                     dispatch({
                         type: FETCH_USER_SUCCESS,
                         data: {
                             email: email.trim(),
                             token: response.data.access_token,
-                            firstName: response2.data.first_name,
-                            lastName: response2.data.last_name,
-                            imageUrl: response2.data.image_url,
+                            firstName: response2.data.information.first_name,
+                            lastName: response2.data.information.last_name,
+                            imageUrl: response2.data.information.image_url,
                             auth: true,
                             authGoogle: false
                         }
