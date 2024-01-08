@@ -1,15 +1,20 @@
 name: Home-Server Deployment
 on:
   push:
-    branches: [master]
+    branches: [home-server-deployment]
 jobs:
-  server-deployment:
-    name: Deploy
-    runs-on: windows-latest
+  deploy:
+    name: Deloy
+    runs-on: self-hosted
     steps:
-      - name: Open be folder
-        run: cd be
-      - name: Node install package
-        run: npm i
-      - name: Node start
-        run: npm start
+      - name: checkout repository
+        uses: actions/checkout@main
+      - name: package install
+        working-directory: ./be
+        run: npm ci
+      - name: docker down
+        working-directory: ./be
+        run: docker-compose -f "docker-compose.yml" down -v
+      - name: docker up
+        working-directory: ./be
+        run: docker-compose up -d

@@ -18,3 +18,27 @@ export async function getCurrentUserId(req, res) {
         res.status(200).json({ "message": "ERROR: Invalid access token" });
     }
 }
+
+export async function isClassActive(req, res, next) {
+    let reqData = req.body;
+
+    if (typeof(req.body) == "string") {
+        reqData = JSON.parse(req.body);
+    }
+
+    const classId = reqData['class_id'];
+   
+    var sql = `SELECT is_active FROM classroom WHERE id = '${classId}'`;
+    var isActive = await databaseQuery(databaseRequest, sql);
+    if (isActive.length == 0) {
+        res.send({messages: "ERROR: invalid class_id"});
+        return;
+    }
+    isActive = isActive[0]['is_active'];
+
+    if (isActive) {
+        next();
+        return;
+    }
+    res.send({messages: "ERROR: This class is no longger active"});
+}
