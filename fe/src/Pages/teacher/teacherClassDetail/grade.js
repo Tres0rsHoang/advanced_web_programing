@@ -2,8 +2,8 @@ import React from 'react'
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import { Box, Divider, Tab, Tabs, Typography } from '@mui/material';
 import MiniDrawer from '../../../components/Drawer';
-import GradeStructure from '../../../components/GradeStructure';
 import TeacherGradeTable from '../../../components/TeacherGradetable';
+import GradeStructure from '../../../components/GradeStructure';
 
 export default function TeacherGrade() {
 
