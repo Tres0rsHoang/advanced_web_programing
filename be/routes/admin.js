@@ -121,7 +121,7 @@ adminRouter.patch('/map-student', authenToken, isAdmin, async function (req, res
     if (typeof(req.body) == "string") {
         reqData = JSON.parse(req.body);
     }
-    
+
     const studentId = reqData['student_id'];
     const classId = reqData['class_id'];
     const inClassId = reqData['in_class_id'];
@@ -129,6 +129,49 @@ adminRouter.patch('/map-student', authenToken, isAdmin, async function (req, res
     const messages = await mapStudentByInClassId(classId, studentId, inClassId);
 
     res.send({messages: messages});
+});
+
+adminRouter.get('/classes', authenToken, isAdmin, async function (req, res) {
+    var sql = `SELECT id, name, subject, is_active FROM classroom`;
+
+    var sqlResult = await databaseQuery(databaseRequest, sql);
+
+    res.send(sqlResult);
+});
+
+adminRouter.patch('/toggle-class', authenToken, isAdmin, async function (req, res) {
+    let reqData = req.body;
+
+    if (typeof(req.body) == "string") {
+        reqData = JSON.parse(req.body);
+    }
+    
+    const classId = reqData['class_id'];
+
+    var sql = `SELECT is_active FROM classroom WHERE id = '${classId}'`;
+    var isActive = await databaseQuery(databaseRequest, sql);
+    if (isActive.length == 0) {
+        res.send({messages: "ERROR: invalid class_id"});
+        return;
+    }
+    isActive = isActive[0]['is_active'];
+    isActive = !isActive;
+
+    var value = (isActive == false) ? 0 : 1;
+
+    var sql = `UPDATE classroom 
+    SET is_active = ${value}
+    WHERE id = '${classId}'`;
+
+    var result = await databaseQuery(databaseRequest, sql);
+
+    if (result != 0) {
+        if (!isActive) res.send({messages: `Class ${classId} is no longger active`});
+        else res.send({messages: `Class ${classId} is active now`});
+        return;
+    }
+
+    res.send({messages: "ERROR: Notthing to change"});
 });
 
 export default adminRouter;

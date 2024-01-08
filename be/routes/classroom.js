@@ -9,8 +9,8 @@ import databaseQuery from '../helper/database_query.js';
 import UploadFile from "../helper/upload_file.js";
 import { makeClassCode } from "../ultis/string_utils.js";
 import { getStudentScore } from "../ultis/student_utils.js";
-import { isTeacher, mapStudent, updateStudent } from "../ultis/teacher_utils.js";
-import { getCurrentUserId } from "../ultis/user_utils.js";
+import { isTeacher, mapStudentByInClassId, updateStudent } from "../ultis/teacher_utils.js";
+import { getCurrentUserId, isClassActive } from "../ultis/user_utils.js";
 
 const classroomRouter = express.Router();
 const databaseRequest = await databaseConnection();
@@ -41,8 +41,8 @@ classroomRouter.post('/create', authenToken, async function (req, res, next) {
 
         res.status(200).json({ "messages": "Create classroom successfully" });
     }
-    catch(err) {
-        res.send({messages: "Create class fail"});
+    catch (err) {
+        res.send({ messages: "Create class fail" });
     }
 });
 
@@ -63,65 +63,73 @@ classroomRouter.get('/join', authenToken, async function (req, res, next) {
         }
         const classId = result[0]['id'];
 
-        var sql = `SELECT classroom_student.student_id
-        FROM classroom_student
-        WHERE classroom_student.is_removed = 0
-        AND classroom_student.student_id = '${currentUser}'
-        UNION
-        SELECT classroom_teacher.teacher_id
-        FROM classroom_teacher
-        WHERE classroom_teacher.is_deleted = 0
-        AND classroom_teacher.teacher_id = '${currentUser}'`;
+        req.body["class_id"] = classId;
+        await isClassActive(req, res);
 
-        result = await databaseQuery(databaseRequest, sql);
+        try {
+            var sql = `SELECT classroom_student.student_id
+            FROM classroom_student
+            WHERE classroom_student.is_removed = 0
+            AND classroom_student.student_id = '${currentUser}'
+            UNION
+            SELECT classroom_teacher.teacher_id
+            FROM classroom_teacher
+            WHERE classroom_teacher.is_deleted = 0
+            AND classroom_teacher.teacher_id = '${currentUser}'`;
 
-        if (result.length != 0) {
-            res.status(200).json({ 'messages': "You already in this class" });
-            return;
-        }
+            result = await databaseQuery(databaseRequest, sql);
 
-        if (type == "student") {
-            sql = `UPDATE classroom_student
-            SET is_removed = 0
-            WHERE classroom_id = '${classId}'
-            AND student_id = '${currentUser}'`;
+            if (result.length != 0) {
+                res.status(200).json({ 'messages': "You already in this class" });
+                return;
+            }
 
-            var sqlResult = await databaseQuery(databaseRequest, sql);
+            if (type == "student") {
+                sql = `UPDATE classroom_student
+                SET is_removed = 0
+                WHERE classroom_id = '${classId}'
+                AND student_id = '${currentUser}'`;
 
-            if (sqlResult == 0) {
-                var inClassId = makeClassCode(4);
+                var sqlResult = await databaseQuery(databaseRequest, sql);
 
-                while (true) {
-                    inClassId = makeClassCode(4);
-                    sql = `SELECT COUNT(1) as number_of_is_class_id
-                    FROM classroom_student
-                    WHERE classroom_id = '${inClassId}' AND in_class_id = '${inClassId}'`;
-                    var sqlResult = await databaseQuery(databaseRequest, sql);
-                    if (sqlResult[0]['number_of_is_class_id'] == 0) break;
+                if (sqlResult == 0) {
+                    var inClassId = makeClassCode(4);
+
+                    while (true) {
+                        inClassId = makeClassCode(4);
+                        sql = `SELECT COUNT(1) as number_of_is_class_id
+                        FROM classroom_student
+                        WHERE classroom_id = '${inClassId}' AND in_class_id = '${inClassId}'`;
+                        var sqlResult = await databaseQuery(databaseRequest, sql);
+                        if (sqlResult[0]['number_of_is_class_id'] == 0) break;
+                    }
+                    sql = `INSERT INTO classroom_student VALUES ('${currentUser}', '${classId}', 0, '${inClassId}')`;
+                    await databaseQuery(databaseRequest, sql);
                 }
-                sql = `INSERT INTO classroom_student VALUES ('${currentUser}', '${classId}', 0, '${inClassId}')`;
-                await databaseQuery(databaseRequest, sql);
-            }
 
-            res.status(200).json({
-                "messages": "Join class successfully"
-            });
+                res.status(200).json({
+                    "messages": "Join class successfully"
+                });
+            }
+            else if (type == "teacher") {
+                sql = `UPDATE classroom_teacher
+                SET is_deleted = 0
+                WHERE classroom_id = '${classId}'
+                AND teacher_id = '${currentUser}'`;
+
+                var sqlResult = await databaseQuery(databaseRequest, sql);
+
+                if (sqlResult == 0) {
+                    sql = `INSERT INTO classroom_teacher VALUES ('${currentUser}', '${classId}', 0)`;
+                    await databaseQuery(databaseRequest, sql);
+                }
+                res.status(200).json({
+                    "messages": "Join class successfully"
+                });
+            }
         }
-        else if (type == "teacher") {
-            sql = `UPDATE classroom_teacher
-            SET is_deleted = 0
-            WHERE classroom_id = '${classId}'
-            AND teacher_id = '${currentUser}'`;
-
-            var sqlResult = await databaseQuery(databaseRequest, sql);
-
-            if (sqlResult == 0) {
-                sql = `INSERT INTO classroom_teacher VALUES ('${currentUser}', '${classId}', 0)`;
-                await databaseQuery(databaseRequest, sql);
-            }
-            res.status(200).json({
-                "messages": "Join class successfully"
-            });
+        catch (err) {
+            console.log(err);
         }
     }
     catch (err) {
@@ -184,40 +192,48 @@ classroomRouter.post('/sendInviteMail', authenToken, async function (req, res, n
 
 classroomRouter.get('/detail', authenToken, async function (req, res, next) {
     const classId = req.query.classId;
-    var sql = `SELECT *
-    FROM classroom
-    WHERE classroom.id = '${classId}'`;
-    var sqlResult = await databaseQuery(databaseRequest, sql);
-    if (sqlResult.length == 0) {
-        res.status(200).json({ "messages": "Invalid class id" });
-        return;
+    req.body["class_id"] = classId;
+    await isClassActive(req, res);
+    try {
+        var sql = `SELECT *
+        FROM classroom
+        WHERE classroom.id = '${classId}'`;
+        var sqlResult = await databaseQuery(databaseRequest, sql);
+        if (sqlResult.length == 0) {
+            res.status(200).json({ "messages": "Invalid class id" });
+            return;
+        }
+        var result = sqlResult[0];
+
+        sql = `SELECT [user].id, CONCAT([user].first_name,' ', [user].last_name) as full_name, [user].image_url
+        FROM classroom_student
+        JOIN [user] ON [user].id = classroom_student.student_id
+        WHERE classroom_student.classroom_id = '${classId}'
+        AND classroom_student.is_removed = 0`;
+
+        sqlResult = await databaseQuery(databaseRequest, sql);
+
+        result["student_list"] = sqlResult;
+
+        sql = `SELECT [user].id, CONCAT([user].first_name,' ', [user].last_name) as full_name, [user].image_url
+        FROM classroom_teacher
+        JOIN [user] ON [user].id = classroom_teacher.teacher_id
+        WHERE classroom_teacher.classroom_id = '${classId}'
+        AND classroom_teacher.is_deleted = 0`;
+
+        sqlResult = await databaseQuery(databaseRequest, sql);
+
+        result["teacher_list"] = sqlResult;
+
+        res.status(200).json(result);
+
     }
-    var result = sqlResult[0];
-
-    sql = `SELECT [user].id, CONCAT([user].first_name,' ', [user].last_name) as full_name, [user].image_url
-    FROM classroom_student
-    JOIN [user] ON [user].id = classroom_student.student_id
-    WHERE classroom_student.classroom_id = '${classId}'
-    AND classroom_student.is_removed = 0`;
-
-    sqlResult = await databaseQuery(databaseRequest, sql);
-
-    result["student_list"] = sqlResult;
-
-    sql = `SELECT [user].id, CONCAT([user].first_name,' ', [user].last_name) as full_name, [user].image_url
-    FROM classroom_teacher
-    JOIN [user] ON [user].id = classroom_teacher.teacher_id
-    WHERE classroom_teacher.classroom_id = '${classId}'
-    AND classroom_teacher.is_deleted = 0`;
-
-    sqlResult = await databaseQuery(databaseRequest, sql);
-
-    result["teacher_list"] = sqlResult;
-
-    res.status(200).json(result);
+    catch (err) {
+        console.log(err);
+    }
 });
 
-classroomRouter.post('/uploadFile', fileUpload({ createParentPath: true }), authenToken, isTeacher, async function (req, res, next) {
+classroomRouter.post('/uploadFile', fileUpload({ createParentPath: true }), authenToken, isClassActive, isTeacher, async function (req, res, next) {
     let reqData = req.body;
     var result = {};
 
@@ -346,10 +362,10 @@ classroomRouter.post('/uploadFile', fileUpload({ createParentPath: true }), auth
         }
     });
 
-    res.send({messages: "Update student grade successully"});
+    res.send({ messages: "Update student grade successully" });
 });
 
-classroomRouter.get('/grade-list', authenToken, isTeacher, async function (req, res) {
+classroomRouter.get('/grade-list', authenToken, isClassActive, isTeacher, async function (req, res) {
     let reqData = req.body;
 
     if (typeof (req.body) == "string") {
@@ -383,7 +399,7 @@ classroomRouter.get('/grade-list', authenToken, isTeacher, async function (req, 
     res.send(result);
 });
 
-classroomRouter.patch('/update-grade', authenToken, isTeacher, async function (req, res) {
+classroomRouter.patch('/update-grade', authenToken, isClassActive, isTeacher, async function (req, res) {
     let reqData = req.body;
 
     if (typeof (req.body) == "string") {
@@ -399,7 +415,7 @@ classroomRouter.patch('/update-grade', authenToken, isTeacher, async function (r
         else if (parseFloat(grade) < 0) grade = 0;
     }
     catch (err) {
-        res.send({"messages": "ERROR: invalid grade"});
+        res.send({ "messages": "ERROR: invalid grade" });
         return;
     }
 
@@ -407,14 +423,14 @@ classroomRouter.patch('/update-grade', authenToken, isTeacher, async function (r
     var sqlResult = await databaseQuery(databaseRequest, sql);
 
     if (sqlResult != 0) {
-        res.send({messages: "Update successfully"});
+        res.send({ messages: "Update successfully" });
     }
     else {
-        res.send({messages: "ERROR: Update fail"});
+        res.send({ messages: "ERROR: Update fail" });
     }
 });
 
-classroomRouter.patch('/map-student', authenToken, isTeacher, async function (req, res) {
+classroomRouter.patch('/map-student', authenToken, isClassActive, isTeacher, async function (req, res) {
     let reqData = req.body;
 
     if (typeof (req.body) == "string") {
@@ -425,22 +441,23 @@ classroomRouter.patch('/map-student', authenToken, isTeacher, async function (re
     const studentId = reqData['new_student_id'];
     const currentStudentId = reqData['current_student_id'];
 
-    try {
-        const sqlResult = await mapStudent(classId, studentId, currentStudentId);
+    var sql = `SELECT in_class_id 
+    FROM classroom_student 
+    WHERE student_id = '${currentStudentId}'`;
 
-        if (sqlResult != 0) {
-            res.send({messages: "Map successfully"});
-        }
-        else {
-            res.send({messages: "ERROR: Map fail"});
-        }
+    var inClassId = databaseQuery(databaseRequest, sql);
+
+    if (inClassId.length == 0) {
+        res.send({ messages: "Invalid current_student_id" });
+        return;
     }
-    catch (err) {
-        res.send({messages: "ERROR: Invalid new student id"});
-    }    
+    inClassId = inClassId[0]["in_class_id"];
+
+    const messages = mapStudentByInClassId(classId, studentId, inClassId);
+    res.send({ messages: messages });
 });
 
-classroomRouter.patch('/finalized-grade', authenToken, isTeacher, async function (req, res) {
+classroomRouter.patch('/finalized-grade', authenToken, isClassActive, isTeacher, async function (req, res) {
     let reqData = req.body;
 
     if (typeof (req.body) == "string") {
@@ -457,7 +474,7 @@ classroomRouter.patch('/finalized-grade', authenToken, isTeacher, async function
     var existGrade = await databaseQuery(databaseRequest, sql);
 
     if (existGrade[0]['exist_grade'] == 0) {
-        res.send({messages: "ERROR: invalid grade id"});
+        res.send({ messages: "ERROR: invalid grade id" });
         return;
     }
 
@@ -470,10 +487,10 @@ classroomRouter.patch('/finalized-grade', authenToken, isTeacher, async function
     console.log(success);
 
     if (success != 0) {
-        res.send({messages: "Update finalized success"});
+        res.send({ messages: "Update finalized success" });
         return;
     }
-    res.send({messages: "ERROR: grade already finalized"});
+    res.send({ messages: "ERROR: grade already finalized" });
 });
 
 export default classroomRouter;

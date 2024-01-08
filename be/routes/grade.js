@@ -5,11 +5,12 @@ import databaseConnection from '../helper/database_connection.js';
 import databaseQuery from '../helper/database_query.js';
 import { isNumeric } from "../ultis/string_utils.js";
 import { isTeacher } from "../ultis/teacher_utils.js";
+import { isClassActive } from "../ultis/user_utils.js";
 
 const gradeRouter = express.Router();
 const databaseRequest = await databaseConnection();
 
-gradeRouter.post('/create', authenToken, isTeacher, async function(req, res, next) {
+gradeRouter.post('/create', authenToken, isClassActive, isTeacher, async function(req, res, next) {
     let reqData = req.body;
 
     if (typeof(req.body) == "string") {
@@ -56,7 +57,7 @@ gradeRouter.post('/create', authenToken, isTeacher, async function(req, res, nex
     res.status(200).json({"messages": "Insert new grade successfully"});
 });
 
-gradeRouter.post('/struture', authenToken, isTeacher, async function(req, res, next) {
+gradeRouter.post('/struture', authenToken, isClassActive, isTeacher, async function(req, res, next) {
     let reqData = req.body;
 
     if (typeof(req.body) == "string") {
@@ -78,7 +79,7 @@ gradeRouter.post('/struture', authenToken, isTeacher, async function(req, res, n
     res.status(200).json({"messages" : "Success", "data" : sqlResult});
 });
 
-gradeRouter.delete('/remove', authenToken, isTeacher, async function(req, res, next) {
+gradeRouter.delete('/remove', authenToken, isClassActive, isTeacher, async function(req, res, next) {
     let reqData = req.body;
 
     if (typeof(req.body) == "string") {
@@ -112,7 +113,7 @@ gradeRouter.delete('/remove', authenToken, isTeacher, async function(req, res, n
     res.status(200).json({"messages": "Delete grade successfully"});
 });
 
-gradeRouter.patch('/update', authenToken, isTeacher, async function(req, res, next) {
+gradeRouter.patch('/update', authenToken, isClassActive, isTeacher, async function(req, res, next) {
     let reqData = req.body;
 
     if (typeof(req.body) == "string") {
