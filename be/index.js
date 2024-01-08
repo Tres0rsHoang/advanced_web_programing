@@ -9,6 +9,7 @@ import gradeRouter from "./routes/grade.js";
 import profileRouter from "./routes/profile.js";
 
 dotenv.config();
+
 const app = express();
 
 bodyParser.urlencoded({ extended: true });
@@ -54,6 +55,11 @@ app.get('/', function (req, res, next) {
 });
 
 app.set('port', process.env.PORT || 8080);
+var server = app.listen(app.get('port'), function() {
+  console.log('Express server listening on port ' + server.address().port);
+});
+
+app.set('port', process.env.PORT || 9000);
 var server = app.listen(app.get('port'), function() {
   console.log('Express server listening on port ' + server.address().port);
 });

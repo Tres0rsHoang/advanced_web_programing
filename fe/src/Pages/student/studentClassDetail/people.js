@@ -1,11 +1,11 @@
 import React from 'react'
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import { Avatar, Box, Divider, Tab, Tabs, Typography, useMediaQuery } from '@mui/material';
-import MiniDrawer from '../../components/Drawer';
+import MiniDrawer from '../../../components/Drawer';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material/styles';
 
-export default function People() {
+export default function StudentPeople() {
     const theme = useTheme();
     const isMatch1 = useMediaQuery(theme.breakpoints.down('xl'));
     const isMatch2 = useMediaQuery(theme.breakpoints.down('lg'));
@@ -19,11 +19,11 @@ export default function People() {
                 <Tabs
                     aria-label="nav tabs example"
                     role="navigation"
-                    value= {2}
+                    value= {1}
                 >
-                    <Tab label="Stream" href='/classDetail/stream' sx={{ml: '20px'}} />
-                    <Tab label="Grade" href='/classDetail/grade' />
-                    <Tab label="People" href='/classDetail/people' />
+                    <Tab label="Stream" href='/student/classDetail/stream' sx={{ml: '20px'}} />
+                    <Tab label="People" href='/student/classDetail/people' />
+                    <Tab label="Grades" href='/student/classDetail/grade' />
                 </Tabs>
                 <Divider />
                 { 
