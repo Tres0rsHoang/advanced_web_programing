@@ -1,5 +1,6 @@
 import { toast } from "react-toastify";
-import { getCurrentUserApi, loginApi } from "../../api/authService";
+import { loginApi } from "../../api/authService";
+import { getCurrentUserApi } from "../../api/profileService";
 
 export const FETCH_USER_LOGIN = 'FETCH_USER_LOGIN';
 export const FETCH_USER_ERROR = 'FETCH_USER_ERROR';
