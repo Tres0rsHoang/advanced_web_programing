@@ -1,63 +1,91 @@
 import * as React from 'react';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import { grey } from '@mui/material/colors';
-import { Typography } from '@mui/material';
+import {
+  DataGridPremium,
+  useGridApiRef
+} from '@mui/x-data-grid-premium';
+import { LicenseInfo } from '@mui/x-data-grid-premium';
+import { Box, Button, IconButton, Paper, Typography } from '@mui/material';
+import { Add, Delete } from '@mui/icons-material';
+import { red } from '@mui/material/colors';
+import { toast } from 'react-toastify';
 
-const columns = [
-    { field: 'name', label: 'Name', width: 150, format: (value) => value.toFixed(2) },
-    { field: 'assignments', label: 'Assignments', width: 200, format: (value) => value.toFixed(0) },
-    { field: 'midterm', label: 'Midterm Project', width: 200, format: (value) => value.toFixed(0) },
-    { field: 'final', label: 'Final Project', width: 200, format: (value) => value.toFixed(0) },
-];
+LicenseInfo.setLicenseKey('e0d9bb8070ce0054c9d9ecb6e82cb58fTz0wLEU9MzI0NzIxNDQwMDAwMDAsUz1wcmVtaXVtLExNPXBlcnBldHVhbCxLVj0y');
 
-function createData(assignments, midterm, final) {
-  return { assignments, midterm, final };
+function updateRowPosition(initialIndex, newIndex, rows) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const rowsClone = [...rows];
+      const row = rowsClone.splice(initialIndex, 1)[0];
+      rowsClone.splice(newIndex, 0, row);
+      resolve(rowsClone);
+    }, Math.random() * 500 + 100); // simulate network latency
+  });
 }
-
-const rows =  createData(30, 30, 40);
 
 export default function GradeStructure() {
 
-  return (
-    <Paper sx={{ width: '100%', overflow: 'hidden', boxShadow: 0 }}>
-      <TableContainer sx={{ maxHeight: 440, border: 0.5, borderColor: grey[500]}}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.field}
-                  align={column.align}
-                  style={{ width: column.width }}
-                  sx={{border: 0.5, borderColor: grey[500], fontWeight: 'bold'}}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow key={rows.id}>
-              {columns.map((column) => {
-                const value = rows[column.field];
-                return (
-                  <TableCell key={column.field} align={column.align} sx={{border: 0.5, borderColor: grey[500]}}>
-                    {column.format && typeof value === 'number'
-                            ? column.format(value) + '%'
-                            : <Typography sx={{fontWeight: 'bold', fontSize: '15px'}}>Scale</Typography>}
-                  </TableCell>
-                );
-              })}
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Paper>
-  );
+    const columns = [
+      { field: 'name', headerName: 'Name', minWidth: 200, flex: 1, editable: true },
+      { field: 'scale', headerName: 'Scale', minWidth: 200, flex: 1, editable: true },
+      { field: 'delete', headerName: 'Delete', minWidth: 120, flex: 0.2,
+        renderCell: () => {
+          const onClick = () => {
+            return toast.success('Deleted!');
+          };
+          
+          return (
+              <IconButton variant="outlined" size="small" onClick={onClick} sx={{color: red[500]}}>
+                <Delete />
+              </IconButton>
+          );
+        }, 
+    },
+    ];
+    
+    const dataRows = [
+      { name: 'Assignments', scale: 0.3,  },
+      { name: 'Midtrem Project', scale: 0.3 },
+      { name: 'Final Project', scale: 0.4 },
+    ];
+      
+    const [rows, setRows] = React.useState(dataRows);
+
+    // React.useEffect(() => {
+    //   setRows(dataRows);
+    // }, [dataRows]);
+
+    const apiRef = useGridApiRef();
+
+    const handleRowOrderChange = async (params) => {
+      const newRows = await updateRowPosition(
+        params.oldIndex,
+        params.targetIndex,
+        rows,
+      );
+  
+      setRows(newRows);
+    };
+
+    return (
+      <Box>
+        <Box sx={{display: 'flex', justifyContent: 'flex-end', margin: '20px'}}>
+          <Button variant="contained" sx={{textTransform: 'none'}} >
+              <Add sx={{mr: '10px'}}/>
+              <Typography sx={{mr: '10px', fontSize: '14px'}}>Add grade composition</Typography> 
+          </Button>
+        </Box>
+        <Paper sx={{ overflow: 'hidden',  width: '100%', boxShadow: 0 }}>
+            <DataGridPremium
+                getRowId={(row) => row.name}
+                rows = {rows}
+                columns={columns}
+                apiRef={apiRef}
+                disableRowSelectionOnClick
+                hideFooter
+                rowReordering
+                onRowOrderChange={handleRowOrderChange}
+            />
+        </Paper>
+      </Box>
+    );
 }
