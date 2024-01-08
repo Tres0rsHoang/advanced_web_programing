@@ -1,14 +1,14 @@
-import * as React from 'react';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
+import { AssignmentIndOutlined, FolderOpenOutlined } from '@mui/icons-material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { CardActionArea, ClickAwayListener, Divider, Grow, MenuItem, MenuList, Paper, Popper } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { CardActionArea, ClickAwayListener, Divider, Grow, MenuList, Paper, Popper, MenuItem } from '@mui/material';
-import { AssignmentIndOutlined, FolderOpenOutlined } from '@mui/icons-material';
+import * as React from 'react';
 
 export default function StudentClassCard() {
   const [open, setOpen] = React.useState(false);
