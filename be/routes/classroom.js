@@ -64,7 +64,7 @@ classroomRouter.get('/join', authenToken, async function (req, res, next) {
         const classId = result[0]['id'];
 
         req.body["class_id"] = classId;
-        await isClassActive(req, res);
+        await isClassActive(req, res, () => {});
 
         try {
             var sql = `SELECT classroom_student.student_id
@@ -193,7 +193,7 @@ classroomRouter.post('/sendInviteMail', authenToken, async function (req, res, n
 classroomRouter.get('/detail', authenToken, async function (req, res, next) {
     const classId = req.query.classId;
     req.body["class_id"] = classId;
-    await isClassActive(req, res);
+    await isClassActive(req, res, () => {});
     try {
         var sql = `SELECT *
         FROM classroom
