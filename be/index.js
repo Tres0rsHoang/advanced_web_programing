@@ -2,45 +2,40 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from 'dotenv';
 import express from 'express';
+import adminRouter from "./routes/admin.js";
 import authenRouter from './routes/authen.js';
 import classroomRouter from "./routes/classroom.js";
 import gradeRouter from "./routes/grade.js";
 import profileRouter from "./routes/profile.js";
 
-
 dotenv.config();
 const app = express();
 
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+bodyParser.urlencoded({ extended: true });
 
-// parse application/json
-app.use(bodyParser.urlencoded());
-app.use(bodyParser.json());
 
-app.use(bodyParser.text({ type: 'text/html' }))
+app.use(bodyParser.json())
+   .use(bodyParser.urlencoded())
 
-app.use(bodyParser.raw({ type: 'application/vnd.custom-type' }))
+// // Add headers before the routes are defined
+// app.use(function (req, res, next) {
 
-// Add headers before the routes are defined
-app.use(function (req, res, next) {
+//     // Website you wish to allow to connect
+//     res.setHeader('Access-Control-Allow-Origin', '*');
 
-    // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', '*');
+//     // Request methods you wish to allow
+//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
 
-    // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+//     // Request headers you wish to allow
+//     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
 
-    // Request headers you wish to allow
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+//     // Set to true if you need the website to include cookies in the requests sent
+//     // to the API (e.g. in case you use sessions)
+//     res.setHeader('Access-Control-Allow-Credentials', true);
 
-    // Set to true if you need the website to include cookies in the requests sent
-    // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true);
-
-    // Pass to next layer of middleware
-    next();
-})
+//     // Pass to next layer of middleware
+//     next();
+// })
 
 app.use(cors());
 
@@ -51,6 +46,8 @@ app.use('/profile', profileRouter);
 app.use('/classroom', classroomRouter);
 
 app.use('/classroom/grade', gradeRouter);
+
+app.use('/admin', adminRouter);
 
 app.get('/', function (req, res, next) {
     res.send("Server is running...");

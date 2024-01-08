@@ -19,6 +19,35 @@ gradeRouter.post('/create', authenToken, isTeacher, async function(req, res, nex
     const classId = reqData['class_id'];
     const gradeScale = reqData['grade_scale'];
     const name = reqData['name'];
+
+    var sql = `SELECT COUNT(1) as exist_grade
+    FROM classroom_grade
+    WHERE classroom_id = '${classId}' AND name = '${name}'`;
+
+    const existGrade = await databaseQuery(databaseRequest, sql);
+
+    if (existGrade[0]['exist_grade'] != 0) {
+        res.status(200).json({"messages": "ERROR: grade name already exists"});
+        return;
+    }
+
+    var sql = `SELECT grade_scale
+    FROM classroom_grade
+    WHERE classroom_id = '${classId}'`;
+
+    const gradeInClass = await databaseQuery(databaseRequest, sql);
+
+    var totalGradeInClass = 0;
+
+    gradeInClass.forEach(element => {
+        totalGradeInClass += element['grade_scale'];
+    });
+
+    if (gradeScale + totalGradeInClass > 100) {
+        res.status(200).json({"messages": "ERROR: invalid grade scales", "maxium_valid_scale": 100 - totalGradeInClass});
+        return;
+    }
+
     const id = uuidv4();
 
     var sql = `INSERT INTO classroom_grade VALUES ('${id}', ${gradeScale}, '${name}', '${classId}')`;
@@ -40,7 +69,7 @@ gradeRouter.post('/struture', authenToken, isTeacher, async function(req, res, n
     FROM classroom_grade
     WHERE classroom_id = '${classId}'`;
 
-    if (reqData['order_by'] != '') {
+    if (reqData['order_by'] != '' && reqData['order_by'] != undefined) {
         sql = `${sql} ORDER BY ${reqData['order_by']}`;
     }
 
@@ -77,6 +106,7 @@ gradeRouter.delete('/remove', authenToken, isTeacher, async function(req, res, n
 
     if (sqlResult.length == 0) {
         res.status(200).json({"messages": "ERROR: can't find this grade id"});
+        return;
     }
 
     res.status(200).json({"messages": "Delete grade successfully"});

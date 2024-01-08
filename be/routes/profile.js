@@ -4,6 +4,9 @@ import jwt from 'jsonwebtoken';
 import authenToken from "../helper/authenticate_token.js";
 import databaseConnection from '../helper/database_connection.js';
 import databaseQuery from '../helper/database_query.js';
+import { getStudentScore, isStudent } from '../ultis/student_utils.js';
+import { mapStudentByInClassId } from '../ultis/teacher_utils.js';
+import { getCurrentUserId } from '../ultis/user_utils.js';
 
 const profileRouter = express.Router();
 const databaseRequest = await databaseConnection();
@@ -71,6 +74,40 @@ profileRouter.patch('/', authenToken, async function(req, res, next) {
     });
 
     res.status(200).json({"messages" : "Update user profile successfully"});
+});
+
+profileRouter.patch('/map-student', authenToken, isStudent, async function(req, res) {
+    let reqData = req.body;
+
+    if (typeof(req.body) == "string") {
+        reqData = JSON.parse(req.body);
+    }
+
+    const classId = reqData['class_id'];
+    const inClassId = reqData['in_class_id'];
+    const currentUserId = await getCurrentUserId(req, res);
+
+    const messages = await mapStudentByInClassId(classId, currentUserId, inClassId);
+
+    res.send({messages: messages});
+});
+
+profileRouter.get('/get-grade', authenToken, isStudent, async function(req, res) {
+    let reqData = req.body;
+
+    if (typeof(req.body) == "string") {
+        reqData = JSON.parse(req.body);
+    }
+
+    const classId = reqData['class_id'];
+    const currentUserId = await getCurrentUserId(req, res);
+    const studentScore = await getStudentScore(classId, currentUserId);
+
+    const result = studentScore.filter((element) => {
+        return element['is_finalized'] != false;
+    });
+
+    res.send(result);
 });
 
 export default profileRouter;
