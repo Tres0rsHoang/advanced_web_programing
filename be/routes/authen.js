@@ -32,12 +32,11 @@ authenRouter.post('/login', async function(req, res, next) {
         res.send({message: "Your account is locked"});
         return;
     }
-
     if (id) {
         const refreshTokenId = await createRefreshToken(id);
         const accessToken = jwt.sign(
             { "refresh_token_id": refreshTokenId },
-            process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '5m' }
+            process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '30m' }
         );
         res.json({ 'access_token': accessToken });
     }
