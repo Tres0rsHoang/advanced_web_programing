@@ -5,11 +5,12 @@ import databaseConnection from '../helper/database_connection.js';
 import databaseQuery from '../helper/database_query.js';
 import { isNumeric } from "../ultis/string_utils.js";
 import { isTeacher } from "../ultis/teacher_utils.js";
+import { isClassActive } from "../ultis/user_utils.js";
 
 const gradeRouter = express.Router();
 const databaseRequest = await databaseConnection();
 
-gradeRouter.post('/create', authenToken, isTeacher, async function(req, res, next) {
+gradeRouter.post('/create', authenToken, isClassActive, isTeacher, async function(req, res, next) {
     let reqData = req.body;
 
     if (typeof(req.body) == "string") {
@@ -19,6 +20,35 @@ gradeRouter.post('/create', authenToken, isTeacher, async function(req, res, nex
     const classId = reqData['class_id'];
     const gradeScale = reqData['grade_scale'];
     const name = reqData['name'];
+
+    var sql = `SELECT COUNT(1) as exist_grade
+    FROM classroom_grade
+    WHERE classroom_id = '${classId}' AND name = '${name}'`;
+
+    const existGrade = await databaseQuery(databaseRequest, sql);
+
+    if (existGrade[0]['exist_grade'] != 0) {
+        res.status(200).json({"messages": "ERROR: grade name already exists"});
+        return;
+    }
+
+    var sql = `SELECT grade_scale
+    FROM classroom_grade
+    WHERE classroom_id = '${classId}'`;
+
+    const gradeInClass = await databaseQuery(databaseRequest, sql);
+
+    var totalGradeInClass = 0;
+
+    gradeInClass.forEach(element => {
+        totalGradeInClass += element['grade_scale'];
+    });
+
+    if (gradeScale + totalGradeInClass > 100) {
+        res.status(200).json({"messages": "ERROR: invalid grade scales", "maxium_valid_scale": 100 - totalGradeInClass});
+        return;
+    }
+
     const id = uuidv4();
 
     var sql = `INSERT INTO classroom_grade VALUES ('${id}', ${gradeScale}, '${name}', '${classId}')`;
@@ -27,7 +57,7 @@ gradeRouter.post('/create', authenToken, isTeacher, async function(req, res, nex
     res.status(200).json({"messages": "Insert new grade successfully"});
 });
 
-gradeRouter.post('/struture', authenToken, isTeacher, async function(req, res, next) {
+gradeRouter.post('/struture', authenToken, isClassActive, isTeacher, async function(req, res, next) {
     let reqData = req.body;
 
     if (typeof(req.body) == "string") {
@@ -40,7 +70,7 @@ gradeRouter.post('/struture', authenToken, isTeacher, async function(req, res, n
     FROM classroom_grade
     WHERE classroom_id = '${classId}'`;
 
-    if (reqData['order_by'] != '') {
+    if (reqData['order_by'] != '' && reqData['order_by'] != undefined) {
         sql = `${sql} ORDER BY ${reqData['order_by']}`;
     }
 
@@ -49,7 +79,7 @@ gradeRouter.post('/struture', authenToken, isTeacher, async function(req, res, n
     res.status(200).json({"messages" : "Success", "data" : sqlResult});
 });
 
-gradeRouter.delete('/remove', authenToken, isTeacher, async function(req, res, next) {
+gradeRouter.delete('/remove', authenToken, isClassActive, isTeacher, async function(req, res, next) {
     let reqData = req.body;
 
     if (typeof(req.body) == "string") {
@@ -77,12 +107,13 @@ gradeRouter.delete('/remove', authenToken, isTeacher, async function(req, res, n
 
     if (sqlResult.length == 0) {
         res.status(200).json({"messages": "ERROR: can't find this grade id"});
+        return;
     }
 
     res.status(200).json({"messages": "Delete grade successfully"});
 });
 
-gradeRouter.patch('/update', authenToken, isTeacher, async function(req, res, next) {
+gradeRouter.patch('/update', authenToken, isClassActive, isTeacher, async function(req, res, next) {
     let reqData = req.body;
 
     if (typeof(req.body) == "string") {

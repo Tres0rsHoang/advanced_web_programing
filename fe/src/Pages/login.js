@@ -14,9 +14,8 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify";
-import { FacebookLoginButton } from 'react-social-login-buttons';
-import { LoginSocialFacebook } from 'reactjs-social-login';
 import { GoogleLogin } from 'react-google-login';
+import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
 import { gapi } from 'gapi-script';
 import { useDispatch, useSelector } from 'react-redux';
 import { handleLoginRedux, handleGoogleLoginRedux } from '../redux/actions/userAction';
@@ -26,7 +25,7 @@ const FacebookClientID = '679614957611578';
 const GoogleClientID = '355691189679-g1bqbv7ar8r0bcii90alovankquv19vu.apps.googleusercontent.com';
 //const GoogleClientSerect = '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';
 
-const Login = () => {
+export default function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -72,6 +71,10 @@ const Login = () => {
     dispatch(handleLoginRedux(email, password));
   }
 
+  const responseFacebook = (response) => {
+    console.log(response);
+  }
+
   const onSuccess = async (res) => {
     dispatch(handleGoogleLoginRedux(res));
   }
@@ -94,7 +97,7 @@ const Login = () => {
           <CssBaseline />
           <Box
             sx={{
-              marginTop: 4,
+              mt: 1,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -154,37 +157,54 @@ const Login = () => {
                 </Grid>
               </Grid>
             </Box>
+              <div style={{
+                width: '100%',
+                textAlign: 'center', 
+                borderBottom: '1px solid #b8b6b6',
+                lineHeight: '0.1em',
+                margin: '40px 0'
+              }}>
+                <span style={{background: '#fff', padding: '0 10px' }}>Or Login With</span>
+              </div>
             <Box sx={{
-              marginTop: 4,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between'
             }}>
-            <LoginSocialFacebook
-              appId={FacebookClientID}
-              onResolve={(response) => {
-                console.log(response);
-              }}
-              onReject={(error) => {
-                console.log(error);
-              }}
-            >
-              <FacebookLoginButton />
-            </LoginSocialFacebook>
-
-            <GoogleLogin
-              clientId={GoogleClientID}
-              buttonText='Log in with Google'
-              onSuccess={onSuccess}
-              onFailure={onFailure}
-              cookiePolicy={'single_host_origin'}
-              isSignedIn={true}
-            />
+              <FacebookLogin 
+                appId={FacebookClientID}
+                autoLoad
+                callback={responseFacebook}
+                render={renderProps => (
+                  <IconButton onClick={renderProps.onClick} sx={{mr: '40px'}}>
+                    <img 
+                      src='https://cdn-icons-png.flaticon.com/512/3536/3536394.png' 
+                      alt='facebook'
+                      style={{borderRadius: '50%', width: '50px', height: '50px'}}
+                    />
+                  </IconButton>
+                )}
+              />
+              <GoogleLogin
+                clientId={GoogleClientID}
+                buttonText='Log in with Google'
+                onSuccess={onSuccess}
+                onFailure={onFailure}
+                cookiePolicy={'single_host_origin'}
+                isSignedIn={true}
+                render={renderProps => (
+                  <IconButton onClick={renderProps.onClick}  sx={{ml: '40px'}}>
+                    <img 
+                      src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/480px-Google_%22G%22_logo.svg.png' 
+                      alt='google'
+                      style={{borderRadius: '50%', width: '50px', height: '50px'}}
+                    />
+                  </IconButton>
+                )}
+              />
             </Box>
           </Box>
         </Container>
     </ThemeProvider>
   );
 }
-
-export default Login;

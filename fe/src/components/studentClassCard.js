@@ -1,17 +1,16 @@
-import * as React from 'react';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
+import { AssignmentIndOutlined, FolderOpenOutlined } from '@mui/icons-material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { CardActionArea, ClickAwayListener, Divider, Grow, MenuItem, MenuList, Paper, Popper } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { indigo } from '@mui/material/colors';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { CardActionArea, ClickAwayListener, Divider, Grow, MenuList, Paper, Popper, MenuItem } from '@mui/material';
-import { AssignmentIndOutlined, FolderOpenOutlined } from '@mui/icons-material';
+import * as React from 'react';
 
-export default function ClassCard() {
+export default function StudentClassCard() {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
 
@@ -59,7 +58,7 @@ export default function ClassCard() {
             boxShadow: 4
         }
     }}>
-      <CardActionArea href='/classDetail/stream'>
+      <CardActionArea href='/student/classDetail/stream'>
         <CardHeader sx={{backgroundImage: "url('https://www.gstatic.com/classroom/themes/img_sailing.jpg')", backgroundSize: 'cover'}}
           action={
             <div>
@@ -133,7 +132,7 @@ export default function ClassCard() {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap'
-          }}>2310-CLC-AWP-20KTPM2aaaa<br/> 
+          }}>2310-CLC-AWP-20KTPM2<br/> 
             <Typography sx={{color: 'white', fontSize: '14px', ":hover":{textDecoration: 'underline'}}}>Advanced Web Programming</Typography>
           </Typography>}
           subheader={<Typography sx={{color: 'white', fontSize: '14px', ":hover":{textDecoration: 'underline'}}}>Khánh Nguyễn Huy</Typography>}

@@ -9,8 +9,12 @@ jobs:
     steps:
       - name: checkout repository
         uses: actions/checkout@main
-      - name: Docker down
-        run: docker-compose down -v
-      - name: Docker up
+      - name: package install
+        working-directory: ./be
+        run: npm ci
+      - name: docker down
+        working-directory: ./be
+        run: docker-compose -f "docker-compose.yml" down --rmi local
+      - name: docker up
+        working-directory: ./be
         run: docker-compose up -d
-        

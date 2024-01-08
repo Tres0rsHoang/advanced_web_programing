@@ -23,9 +23,8 @@ const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const PHONE_REGEX = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
 const NAME_REGEX = /\b([A-ZÀ-ÿ][-,a-z. ']+[ ]*)+/;
 
-const SignUp = () => {
+export default function SignUp() {
   const userRef = useRef();
-  const errRef = useRef();
 
   const [email, setEmail] = useState('');
   const [validEmail, setValidEmail] = useState(false);
@@ -115,7 +114,6 @@ const SignUp = () => {
         } else {
           toast.error('Registration Failed!')
         }
-        errRef.current.focus();
     }
   }
 
@@ -133,7 +131,7 @@ const SignUp = () => {
           <CssBaseline />
           <Box
             sx={{
-              marginTop: 2,
+              mt: 1,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -276,5 +274,3 @@ const SignUp = () => {
     </ThemeProvider>
   );
 }
-
-export default SignUp;

@@ -18,20 +18,25 @@ authenRouter.post('/login', async function(req, res, next) {
     if (typeof(req.body) == "string") {
         reqData = JSON.parse(req.body);
     }
-
+    
     const email = reqData['email'];
     const password = reqData['password'];
 
     const id = await authenPassword(email, password);
 
     if (id == 'unverify_email') {
-        res.status(200).json({ "message": "Unverify email" });
+        res.status(200).json({ "message": "Please verify your email" });
+        return;
+    }
+    if (id == 'locked') {
+        res.send({message: "Your account is locked"});
+        return;
     }
     if (id) {
         const refreshTokenId = await createRefreshToken(id);
         const accessToken = jwt.sign(
             { "refresh_token_id": refreshTokenId },
-            process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '5m' }
+            process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '30m' }
         );
         res.json({ 'access_token': accessToken });
     }
@@ -121,7 +126,7 @@ authenRouter.post('/register', async function(req, res, next) {
     }
     else {
         const hashPassword = await bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS)).catch(err => console.error(err.message));
-        const sql = `INSERT INTO [user](id, email, password, phone_number, first_name, last_name, is_verify) VALUES ( '${id}', '${email}', '${hashPassword}', '${phoneNumber}', '${firstName}', '${lastName}', 0)`;
+        const sql = `INSERT INTO [user](id, email, password, phone_number, first_name, last_name, is_verify, is_admin, is_locked) VALUES ( '${id}', '${email}', '${hashPassword}', '${phoneNumber}', '${firstName}', '${lastName}', 0, 0, 0)`;
 
         const verifyUrl = req.protocol + '://' + req.get('host') + req.originalUrl + '/verify-email?userId=' + id;
         const emailSubject = 'Verify your resgister';

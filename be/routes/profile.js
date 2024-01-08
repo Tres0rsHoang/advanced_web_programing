@@ -4,30 +4,36 @@ import jwt from 'jsonwebtoken';
 import authenToken from "../helper/authenticate_token.js";
 import databaseConnection from '../helper/database_connection.js';
 import databaseQuery from '../helper/database_query.js';
+import { getStudentScore, isStudent } from '../ultis/student_utils.js';
+import { mapStudentByInClassId } from '../ultis/teacher_utils.js';
+import { getCurrentUserId, isClassActive } from '../ultis/user_utils.js';
 
 const profileRouter = express.Router();
 const databaseRequest = await databaseConnection();
 
 profileRouter.get('/', authenToken, async function(req, res, next){
-    const authorizationHeader = req.headers['authorization'];
-    const accessToken = authorizationHeader.split(' ')[1];
+    const userId = await getCurrentUserId(req, res);
+    
+    var sql = `SELECT email, phone_number, first_name, last_name
+    FROM [user] WHERE id = '${userId}'`;
+    var result = {};
+    var information = await databaseQuery(databaseRequest, sql);
+    result['information'] = information[0];
+    var sql = `SELECT classroom_id, name, subject 
+    FROM classroom_teacher t JOIN classroom c ON t.classroom_id = c.id
+    WHERE t.teacher_id = '${userId}' AND c.is_active = 1`;
 
-    var refreshTokenId = await jwt.decode(accessToken);
-    refreshTokenId = refreshTokenId['refresh_token_id'];
+    var isTeacherClasses = await databaseQuery(databaseRequest, sql);
+    result['is_teacher_classes'] = isTeacherClasses;
 
-    const userIdSql = `SELECT user_id FROM [refresh_authen] WHERE id = '${refreshTokenId}'`;
-    const userId = await databaseQuery(databaseRequest, userIdSql);
+    var sql = `SELECT classroom_id, name, subject
+    FROM classroom_student s JOIN classroom c ON s.classroom_id = c.id
+    WHERE student_id = '${userId}' AND c.is_active = 1`;
 
-    if (userId.length > 0) {
-        const sql = `SELECT * FROM [user] WHERE id = '${userId[0]["user_id"]}'`;
-        
-        const results = await databaseQuery(databaseRequest, sql);
+    var isStudentClasses = await databaseQuery(databaseRequest, sql);
+    result['is_student_classes'] = isStudentClasses;
 
-        res.status(200).json(results[0]);
-    }
-    else {
-        res.status(200).json({ "message": "Invalid access token" });
-    }
+    res.send(result);
 });
 
 profileRouter.patch('/', authenToken, async function(req, res, next) {
@@ -71,6 +77,40 @@ profileRouter.patch('/', authenToken, async function(req, res, next) {
     });
 
     res.status(200).json({"messages" : "Update user profile successfully"});
+});
+
+profileRouter.patch('/map-student', authenToken, isClassActive, isStudent, async function(req, res) {
+    let reqData = req.body;
+
+    if (typeof(req.body) == "string") {
+        reqData = JSON.parse(req.body);
+    }
+
+    const classId = reqData['class_id'];
+    const inClassId = reqData['in_class_id'];
+    const currentUserId = await getCurrentUserId(req, res);
+
+    const messages = await mapStudentByInClassId(classId, currentUserId, inClassId);
+
+    res.send({messages: messages});
+});
+
+profileRouter.get('/get-grade', authenToken, isClassActive, isStudent, async function(req, res) {
+    let reqData = req.body;
+
+    if (typeof(req.body) == "string") {
+        reqData = JSON.parse(req.body);
+    }
+
+    const classId = reqData['class_id'];
+    const currentUserId = await getCurrentUserId(req, res);
+    const studentScore = await getStudentScore(classId, currentUserId);
+
+    const result = studentScore.filter((element) => {
+        return element['is_finalized'] != false;
+    });
+
+    res.send(result);
 });
 
 export default profileRouter;
