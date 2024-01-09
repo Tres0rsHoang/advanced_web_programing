@@ -1,4 +1,4 @@
-import axios from "./axios";
+import axios from "./request";
 
 const getCurrentUserApi = () => {
     console.log(localStorage.getItem("token"));
@@ -44,4 +44,4 @@ const getGradeApi = (classId) => {
     }); 
 }
 
-export { getCurrentUserApi, updateUserProfileApi, profileMapStudentApi, getGradeApi };
+export { getCurrentUserApi, getGradeApi, profileMapStudentApi, updateUserProfileApi };
