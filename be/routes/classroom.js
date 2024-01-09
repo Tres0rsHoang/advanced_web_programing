@@ -76,6 +76,8 @@ classroomRouter.get('/join', authenToken, async function (req, res, next) {
         try {
             var isMember = await isMemberInClass(classId, currentUser);
 
+            console.log(isMember);
+1
             if (isMember) {
                 res.status(202).json({ 'messages': "You already in this class" });
                 return;

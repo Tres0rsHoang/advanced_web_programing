@@ -6,7 +6,7 @@ import authenToken from "../helper/authenticate_token.js";
 import databaseConnection from '../helper/database_connection.js';
 import databaseQuery from '../helper/database_query.js';
 import { getStudentScore, isStudent } from '../ultis/student_utils.js';
-import { mapStudentByInClassId } from '../ultis/teacher_utils.js';
+import { mapStudentByInClassId, unMapStudent } from '../ultis/teacher_utils.js';
 import { getCurrentUserId, isClassActive, isMemberInClass } from '../ultis/user_utils.js';
 import { sendNotification, sendToAllMemberInClass } from './notifications.js';
 
@@ -233,6 +233,28 @@ profileRouter.post('/comment', authenToken, async function (req, res) {
     }
     catch (err) {
         console.log("ERROR[/profile/comment]:", err);
+    }
+});
+
+profileRouter.patch('/un-mapping', authenToken, isClassActive, isStudent, async function (req, res) {
+    try {
+        let reqData = req.body;
+
+        if (typeof (req.body) == "string") {
+            reqData = JSON.parse(req.body);
+        }
+
+        const classId = reqData['class_id'];
+        const userId = await getCurrentUserId(req, res);
+
+        const messages = await unMapStudent(classId, userId);
+
+        if (messages.includes("ERROR")) res.status(202).send({messages: messages});
+
+        res.status(200).send({messages: messages});
+    }
+    catch (err) {
+        console.log("ERROR[/profile/un-mapping]:", err);
     }
 });
 
