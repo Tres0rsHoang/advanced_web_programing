@@ -39,5 +39,11 @@ const confirmResetPassword = async (email, resetCode, newPassword) => {
   });
 }
 
-export { confirmResetPassword, loginApi, logoutApi, signUpApi };
+const resetPassword = async ( email ) => {
+  return await request('POST', '/auth/reset-password', {
+    "email": email
+  });
+}
+
+export { confirmResetPassword, loginApi, logoutApi, resetPassword, signUpApi };
 

@@ -10,9 +10,7 @@ import Typography from '@mui/material/Typography';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from '../api/axios';
-
-const RESET_PASSWORD_URL = '/reset-password';
+import { resetPassword } from '../api/authService';
 
 const defaultTheme = createTheme();
 
@@ -34,17 +32,8 @@ export default function ResetPassword() {
     e.preventDefault();
     if (email !== '') {
         try {
-            const params = {
-              "email": email
-            };
+            const response = await resetPassword(email);
             
-            const response = await axios.post(RESET_PASSWORD_URL, params, {
-              headers: {
-                'Content-Type': 'application/json'
-              }
-            }); 
-            
-            console.log(JSON.stringify(response?.data));
             if (response?.data === "Password reset email sent") {
                 setEmail('');
                 navigate("/");
