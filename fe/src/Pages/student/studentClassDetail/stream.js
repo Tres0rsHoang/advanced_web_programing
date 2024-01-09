@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import { Avatar, Box, Button, Card, CardContent, CardHeader, Divider, Grid, IconButton, Tab, Tabs, TextField, Typography, useMediaQuery } from '@mui/material';
 import MiniDrawer from '../../../components/Drawer';
@@ -6,12 +6,27 @@ import { useTheme } from '@mui/material/styles';
 import { ClassOutlined, MoreVert, SendOutlined } from '@mui/icons-material';
 import { blue, grey } from '@mui/material/colors';
 import { useSelector } from 'react-redux';
+import { useSearchParams } from 'react-router-dom';
+import { classDetailsApi } from '../../../api/classService';
 
 export default function StudentStream() {
     const theme = useTheme();
     const isMatch = useMediaQuery(theme.breakpoints.down('lg'));
 
     const user = useSelector(state => state.user.account);
+
+    const [searchParams, setSearchParams] = useSearchParams();
+    const classId = searchParams.get("classId");
+
+    const [classDetails, setClassDetails] = useState({});
+
+    useEffect(() => {
+        async function fetchData() {
+            let response = await classDetailsApi(classId);
+            setClassDetails(response.data);
+        }
+        fetchData();
+    }, []);
 
     return (
         <React.Fragment>
@@ -22,9 +37,9 @@ export default function StudentStream() {
                     role="navigation"
                     value= {0}
                 >
-                    <Tab label="Stream" href='/student/classDetail/stream' sx={{ml: '20px'}} />
-                    <Tab label="People" href='/student/classDetail/people' />
-                    <Tab label="Grades" href='/student/classDetail/grade' />
+                    <Tab label="Stream" href={`/student/classDetail/stream?classId=${classId}`} sx={{ml: '20px'}} />
+                    <Tab label="People" href={`/student/classDetail/people?classId=${classId}`} />
+                    <Tab label="Grades" href={`/student/classDetail/grade?classId=${classId}`} />
                 </Tabs>
                 <Divider />
                 <Box sx={{margin: '30px 70px'}}>
@@ -41,10 +56,10 @@ export default function StudentStream() {
                             >
                                 <CardContent sx={{ml: '20px'}}>
                                     <Typography gutterBottom variant="h4" component="div" sx={{color: 'white', fontWeight: 'bold'}}>
-                                    2310-CLC-AWP-20KTPM2
+                                        {classDetails.name}
                                     </Typography>
                                     <Typography variant="h6" sx={{color: 'white'}}>
-                                    Advanced Web Programming
+                                        {classDetails.subject}
                                     </Typography>
                                 </CardContent>
                             </Card>
@@ -54,7 +69,7 @@ export default function StudentStream() {
                                 <Grid item md={12} lg={9}>
                                     <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', borderRadius: '10px', boxShadow: 3, color: grey[500], ":hover":{cursor: 'pointer', color: '#02579A'}}}>
                                         <CardContent sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
-                                            <Avatar src={user.imageUrl} sx={{ width: 40, height: 40, background: blue[500], mr: '30px', ml: '10px' }}>{user.firstName.charAt(0)}</Avatar>
+                                            <Avatar src={user.imageUrl} sx={{ width: 40, height: 40, background: blue[500], mr: '30px', ml: '10px', backgroundColor: '#02579A' }}>{user.firstName.charAt(0)}</Avatar>
                                             <Typography gutterBottom component="div" sx={{fontSize: '15px', margin: '10px 0', fontWeight: 500}}>
                                                 Announce something to your class
                                             </Typography>
@@ -73,7 +88,7 @@ export default function StudentStream() {
                                             </IconButton>
                                             }
                                             title={<Typography gutterBottom component="div" sx={{fontSize: '16px', fontWeight: 500, mt: '5px'}}>
-                                                Khánh Nguyễn Huy posted a new material: Final project submission (Deadline Jan 8 10pm)
+                                                {classDetails.teacher_list ? classDetails.teacher_list[0].full_name : 'Teacher'} posted a new material: Final project submission (Deadline Jan 8 10pm)
                                             </Typography>}
                                             subheader={<Typography gutterBottom component="div" sx={{fontSize: '13px', fontWeight: 200}}>
                                                 Dec 29
@@ -94,7 +109,7 @@ export default function StudentStream() {
                                             </IconButton>
                                             }
                                             title={<Typography gutterBottom component="div" sx={{fontSize: '16px', fontWeight: 500, mt: '5px'}}>
-                                                Khánh Nguyễn Huy posted a new material: Final project submission (Deadline Jan 8 10pm)
+                                                {classDetails.teacher_list ? classDetails.teacher_list[0].full_name : 'Teacher'} posted a new material: Final project submission (Deadline Jan 8 10pm)
                                             </Typography>}
                                             subheader={<Typography gutterBottom component="div" sx={{fontSize: '13px', fontWeight: 200}}>
                                                 Dec 29
@@ -112,7 +127,7 @@ export default function StudentStream() {
                                         <CardHeader
                                             avatar={
                                             <Avatar sx={{ bgcolor: '#02579A', ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
-                                                K
+                                                {classDetails.teacher_list ? classDetails.teacher_list[0].full_name.charAt(0) : ''}
                                             </Avatar>
                                             }
                                             action={
@@ -121,7 +136,7 @@ export default function StudentStream() {
                                             </IconButton>
                                             }
                                             title={<Typography gutterBottom component="div" sx={{fontSize: '16px', fontWeight: 500, mt: '5px'}}>
-                                                Khánh Nguyễn Huy
+                                                {classDetails.teacher_list ? classDetails.teacher_list[0].full_name : 'Teacher'}
                                             </Typography>}
                                             subheader={<Typography gutterBottom component="div" sx={{fontSize: '13px', fontWeight: 200}}>
                                                 Dec 29
@@ -135,7 +150,7 @@ export default function StudentStream() {
                                         </CardContent>
                                         <Divider />
                                         <CardContent sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
-                                            <Avatar src={user.imageUrl} sx={{ width: 40, height: 40, background: blue[500], mr: '30px', ml: '10px' }}>{user.firstName.charAt(0)}</Avatar>
+                                            <Avatar src={user.imageUrl} sx={{ width: 40, height: 40, bgcolor:'#02579A', mr: '30px', ml: '10px' }}>{user.firstName.charAt(0)}</Avatar>
                                             <TextField fullWidth placeholder='Add class comment...'
                                                 InputProps={{
                                                     style: {
@@ -196,7 +211,7 @@ export default function StudentStream() {
                                 <Grid item md={12} lg={9}>
                                     <Card sx={{margin: '20px 20px 20px 0', border: 1, borderColor: 'grey.300', borderRadius: '10px', boxShadow: 3, color: grey[500], ":hover":{cursor: 'pointer', color: '#02579A'}}}>
                                         <CardContent sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
-                                            <Avatar src={user.imageUrl} sx={{ width: 40, height: 40, background: blue[500], mr: '30px', ml: '10px' }}>{user.firstName.charAt(0)}</Avatar>
+                                            <Avatar src={user.imageUrl} sx={{ width: 40, height: 40, background: blue[500], mr: '30px', ml: '10px', bgcolor:'#02579A' }}>{user.firstName.charAt(0)}</Avatar>
                                             <Typography gutterBottom component="div" sx={{fontSize: '15px', margin: '10px 0', fontWeight: 500}}>
                                                 Announce something to your class
                                             </Typography>
@@ -215,7 +230,7 @@ export default function StudentStream() {
                                             </IconButton>
                                             }
                                             title={<Typography gutterBottom component="div" sx={{fontSize: '16px', fontWeight: 500, mt: '5px'}}>
-                                                Khánh Nguyễn Huy posted a new material: Final project submission (Deadline Jan 8 10pm)
+                                                {classDetails.teacher_list ? classDetails.teacher_list[0].full_name : 'Teacher'} posted a new material: Final project submission (Deadline Jan 8 10pm)
                                             </Typography>}
                                             subheader={<Typography gutterBottom component="div" sx={{fontSize: '13px', fontWeight: 200}}>
                                                 Dec 29
@@ -236,7 +251,7 @@ export default function StudentStream() {
                                             </IconButton>
                                             }
                                             title={<Typography gutterBottom component="div" sx={{fontSize: '16px', fontWeight: 500, mt: '5px'}}>
-                                                Khánh Nguyễn Huy posted a new material: Final project submission (Deadline Jan 8 10pm)
+                                                {classDetails.teacher_list ? classDetails.teacher_list[0].full_name : 'Teacher'} posted a new material: Final project submission (Deadline Jan 8 10pm)
                                             </Typography>}
                                             subheader={<Typography gutterBottom component="div" sx={{fontSize: '13px', fontWeight: 200}}>
                                                 Dec 29
@@ -254,7 +269,7 @@ export default function StudentStream() {
                                         <CardHeader
                                             avatar={
                                             <Avatar sx={{ bgcolor: '#02579A', ml: '10px', mr: '5px', height: '50px', width: '50px' }} aria-label="recipe">
-                                                K
+                                                {classDetails.teacher_list ? classDetails.teacher_list[0].full_name.charAt(0) : ''}
                                             </Avatar>
                                             }
                                             action={
@@ -263,7 +278,7 @@ export default function StudentStream() {
                                             </IconButton>
                                             }
                                             title={<Typography gutterBottom component="div" sx={{fontSize: '16px', fontWeight: 500, mt: '5px'}}>
-                                                Khánh Nguyễn Huy
+                                                {classDetails.teacher_list ? classDetails.teacher_list[0].full_name : 'Teacher'}
                                             </Typography>}
                                             subheader={<Typography gutterBottom component="div" sx={{fontSize: '13px', fontWeight: 200}}>
                                                 Dec 29
@@ -277,7 +292,7 @@ export default function StudentStream() {
                                         </CardContent>
                                         <Divider />
                                         <CardContent sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
-                                            <Avatar src={user.imageUrl} sx={{ width: 40, height: 40, background: blue[500], mr: '30px', ml: '10px' }}>{user.firstName.charAt(0)}</Avatar>
+                                            <Avatar src={user.imageUrl} sx={{ width: 40, height: 40, bgcolor:'#02579A', mr: '30px', ml: '10px' }}>{user.firstName.charAt(0)}</Avatar>
                                             <TextField fullWidth placeholder='Add class comment...'
                                                 InputProps={{
                                                     style: {

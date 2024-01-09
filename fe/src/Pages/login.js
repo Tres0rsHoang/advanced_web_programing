@@ -68,7 +68,7 @@ export default function Login() {
       return;
     }
 
-    dispatch(handleLoginRedux(email, password));
+    await dispatch(handleLoginRedux(email, password));
   }
 
   const responseFacebook = (response) => {
@@ -76,7 +76,7 @@ export default function Login() {
   }
 
   const onSuccess = async (res) => {
-    dispatch(handleGoogleLoginRedux(res));
+    await dispatch(handleGoogleLoginRedux(res));
   }
 
   const onFailure = (res) => {
@@ -173,7 +173,6 @@ export default function Login() {
             }}>
               <FacebookLogin 
                 appId={FacebookClientID}
-                autoLoad
                 callback={responseFacebook}
                 render={renderProps => (
                   <IconButton onClick={renderProps.onClick} sx={{mr: '40px'}}>

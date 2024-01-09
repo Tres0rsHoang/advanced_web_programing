@@ -7,9 +7,16 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { IconButton } from '@mui/material';
 import { Add } from '@mui/icons-material';
+import { createClassApi } from '../api/classService';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 export default function CreateClass() {
   const [open, setOpen] = React.useState(false);
+  const [className, setClassName] = React.useState('');
+  const [classSubject, setClassSubject] = React.useState('');
+
+  const navigate = useNavigate();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -18,6 +25,25 @@ export default function CreateClass() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const handleSubmit = async () => {
+    let response = await createClassApi(className, '', classSubject, '');
+    if (response.status === 200) {
+      setTimeout(() => {
+        navigate(0);
+      }, 1000);
+      toast.success('Create class successful');
+    }
+    else {
+      setTimeout(() => {
+        navigate(0);
+      }, 1000);
+      toast.error(response.data.messages);
+    }
+  };
+
+  React.useEffect(() => {
+  }, [className, classSubject]);
 
   return (
     <React.Fragment>
@@ -41,6 +67,8 @@ export default function CreateClass() {
                 type="text"
                 fullWidth
                 variant="outlined"
+                onChange={(e) => setClassName(e.target.value)}
+                value={className}
             />
             <TextField
                 margin="dense"
@@ -49,11 +77,13 @@ export default function CreateClass() {
                 type="text"
                 fullWidth
                 variant="outlined"
+                onChange={(e) => setClassSubject(e.target.value)}
+                value={classSubject}
             />
         </DialogContent>
         <DialogActions>
             <Button onClick={handleClose} sx={{textTransform: 'none', fontSize: '16px'}}>Cancel</Button>
-            <Button onClick={handleClose} sx={{textTransform: 'none', fontSize: '16px'}}>Create</Button>
+            <Button onClick={handleSubmit} sx={{textTransform: 'none', fontSize: '16px'}}>Create</Button>
         </DialogActions>
       </Dialog>
     </React.Fragment>

@@ -1,7 +1,6 @@
 import axios from "./axios";
 
 const getCurrentUserApi = () => {
-    console.log(localStorage.getItem("token"));
     return axios.get("/profile", {
         headers: {
           'Content-Type': 'application/json',

@@ -1,5 +1,5 @@
 import { logoutApi } from '../../api/authService';
-import { FETCH_USER_LOGIN, FETCH_USER_SUCCESS, FETCH_GOOGLE_SUCCESS, FETCH_USER_ERROR, USER_LOGOUT, GOOGLE_LOGOUT, USER_REFRESH } from '../actions/userAction';
+import { FETCH_USER_LOGIN, FETCH_USER_SUCCESS, FETCH_GOOGLE_SUCCESS, FETCH_USER_ERROR, USER_LOGOUT, GOOGLE_LOGOUT, USER_REFRESH, FETCH_USER_EDIT_PROFILE } from '../actions/userAction';
 
 
 const INITIAL_STATE = {
@@ -122,7 +122,15 @@ export default function userReducer(state = INITIAL_STATE, action) {
                     authGoogle: user.googleId ? true : false
                 }
 
-        };
+            };
+
+        case FETCH_USER_EDIT_PROFILE:
+
+            return {
+
+                ...state,
+
+            };
 
         default: return state;
 

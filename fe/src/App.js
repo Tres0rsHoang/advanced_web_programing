@@ -20,6 +20,7 @@ import TeacherGrade from './Pages/teacher/teacherClassDetail/grade';
 import StudentPeople from './Pages/student/studentClassDetail/people';
 import TeacherPeople from './Pages/teacher/teacherClassDetail/people';
 import TeacherGradeReview from './Pages/teacher/teacherClassDetail/gradeReview';
+import JoinClass from './Pages/joinClass';
 
 function App() {
   const dispatch = useDispatch();
@@ -40,6 +41,7 @@ function App() {
           <Route path='/profile' element={<Profile />} />
           <Route path='/resetPassword' element={<ResetPassword />} />
           <Route path='/reset-password' element={<ConfirmResetPassword />} />
+          <Route path='/joinClass' element={<JoinClass />} />
           
           <Route path='/student/enrolled' element={<Enrolled/>} />
           <Route path='student/classDetail/stream' element={<StudentStream />} />

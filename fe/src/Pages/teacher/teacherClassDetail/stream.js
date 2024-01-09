@@ -53,14 +53,10 @@ export default function TeacherStream() {
       <CssBaseline />
       <MiniDrawer>
         <Tabs aria-label="nav tabs example" role="navigation" value={0}>
-          <Tab
-            label="Stream"
-            href="/teacher/classDetail/stream"
-            sx={{ ml: "20px" }}
-          />
-          <Tab label="People" href="/teacher/classDetail/people" />
-          <Tab label="Grades" href="/teacher/classDetail/grade" />
-          <Tab label="Grade Reviews" href="/teacher/classDetail/gradeReview" />
+          <Tab label="Stream" href={`/teacher/classDetail/stream?classId=${classId}`} sx={{ml: '20px'}} />
+          <Tab label="People" href={`/teacher/classDetail/people?classId=${classId}`} />
+          <Tab label="Grades" href={`/teacher/classDetail/grade?classId=${classId}`} />
+          <Tab label="Grade Reviews" href={`/teacher/classDetail/gradeReview?classId=${classId}`} />
         </Tabs>
         <Divider />
         <Box sx={{ margin: "30px 70px" }}>
@@ -120,6 +116,7 @@ export default function TeacherStream() {
                         background: blue[500],
                         mr: "30px",
                         ml: "10px",
+                        bgcolor: '#0C8590'
                       }}
                     >
                       {user.firstName.charAt(0)}
@@ -173,7 +170,7 @@ export default function TeacherStream() {
                         component="div"
                         sx={{ fontSize: "16px", fontWeight: 500, mt: "5px" }}
                       >
-                        {classDetails.teacher_list[0].full_name} posted a new material: Final project
+                        {classDetails.teacher_list ? classDetails.teacher_list[0].full_name : 'Teacher'} posted a new material: Final project
                         submission (Deadline Jan 8 10pm)
                       </Typography>
                     }
@@ -225,7 +222,7 @@ export default function TeacherStream() {
                         component="div"
                         sx={{ fontSize: "16px", fontWeight: 500, mt: "5px" }}
                       >
-                        Khánh Nguyễn Huy posted a new material: Final project
+                        {classDetails.teacher_list ? classDetails.teacher_list[0].full_name : 'Teacher'} posted a new material: Final project
                         submission (Deadline Jan 8 10pm)
                       </Typography>
                     }
@@ -273,6 +270,7 @@ export default function TeacherStream() {
                   <CardHeader
                     avatar={
                       <Avatar
+                        src={classDetails.teacher_list ? classDetails.teacher_list[0].image_url: null}
                         sx={{
                           bgcolor: "#0C8590",
                           ml: "10px",
@@ -282,7 +280,7 @@ export default function TeacherStream() {
                         }}
                         aria-label="recipe"
                       >
-                        K
+                        {classDetails.teacher_list ? classDetails.teacher_list[0].full_name.charAt(0) : ''}
                       </Avatar>
                     }
                     action={
@@ -296,7 +294,7 @@ export default function TeacherStream() {
                         component="div"
                         sx={{ fontSize: "16px", fontWeight: 500, mt: "5px" }}
                       >
-                        Khánh Nguyễn Huy
+                        {classDetails.teacher_list ? classDetails.teacher_list[0].full_name : 'Teacher'}
                       </Typography>
                     }
                     subheader={
@@ -346,6 +344,7 @@ export default function TeacherStream() {
                         background: blue[500],
                         mr: "30px",
                         ml: "10px",
+                        bgcolor: '#0C8590'
                       }}
                     >
                       {user.firstName.charAt(0)}
@@ -413,7 +412,7 @@ export default function TeacherStream() {
                           color: "#0C8590",
                         }}
                       >
-                        p4svlma
+                        {classDetails.class_code}
                       </Typography>
                       <IconButton sx={{ mb: "30px", ml: "10px" }}>
                         <CropFree sx={{ color: "#0C8590" }} />
@@ -481,6 +480,7 @@ export default function TeacherStream() {
                           background: blue[500],
                           mr: "30px",
                           ml: "10px",
+                          bgcolor: '#0C8590'
                         }}
                       >
                         {user.firstName.charAt(0)}
@@ -537,7 +537,7 @@ export default function TeacherStream() {
                           component="div"
                           sx={{ fontSize: "16px", fontWeight: 500, mt: "5px" }}
                         >
-                          Khánh Nguyễn Huy posted a new material: Final project
+                          {classDetails.teacher_list ? classDetails.teacher_list[0].full_name : 'Teacher'} posted a new material: Final project
                           submission (Deadline Jan 8 10pm)
                         </Typography>
                       }
@@ -592,7 +592,7 @@ export default function TeacherStream() {
                           component="div"
                           sx={{ fontSize: "16px", fontWeight: 500, mt: "5px" }}
                         >
-                          Khánh Nguyễn Huy posted a new material: Final project
+                          {classDetails.teacher_list ? classDetails.teacher_list[0].full_name : 'Teacher'} posted a new material: Final project
                           submission (Deadline Jan 8 10pm)
                         </Typography>
                       }
@@ -640,6 +640,7 @@ export default function TeacherStream() {
                     <CardHeader
                       avatar={
                         <Avatar
+                        src={classDetails.teacher_list ? classDetails.teacher_list[0].image_url : null}
                           sx={{
                             bgcolor: "#0C8590",
                             ml: "10px",
@@ -649,7 +650,7 @@ export default function TeacherStream() {
                           }}
                           aria-label="recipe"
                         >
-                          K
+                          {classDetails.teacher_list ? classDetails.teacher_list[0].full_name.charAt(0) : ''}
                         </Avatar>
                       }
                       action={
@@ -663,7 +664,7 @@ export default function TeacherStream() {
                           component="div"
                           sx={{ fontSize: "16px", fontWeight: 500, mt: "5px" }}
                         >
-                          Khánh Nguyễn Huy
+                          {classDetails.teacher_list ? classDetails.teacher_list[0].full_name : 'Teacher'}
                         </Typography>
                       }
                       subheader={
@@ -713,6 +714,7 @@ export default function TeacherStream() {
                           background: blue[500],
                           mr: "30px",
                           ml: "10px",
+                          bgcolor: '#0C8590'
                         }}
                       >
                         {user.firstName.charAt(0)}
