@@ -11,14 +11,14 @@ import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { gapi } from 'gapi-script';
 import { useEffect, useRef, useState } from 'react';
+import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
+import { GoogleLogin } from 'react-google-login';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify";
-import { GoogleLogin } from 'react-google-login';
-import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
-import { gapi } from 'gapi-script';
-import { useDispatch, useSelector } from 'react-redux';
-import { handleLoginRedux, handleGoogleLoginRedux } from '../redux/actions/userAction';
+import { handleGoogleLoginRedux, handleLoginRedux } from '../redux/actions/userAction';
 
 const defaultTheme = createTheme();
 const FacebookClientID = '679614957611578';
@@ -173,7 +173,6 @@ export default function Login() {
             }}>
               <FacebookLogin 
                 appId={FacebookClientID}
-                autoLoad
                 callback={responseFacebook}
                 render={renderProps => (
                   <IconButton onClick={renderProps.onClick} sx={{mr: '40px'}}>
