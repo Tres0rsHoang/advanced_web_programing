@@ -125,7 +125,7 @@ export async function unMapStudent(classId, studentId) {
 
     const mapGradeResult = await mapGradeForNewStudent(classId, previousId, studentId);
 
-    if (mapGradeForNewStudent == "Mapping successfully") return 'Un-mapping successfully';
+    if (mapGradeResult == "Mapping successfully") return 'Un-mapping successfully';
     return "ERROR: Mapping grade fail";
 }
 
