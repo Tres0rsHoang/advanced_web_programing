@@ -185,6 +185,8 @@ profileRouter.post('/comment', authenToken, async function (req, res) {
 
         const gradeId = reqData['grade_id'];
         const content = reqData['content'];
+        const expectedGrade = reqData['expected_grade'];
+
         const userId = await getCurrentUserId(req, res);
 
         var sql = `SELECT g.classroom_id, c.name
@@ -214,7 +216,7 @@ profileRouter.post('/comment', authenToken, async function (req, res) {
             return
         }
 
-        var sql = `INSERT INTO comment VALUES ('${id}', '${content}', '${gradeId}', '${userId}', SYSDATETIME())`;
+        var sql = `INSERT INTO comment VALUES ('${id}', '${content}', '${gradeId}', '${userId}', SYSDATETIME(), ${expectedGrade})`;
         await databaseQuery(databaseRequest, sql);
 
         if (isMember['type'] == 'teacher') {

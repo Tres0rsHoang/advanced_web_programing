@@ -587,7 +587,7 @@ classroomRouter.get('/comment-list', authenToken, isClassActive, async function 
         for (const element of gradeIds) {
             const gradeId = element['id'];
 
-            var sql = `SELECT c.id, content, grade_id, user_id, create_time
+            var sql = `SELECT c.id, content, expected_grade, grade_id, user_id, create_time
         FROM comment c
         JOIN classroom_grade cg ON cg.id = c.grade_id
         WHERE cg.classroom_id = '${classId}' AND cg.id = '${gradeId}'`;
