@@ -25,23 +25,24 @@ authenRouter.post('/login', async function(req, res, next) {
     const id = await authenPassword(email, password);
 
     if (id == 'unverify_email') {
-        res.status(200).json({ "message": "Please verify your email" });
+        res.status(200).json({ "messages": "Please verify your email" });
         return;
     }
     if (id == 'locked') {
-        res.send({message: "Your account is locked"});
+        res.send({messages: "Your account is locked"});
         return;
     }
+
     if (id) {
         const refreshTokenId = await createRefreshToken(id);
         const accessToken = jwt.sign(
             { "refresh_token_id": refreshTokenId },
-            process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '30m' }
+            process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '5m' }
         );
         res.json({ 'access_token': accessToken });
     }
     else {
-        res.status(200).json({ "message": "Password or email is not correct" });
+        res.status(200).json({ "messages": "Password or email is not correct" });
     }
 });
 
@@ -75,7 +76,7 @@ authenRouter.get('/refreshToken', authenToken, async function(req, res, next) {
                 });
             }
             else {
-                res.status(403).json({ "message": "Refresh token is revoked" });
+                res.status(403).json({ "messages": "Refresh token is revoked" });
             }
         }
         else {
@@ -98,7 +99,7 @@ authenRouter.get('/logout', authenToken, async function(req, res, next) {
 
         await databaseQuery(databaseRequest, sql);
 
-        res.json({ "message": "Logout successfully" });
+        res.json({ "messages": "Logout successfully" });
     });
 
 });
@@ -122,7 +123,7 @@ authenRouter.post('/register', async function(req, res, next) {
     const results = await databaseQuery(databaseRequest, sql);
 
     if (results.length > 0) {
-        res.status(200).json({ "message": "Email already exist" });
+        res.status(200).json({ "messages": "Email already exist" });
     }
     else {
         const hashPassword = await bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS)).catch(err => console.error(err.message));
@@ -135,7 +136,7 @@ authenRouter.post('/register', async function(req, res, next) {
         await sendMail(email, emailSubject, emailContent);
 
         await databaseQuery(databaseRequest, sql);
-        res.status(200).json({ "message": "Send verify email success" });
+        res.status(200).json({ "messages": "Send verify email success" });
     }
 });
 
