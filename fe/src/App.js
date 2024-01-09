@@ -10,16 +10,16 @@ import Login from './Pages/login';
 import Profile from './Pages/profile';
 import ResetPassword from './Pages/resetPassword';
 import SignUp from './Pages/signUp';
-import { handleRefresh } from './redux/actions/userAction';
 import Enrolled from './Pages/student/enrolled';
-import Teaching from './Pages/teacher/teaching';
-import StudentStream from './Pages/student/studentClassDetail/stream';
 import StudentGrade from './Pages/student/studentClassDetail/grade';
-import TeacherStream from './Pages/teacher/teacherClassDetail/stream';
-import TeacherGrade from './Pages/teacher/teacherClassDetail/grade';
 import StudentPeople from './Pages/student/studentClassDetail/people';
-import TeacherPeople from './Pages/teacher/teacherClassDetail/people';
+import StudentStream from './Pages/student/studentClassDetail/stream';
+import TeacherGrade from './Pages/teacher/teacherClassDetail/grade';
 import TeacherGradeReview from './Pages/teacher/teacherClassDetail/gradeReview';
+import TeacherPeople from './Pages/teacher/teacherClassDetail/people';
+import TeacherStream from './Pages/teacher/teacherClassDetail/stream';
+import Teaching from './Pages/teacher/teaching';
+import { handleRefresh } from './redux/actions/userAction';
 
 function App() {
   const dispatch = useDispatch();
@@ -45,13 +45,14 @@ function App() {
           <Route path='student/classDetail/stream' element={<StudentStream />} />
           <Route path='student/classDetail/grade' element={<StudentGrade />} />
           <Route path='student/classDetail/people' element={<StudentPeople />} />
-
           
           <Route path='/teacher/teaching' element={<Teaching/>} />
           <Route path='/teacher/classDetail/stream' element={<TeacherStream />} />
           <Route path='/teacher/classDetail/people' element={<TeacherPeople />} />
           <Route path='/teacher/classDetail/grade' element={<TeacherGrade />} />
           <Route path='/teacher/classDetail/gradeReview' element={<TeacherGradeReview />} />
+
+          <Route path='/admin/account' element={<AdminAccount />}></Route>
         </Routes>
       </div>
       <ToastContainer
