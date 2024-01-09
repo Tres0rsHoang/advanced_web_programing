@@ -18,7 +18,13 @@ const logoutApi = () => {
 }
 
 const signUpApi = (email, password, phoneNumber, firstName, lastName) => {
-  return axios.post("/auth/register", {email, password, phoneNumber, firstName, lastName}, {
+  return axios.post("/auth/register", {
+    email: email, 
+    password: password, 
+    phone_number: phoneNumber, 
+    first_name: firstName, 
+    last_name: lastName
+  }, {
     headers: {
       'Content-Type': 'application/json',
     }

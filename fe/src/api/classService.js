@@ -19,7 +19,11 @@ const joinClassApi = (classCode, type) => {
 }
 
 const sendInviteMailApi = (invitationType, classCode, studentEmail) => {
-  return axios.post("/classroom/sendInviteMail", {invitationType, classCode, studentEmail}, {
+  return axios.post("/classroom/sendInviteMail", {
+    invitation_type: invitationType, 
+    class_code: classCode, 
+    student_email: studentEmail
+  }, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + localStorage.getItem('token')

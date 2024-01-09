@@ -9,6 +9,7 @@ import AdminClasses from './Pages/admin/adminClasses';
 import AdminMapping from './Pages/admin/adminMapping';
 import ConfirmResetPassword from './Pages/confirmResetPassword';
 import Home from './Pages/home';
+import JoinClass from './Pages/joinClass';
 import Login from './Pages/login';
 import Profile from './Pages/profile';
 import ResetPassword from './Pages/resetPassword';
@@ -43,6 +44,7 @@ function App() {
           <Route path='/profile' element={<Profile />} />
           <Route path='/resetPassword' element={<ResetPassword />} />
           <Route path='/reset-password' element={<ConfirmResetPassword />} />
+          <Route path='/joinClass' element={<JoinClass />} />
           
           <Route path='/student/enrolled' element={<Enrolled/>} />
           <Route path='student/classDetail/stream' element={<StudentStream />} />

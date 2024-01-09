@@ -9,9 +9,11 @@ import { Box, DialogContentText, IconButton, Typography } from '@mui/material';
 import { ContentCopy,PersonAddAlt1Outlined } from '@mui/icons-material';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import { toast } from 'react-toastify';
+import { sendInviteMailApi } from '../api/classService';
 
-export default function InviteStudent() {
+export default function InviteStudent({classCode}) {
   const [open, setOpen] = React.useState(false);
+  const [email, setEmail] = React.useState('');
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -20,6 +22,19 @@ export default function InviteStudent() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const handleSubmit = async () => {
+    let response = await sendInviteMailApi('student', classCode, email);
+    if (response.status === 200) {
+      toast.success('Invite student successful');
+    }
+    else {
+      toast.error(response.data.messages);
+    }
+  };
+
+  React.useEffect(() => {
+  }, [email]);
 
   return (
     <React.Fragment>
@@ -44,10 +59,10 @@ export default function InviteStudent() {
                   whiteSpace: 'nowrap'
                 }}
               >
-                https://www.bao-home-server.site:9000/classroom/join?classCode=SoJgusB&type=student
+                {`${process.env.REACT_APP_SITE_URL}/joinClass?classCode=${classCode}&type=student`}
               </DialogContentText>
               <CopyToClipboard 
-                text='https://www.bao-home-server.site:9000/classroom/join?classCode=SoJgusB&type=student'
+                text={`${process.env.REACT_APP_SITE_URL}/joinClass?classCode=${classCode}&type=student`}
                 onCopy={() => toast.success('Copied to clipboard')}
               >
                 <IconButton sx={{mb: '5px'}}>
@@ -64,11 +79,13 @@ export default function InviteStudent() {
                 type="email"
                 fullWidth
                 variant="outlined"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
             />
         </DialogContent>
         <DialogActions>
             <Button onClick={handleClose} sx={{textTransform: 'none', fontSize: '16px', color: '#0C8590'}}>Cancel</Button>
-            <Button onClick={handleClose} sx={{textTransform: 'none', fontSize: '16px', color: '#0C8590'}}>Invite</Button>
+            <Button onClick={handleSubmit} sx={{textTransform: 'none', fontSize: '16px', color: '#0C8590'}}>Invite</Button>
         </DialogActions>
       </Dialog>
     </React.Fragment>

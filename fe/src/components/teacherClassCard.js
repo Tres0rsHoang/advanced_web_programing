@@ -114,7 +114,7 @@ export default function TeacherClassCard({classInfo}) {
                             event.preventDefault();
                             handleClose(event);
                           }}
-                          sx={{padding: '15px 50px 15px 20px'}}>Unenroll</MenuItem>
+                          sx={{padding: '15px 50px 15px 20px'}}>Delete class</MenuItem>
                         </MenuList>
                       </ClickAwayListener>
                     </Paper>

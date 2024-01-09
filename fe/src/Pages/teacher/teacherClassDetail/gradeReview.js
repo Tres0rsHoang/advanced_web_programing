@@ -5,11 +5,15 @@ import MiniDrawer from '../../../components/Drawer';
 import { grey, red } from '@mui/material/colors';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import GradeReviewDetail from '../../../components/GradeReviewDetail';
+import { useSearchParams } from 'react-router-dom';
 
 export default function TeacherGradeReview() {
     const theme = useTheme();
     const isMatch1 = useMediaQuery(theme.breakpoints.down('xl'));
     const isMatch2 = useMediaQuery(theme.breakpoints.down('lg'));
+
+    const [searchParams, setSearchParams] = useSearchParams();
+    const classId = searchParams.get("classId");
 
     return (
         <React.Fragment>
@@ -20,10 +24,10 @@ export default function TeacherGradeReview() {
                     role="navigation"
                     value= {3}
                 >
-                    <Tab label="Stream" href='/teacher/classDetail/stream' sx={{ml: '20px'}} />
-                    <Tab label="People" href='/teacher/classDetail/people' />
-                    <Tab label="Grades" href='/teacher/classDetail/grade' />
-                    <Tab label="Grade Reviews" href='/teacher/classDetail/gradeReview' />
+                    <Tab label="Stream" href={`/teacher/classDetail/stream?classId=${classId}`} sx={{ml: '20px'}} />
+                    <Tab label="People" href={`/teacher/classDetail/people?classId=${classId}`} />
+                    <Tab label="Grades" href={`/teacher/classDetail/grade?classId=${classId}`} />
+                    <Tab label="Grade Reviews" href={`/teacher/classDetail/gradeReview?classId=${classId}`} />
                 </Tabs>
                 <Divider />
                 { 

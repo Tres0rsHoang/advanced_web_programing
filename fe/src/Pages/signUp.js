@@ -89,11 +89,10 @@ export default function SignUp() {
 
       const response = await signUpApi(email, password, phoneNumber, firstName, lastName);
 
-      console.log(response?.data);
-      console.log(JSON.stringify(response))
+      console.log(response)
 
-      if(response?.data.message === "Email already exist") {
-        toast.error('Email already exists!');
+      if(response.status !== 200) {
+        toast.error(response.data.messages);
         return;
       }
       //clear state and controlled inputs
@@ -105,6 +104,7 @@ export default function SignUp() {
       setFirstName('');
       setLastName('');
 
+      toast.success(response.data.messages);
       navigate("/login");
     } catch (err) {
         if (!err?.response) {

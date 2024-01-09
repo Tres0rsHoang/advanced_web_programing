@@ -10,7 +10,7 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
 
-export default function StudentClassCard() {
+export default function StudentClassCard({classInfo}) {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
 
@@ -58,7 +58,7 @@ export default function StudentClassCard() {
             boxShadow: 4
         }
     }}>
-      <CardActionArea href='/student/classDetail/stream'>
+      <CardActionArea href={`/student/classDetail/stream?classId=${classInfo.classroom_id}`}>
         <CardHeader sx={{backgroundImage: "url('https://www.gstatic.com/classroom/themes/img_sailing.jpg')", backgroundSize: 'cover'}}
           action={
             <div>
@@ -132,16 +132,16 @@ export default function StudentClassCard() {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap'
-          }}>2310-CLC-AWP-20KTPM2<br/> 
-            <Typography sx={{color: 'white', fontSize: '14px', ":hover":{textDecoration: 'underline'}}}>Advanced Web Programming</Typography>
+          }}>{classInfo.name}<br/> 
+            <Typography sx={{color: 'white', fontSize: '14px', ":hover":{textDecoration: 'underline'}}}>{classInfo.subject}</Typography>
           </Typography>}
-          subheader={<Typography sx={{color: 'white', fontSize: '14px', ":hover":{textDecoration: 'underline'}}}>Khánh Nguyễn Huy</Typography>}
+          subheader={<Typography sx={{color: 'white', fontSize: '14px', ":hover":{textDecoration: 'underline'}}}>{classInfo.teacher_name}</Typography>}
         />
       </CardActionArea>
       
       <CardContent sx={{display: 'flex', justifyContent: 'flex-end', height: '150px'}}>
           <Avatar sx={{ bgcolor: '#0074cc', mt: '-50px', height: '70px', width: '70px', fontSize: '30px' }} aria-label="recipe">
-            K
+            {classInfo.teacher_name ? classInfo.teacher_name.charAt(0) : ''}
           </Avatar>
       </CardContent>
       <Divider />
