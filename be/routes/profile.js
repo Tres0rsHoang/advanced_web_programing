@@ -22,6 +22,7 @@ profileRouter.get('/', authenToken, async function (req, res, next) {
         var result = {};
         var information = await databaseQuery(databaseRequest, sql);
         result['information'] = information[0];
+
         var sql = `SELECT classroom_id, name, subject 
     FROM classroom_teacher t JOIN classroom c ON t.classroom_id = c.id
     WHERE t.teacher_id = '${userId}' AND c.is_active = 1`;
@@ -34,6 +35,20 @@ profileRouter.get('/', authenToken, async function (req, res, next) {
     WHERE student_id = '${userId}' AND c.is_active = 1`;
 
         var isStudentClasses = await databaseQuery(databaseRequest, sql);
+
+        for (const element of isStudentClasses) {
+            var classId = element['classroom_id'];
+
+            var sql = `SELECT CONCAT(u.first_name,' ', u.last_name) as full_name
+            FROM classroom_teacher ct
+            JOIN [user] u ON u.id = ct.teacher_id
+            WHERE ct.classroom_id = '${classId}'`;
+
+            var sqlResult = await databaseQuery(databaseRequest, sql);
+
+            element['teacher_name'] = sqlResult[0]['full_name'];
+        }
+
         result['is_student_classes'] = isStudentClasses;
 
         var sql = `SELECT n.content, n.create_time
