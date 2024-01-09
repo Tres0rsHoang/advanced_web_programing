@@ -1,12 +1,14 @@
 import bcrypt from 'bcrypt';
 import express from 'express';
 import jwt from 'jsonwebtoken';
+import { v4 as uuidv4 } from "uuid";
 import authenToken from "../helper/authenticate_token.js";
 import databaseConnection from '../helper/database_connection.js';
 import databaseQuery from '../helper/database_query.js';
 import { getStudentScore, isStudent } from '../ultis/student_utils.js';
 import { mapStudentByInClassId } from '../ultis/teacher_utils.js';
-import { getCurrentUserId, isClassActive } from '../ultis/user_utils.js';
+import { getCurrentUserId, isClassActive, isMemberInClass } from '../ultis/user_utils.js';
+import { sendNotification, sendToAllMemberInClass } from './notifications.js';
 
 const profileRouter = express.Router();
 const databaseRequest = await databaseConnection();
@@ -32,6 +34,15 @@ profileRouter.get('/', authenToken, async function(req, res, next){
 
     var isStudentClasses = await databaseQuery(databaseRequest, sql);
     result['is_student_classes'] = isStudentClasses;
+
+    var sql = `SELECT n.content, n.create_time
+    FROM notification n 
+    JOIN [user] u ON u.id = n.user_id
+    WHERE u.id = '${userId}' ORDER BY create_time DESC`;
+    
+    var notificationList = await databaseQuery(databaseRequest, sql);
+
+    result['notification_list'] = notificationList;
 
     res.send(result);
 });
@@ -111,6 +122,75 @@ profileRouter.get('/get-grade', authenToken, isClassActive, isStudent, async fun
     });
 
     res.send(result);
+});
+
+profileRouter.post('/comment', authenToken, async function(req, res) {
+    let reqData = req.body;
+
+    if (typeof(req.body) == "string") {
+        reqData = JSON.parse(req.body);
+    }
+    const id = uuidv4();
+
+    const gradeId = reqData['grade_id'];
+    const content = reqData['content'];
+    const userId = await getCurrentUserId(req, res);
+
+    var sql = `SELECT g.classroom_id, c.name
+    FROM classroom_grade g
+    JOIN classroom c ON c.id = g.classroom_id
+    WHERE g.id = '${gradeId}'`;
+
+    var classId = await databaseQuery(databaseRequest, sql);
+    if (classId.length == 0) {
+        res.send({messages: "ERROR: invalid grade_id"});
+        return;
+    }
+    const className = classId[0]['name']
+    classId = classId[0]['classroom_id'];
+
+    var sql = `SELECT is_active FROM classroom WHERE id = '${classId}'`;
+    var isActive = await databaseQuery(databaseRequest, sql);
+    if (isActive[0]['is_active'] == false) {
+        res.send({messages: "ERROR: This class is no longger active"});
+        return;
+    }
+
+    var isMember = await isMemberInClass(classId, userId);
+
+    if (!isMember) {
+        res.send({messages: "ERROR: You are not member in this class"});
+        return
+    }
+
+    var sql = `INSERT INTO comment VALUES ('${id}', '${content}', '${gradeId}', '${userId}', SYSDATETIME())`;
+    await databaseQuery(databaseRequest, sql);
+
+    if (isMember['type'] == 'teacher') {
+        sendToAllMemberInClass(classId, userId, `${isMember['name']} in class ${className} have been comment on grade review`);
+    }
+    else if (isMember['type'] == 'student') {
+        var notiId = uuidv4();
+
+        var sql = `SELECT teacher_id 
+        FROM classroom_teacher 
+        WHERE classroom_id = '${classId}'`;
+
+        const teacherList = await databaseQuery(databaseRequest, sql);
+
+        var sql = `SELECT CONCAT(u.first_name,' ', u.last_name) as full_name
+        FROM [user] u
+        WHERE id = '${userId}'`;
+
+        var studentName = await databaseQuery(databaseRequest, sql);
+        studentName = studentName[0]['full_name'];
+
+        for (const element of teacherList) {
+            sendNotification(notiId, classId, element['teacher_id'], `${studentName} have been comment on grade review`);
+        }
+    }
+
+    res.send({messages: "Add new comment successffuly"});
 });
 
 export default profileRouter;

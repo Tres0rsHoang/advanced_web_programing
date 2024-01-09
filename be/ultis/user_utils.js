@@ -42,3 +42,34 @@ export async function isClassActive(req, res, next) {
     }
     res.send({messages: "ERROR: This class is no longger active"});
 }
+
+export async function isMemberInClass(classId, userId) {
+    var sql = `SELECT CONCAT(u.first_name,' ', u.last_name) as full_name
+    FROM classroom_student cs
+    JOIN [user] u ON u.id = cs.student_id
+    WHERE student_id = '${userId}' AND classroom_id = '${classId}' AND is_removed = 0`;
+
+    var sqlResult = await databaseQuery(databaseRequest, sql);
+    if (sqlResult.length != 0) {
+        return {
+            type: "student",
+            name: sqlResult[0]['full_name']
+        }
+    }
+
+    var sql = `SELECT CONCAT(u.first_name,' ', u.last_name) as full_name
+    FROM classroom_teacher td
+    JOIN [user] u ON u.id = td.teacher_id
+    WHERE teacher_id = '${userId}' AND classroom_id = '${classId}' AND is_deleted = 0`;
+
+    var sqlResult = await databaseQuery(databaseRequest, sql);
+
+    if (sqlResult.length != 0) {
+        return {
+            type: "teacher",
+            name: sqlResult[0]['full_name']
+        };
+    }
+
+    return false;
+}

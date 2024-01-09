@@ -11,6 +11,7 @@ import { makeClassCode } from "../ultis/string_utils.js";
 import { getStudentScore } from "../ultis/student_utils.js";
 import { isTeacher, mapStudentByInClassId, updateStudent } from "../ultis/teacher_utils.js";
 import { getCurrentUserId, isClassActive } from "../ultis/user_utils.js";
+import { sendToAllMemberInClass } from "./notifications.js";
 
 const classroomRouter = express.Router();
 const databaseRequest = await databaseConnection();
@@ -64,7 +65,7 @@ classroomRouter.get('/join', authenToken, async function (req, res, next) {
         const classId = result[0]['id'];
 
         req.body["class_id"] = classId;
-        await isClassActive(req, res, () => {});
+        await isClassActive(req, res, () => { });
 
         try {
             var sql = `SELECT classroom_student.student_id
@@ -193,7 +194,7 @@ classroomRouter.post('/sendInviteMail', authenToken, async function (req, res, n
 classroomRouter.get('/detail', authenToken, async function (req, res, next) {
     const classId = req.query.classId;
     req.body["class_id"] = classId;
-    await isClassActive(req, res, () => {});
+    await isClassActive(req, res, () => { });
     try {
         var sql = `SELECT *
         FROM classroom
@@ -224,9 +225,8 @@ classroomRouter.get('/detail', authenToken, async function (req, res, next) {
         sqlResult = await databaseQuery(databaseRequest, sql);
 
         result["teacher_list"] = sqlResult;
-
+        
         res.status(200).json(result);
-
     }
     catch (err) {
         console.log(err);
@@ -484,13 +484,81 @@ classroomRouter.patch('/finalized-grade', authenToken, isClassActive, isTeacher,
 
     const success = await databaseQuery(databaseRequest, sql);
 
-    console.log(success);
-
-    if (success != 0) {
-        res.send({ messages: "Update finalized success" });
+    if (success == 0) {
+        res.send({ messages: "ERROR: grade already finalized" });
         return;
     }
-    res.send({ messages: "ERROR: grade already finalized" });
+
+    var userId = await getCurrentUserId(req, res);
+    var sql = `SELECT name FROM classroom WHERE id = '${classId}' AND is_active = 1`;
+    var className = await databaseQuery(databaseRequest, sql);
+    var className = className[0]['name'];
+
+    var sql = `SELECT name FROM classroom_grade WHERE classroom_id = '${classId}' AND id = '${gradeId}'`;
+    var gradeName = await databaseQuery(databaseRequest, sql);
+    var gradeName = gradeName[0]['name'];
+
+    sendToAllMemberInClass(classId, userId, `Your grade ${gradeName} in class ${className} is finalized now.`);
+
+    res.send({ messages: "Update finalized success" });
+});
+
+classroomRouter.get('/comment-list', authenToken, isClassActive, async function (req, res) {
+    let reqData = req.body;
+
+    if (typeof (req.body) == "string") {
+        reqData = JSON.parse(req.body);
+    }
+
+    const classId = reqData['class_id'];
+
+    var sql = `SELECT id, name
+    FROM classroom_grade 
+    WHERE classroom_id = '${classId}'`;
+
+    var gradeIds = await databaseQuery(databaseRequest, sql);
+
+    for (const element of gradeIds) {
+        const gradeId = element['id'];
+
+        var sql = `SELECT c.id, content, grade_id, user_id, create_time
+        FROM comment c
+        JOIN classroom_grade cg ON cg.id = c.grade_id
+        WHERE cg.classroom_id = '${classId}' AND cg.id = '${gradeId}'`;
+
+        var commentList = await databaseQuery(databaseRequest, sql);
+
+        for (const comment of commentList) {
+            const commentUser = comment['user_id'];
+
+            var sql = `SELECT CONCAT(u.first_name,' ', u.last_name) as full_name 
+            FROM [user] u
+            WHERE u.id = '${commentUser}'`;
+
+            const commentUserName = await databaseQuery(databaseRequest, sql);
+
+            comment['comment_user'] = {
+                id: commentUser,
+                name: commentUserName[0]['full_name'],
+            }
+
+            delete comment['user_id'];
+
+            const gradeId = comment['grade_id'];
+
+            var sql = `SELECT name FROM classroom_grade WHERE id = '${gradeId}'`;
+            const gradeName = await databaseQuery(databaseRequest, sql);
+
+            comment['grade'] = {
+                id: gradeId,
+                name: gradeName[0]['name'],
+            }
+
+            delete comment['grade_id'];
+        }
+    }
+
+    res.send(commentList);
 });
 
 export default classroomRouter;

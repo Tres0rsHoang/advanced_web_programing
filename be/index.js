@@ -6,6 +6,7 @@ import adminRouter from "./routes/admin.js";
 import authenRouter from './routes/authen.js';
 import classroomRouter from "./routes/classroom.js";
 import gradeRouter from "./routes/grade.js";
+import notificationRouter from "./routes/notifications.js";
 import profileRouter from "./routes/profile.js";
 
 dotenv.config();
@@ -40,6 +41,8 @@ app.use(function (req, res, next) {
 
 app.use(cors());
 
+app.use('/notification', notificationRouter);
+
 app.use('/auth', authenRouter);
 
 app.use('/profile', profileRouter);
@@ -55,11 +58,6 @@ app.get('/', function (req, res, next) {
 });
 
 app.set('port', process.env.PORT || 8080);
-var server = app.listen(app.get('port'), function() {
-  console.log('Express server listening on port ' + server.address().port);
-});
-
-app.set('port', process.env.PORT || 9000);
 var server = app.listen(app.get('port'), function() {
   console.log('Express server listening on port ' + server.address().port);
 });
