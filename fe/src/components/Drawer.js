@@ -102,7 +102,6 @@ export default function MiniDrawer({children}) {
   }
   
   useEffect(() => {
-    console.log(user.auth);
     if(user && user.auth === false){
         navigate('/login');
     }

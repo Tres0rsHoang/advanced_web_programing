@@ -128,7 +128,7 @@ export default function Profile() {
           >
             <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
             <p ref={successRef} className={successMessage ? "successMsg" : "offscreen"} aria-live="assertive">{successMessage}</p>  
-            <Avatar src={user.imageUrl} sx={{ width: 100, height: 100, background: '#02579A'}}>
+            <Avatar src={user.imageUrl} sx={{ width: 100, height: 100, background: '#02579A', fontSize: '45px'}}>
                   {firstName.charAt(0)}
             </Avatar>
             <Typography gutterBottom component="div" sx={{fontSize: '25px', margin: '20px 0'}}>

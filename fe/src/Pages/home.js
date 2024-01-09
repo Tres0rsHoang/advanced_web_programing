@@ -23,7 +23,7 @@ export default function Home() {
       <CssBaseline />
       <MiniDrawer>
       <Box sx={{margin: '20px', ml: '30px'}}>
-        <Grid container spacing={3} >
+        {/* <Grid container spacing={3} >
             <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
                 <TeacherClassCard />
             </Grid>
@@ -48,7 +48,7 @@ export default function Home() {
             <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
                 <StudentClassCard />
             </Grid>
-        </Grid>
+        </Grid> */}
       </Box>
       </MiniDrawer>
     </React.Fragment>
