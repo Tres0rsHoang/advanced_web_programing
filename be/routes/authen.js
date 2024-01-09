@@ -25,7 +25,7 @@ authenRouter.post('/login', async function(req, res, next) {
     const id = await authenPassword(email, password);
 
     if (id == 'unverify_email') {
-        res.status(200).json({ "message": "Please verify your email" });
+        res.status(202).json({ "message": "Please verify your email" });
         return;
     }
     if (id == 'locked') {
@@ -41,7 +41,7 @@ authenRouter.post('/login', async function(req, res, next) {
         res.json({ 'access_token': accessToken });
     }
     else {
-        res.status(200).json({ "message": "Password or email is not correct" });
+        res.status(202).json({ "message": "Password or email is not correct" });
     }
 });
 
@@ -122,7 +122,7 @@ authenRouter.post('/register', async function(req, res, next) {
     const results = await databaseQuery(databaseRequest, sql);
 
     if (results.length > 0) {
-        res.status(200).json({ "message": "Email already exist" });
+        res.status(202).json({ "message": "Email already exist" });
     }
     else {
         const hashPassword = await bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS)).catch(err => console.error(err.message));
