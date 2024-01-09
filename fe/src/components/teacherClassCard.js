@@ -9,7 +9,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { CardActionArea, ClickAwayListener, Divider, Grow, MenuList, Paper, Popper, MenuItem } from '@mui/material';
 import { FolderOpenOutlined, Moving } from '@mui/icons-material';
 
-export default function TeacherClassCard() {
+export default function TeacherClassCard({classInfo}) {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
 
@@ -57,7 +57,7 @@ export default function TeacherClassCard() {
             boxShadow: 4
         }
     }}>
-      <CardActionArea href='/teacher/classDetail/stream'>
+      <CardActionArea href={`/teacher/classDetail/stream?classId=${classInfo.classroom_id}`}>
         <CardHeader sx={{backgroundImage: "url('https://www.gstatic.com/classroom/themes/LanguageArts.jpg')", backgroundSize: 'cover', height: '105px'}}
           action={
             <div>
@@ -132,8 +132,8 @@ export default function TeacherClassCard() {
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
             mt: '-20px'
-          }}>2310-CLC-AWP-20KTPM2<br/> 
-            <Typography sx={{color: 'white', fontSize: '14px', ":hover":{textDecoration: 'underline'}}}>Advanced Web Programming</Typography>
+          }}>{classInfo.name}<br/> 
+            <Typography sx={{color: 'white', fontSize: '14px', ":hover":{textDecoration: 'underline'}}}>{classInfo.subject}</Typography>
           </Typography>}
         />
       </CardActionArea>

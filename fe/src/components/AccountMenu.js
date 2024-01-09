@@ -96,7 +96,8 @@ export default function AccountMenu() {
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         <MenuItem sx={{ margin: '10px'}} component={Link} to="/profile">
-          <Avatar src={user.imageUrl}/> {user.firstName} {user.lastName}
+          <Avatar src={user.imageUrl} sx={{ width: 40, height: 40, background: '#02579A' }}>{user.firstName.charAt(0)}</Avatar> 
+          {user.firstName} {user.lastName}
         </MenuItem>
         <Divider />
         <MenuItem sx={{ margin: '10px'}} onClick={handleClose}>
