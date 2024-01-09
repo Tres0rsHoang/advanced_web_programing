@@ -1,6 +1,6 @@
 import axios from "./axios";
 
-const loginApi = (email, password) => {
+const loginApi = async (email, password) => {
     return axios.post("/auth/login", {email, password}, {
       headers: {
         'Content-Type': 'application/json',
@@ -25,4 +25,5 @@ const signUpApi = (email, password, phoneNumber, firstName, lastName) => {
   });
 }
 
-export { loginApi, logoutApi, signUpApi  };
+export { loginApi, logoutApi, signUpApi };
+
