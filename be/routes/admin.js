@@ -3,7 +3,7 @@ import authenToken from "../helper/authenticate_token.js";
 import databaseConnection from '../helper/database_connection.js';
 import databaseQuery from '../helper/database_query.js';
 import { isAdmin } from "../ultis/authen_utils.js";
-import { mapStudentByInClassId } from "../ultis/teacher_utils.js";
+import { mapStudentByInClassId, unMapStudent } from "../ultis/teacher_utils.js";
 import { getCurrentUserId } from "../ultis/user_utils.js";
 
 const adminRouter = express.Router();
@@ -150,6 +150,29 @@ adminRouter.patch('/map-student', authenToken, isAdmin, async function (req, res
     }
     catch (err) {
         console.log("ERROR[/admin/map-student]:", err);
+    }
+});
+
+adminRouter.patch('/un-mapping', authenToken, isAdmin, async function (req, res) {
+    try {
+        let reqData = req.body;
+
+        if (typeof (req.body) == "string") {
+            reqData = JSON.parse(req.body);
+        }
+
+        const studentId = reqData['student_id'];
+        const classId = reqData['class_id'];
+
+        const messages = await unMapStudent(classId, studentId);
+        
+        var statusCode = 200;
+        if (messages.includes("ERROR")) statusCode = 202;
+
+        res.status(statusCode).send({ messages: messages });
+    }
+    catch (err) {
+        console.log("ERROR[/admin/un-mapping]:", err);
     }
 });
 

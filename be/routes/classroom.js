@@ -10,7 +10,7 @@ import sendMail from "../helper/send_email.js";
 import UploadFile from "../helper/upload_file.js";
 import { makeClassCode } from "../ultis/string_utils.js";
 import { getStudentScore } from "../ultis/student_utils.js";
-import { isTeacher, mapStudentByInClassId, updateStudent } from "../ultis/teacher_utils.js";
+import { isTeacher, mapStudentByInClassId, unMapStudent, updateStudent } from "../ultis/teacher_utils.js";
 import { getCurrentUserId, isClassActive, isMemberInClass } from "../ultis/user_utils.js";
 import { sendToAllMemberInClass } from "./notifications.js";
 
@@ -477,7 +477,7 @@ classroomRouter.patch('/map-student', authenToken, isClassActive, isTeacher, asy
     FROM classroom_student 
     WHERE student_id = '${currentStudentId}'`;
 
-        var inClassId = databaseQuery(databaseRequest, sql);
+        var inClassId = await databaseQuery(databaseRequest, sql);
 
         if (inClassId.length == 0) {
             res.status(202).send({ messages: "Invalid current_student_id" });
@@ -488,7 +488,29 @@ classroomRouter.patch('/map-student', authenToken, isClassActive, isTeacher, asy
         const messages = await mapStudentByInClassId(classId, studentId, inClassId);
         var statusCode = 200;
         if (messages.includes("ERROR")) var statusCode = 202;
-        res.send({ messages: messages });
+        res.status(statusCode).send({ messages: messages });
+    }
+    catch (err) {
+        console.log("ERROR[/classroom/map-student]:", err);
+    }
+});
+
+classroomRouter.patch('/un-mapping', authenToken, isClassActive, isTeacher, async function (req, res) {
+    try {
+        let reqData = req.body;
+
+        if (typeof (req.body) == "string") {
+            reqData = JSON.parse(req.body);
+        }
+
+        const classId = reqData['class_id'];
+        const studentId = reqData['student_id'];
+        
+        const messages = await unMapStudent(classId, studentId);
+        
+        var statusCode = 200;
+        if (messages.includes("ERROR")) var statusCode = 202;
+        res.status(statusCode).send({ messages: messages });
     }
     catch (err) {
         console.log("ERROR[/classroom/map-student]:", err);
