@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import authenToken from "../helper/authenticate_token.js";
 import databaseConnection from '../helper/database_connection.js';
 import databaseQuery from '../helper/database_query.js';
+import sendMail from "../helper/send_email.js";
 import UploadFile from "../helper/upload_file.js";
 import { makeClassCode } from "../ultis/string_utils.js";
 import { getStudentScore } from "../ultis/student_utils.js";
@@ -178,6 +179,15 @@ classroomRouter.post('/sendInviteMail', authenToken, async function (req, res, n
     sqlResult = await databaseQuery(databaseRequest, sql);
 
     if (sqlResult.length != 0) {
+        res.status(202).json({ 'messages': "This email already in this class" });
+        return;
+    }
+
+    var sql = `SELECT 1 FROM [user] u WHERE u.email = '${email}'`;
+
+    sqlResult = await databaseQuery(databaseRequest, sql);
+
+    if (sqlResult.length == 0) {
         res.status(202).json({ 'messages': "This email already in this class" });
         return;
     }

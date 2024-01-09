@@ -16,7 +16,7 @@ const databaseRequest = await databaseConnection();
 profileRouter.get('/', authenToken, async function(req, res, next){
     const userId = await getCurrentUserId(req, res);
     
-    var sql = `SELECT email, phone_number, first_name, last_name
+    var sql = `SELECT email, phone_number, first_name, last_name, is_admin
     FROM [user] WHERE id = '${userId}'`;
     var result = {};
     var information = await databaseQuery(databaseRequest, sql);
