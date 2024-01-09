@@ -6,7 +6,6 @@ const instance =  axios.create({
 
 axios.interceptors.response.use(function (response) {
     return response.data ? response.data : {statusCode: response.status };
-
 }, function (error) {
     console.log(error.response)
     let res = {};
@@ -20,10 +19,8 @@ axios.interceptors.response.use(function (response) {
     } else {
         console.log("Error: ", error.message);
     }
-
+    
     return res;
-
-    //return Promise.reject(error);
 });
 
 export default instance;

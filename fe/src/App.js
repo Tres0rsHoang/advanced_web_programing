@@ -4,6 +4,9 @@ import { Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
+import AdminAccount from './Pages/admin/adminAcount';
+import AdminClasses from './Pages/admin/adminClasses';
+import AdminMapping from './Pages/admin/adminMapping';
 import ConfirmResetPassword from './Pages/confirmResetPassword';
 import Home from './Pages/home';
 import Login from './Pages/login';
@@ -53,6 +56,8 @@ function App() {
           <Route path='/teacher/classDetail/gradeReview' element={<TeacherGradeReview />} />
 
           <Route path='/admin/account' element={<AdminAccount />}></Route>
+          <Route path='/admin/classes' element={<AdminClasses />}></Route>
+          <Route path='/admin/mapping' element={<AdminMapping />}></Route>
         </Routes>
       </div>
       <ToastContainer

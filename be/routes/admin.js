@@ -9,171 +9,201 @@ import { getCurrentUserId } from "../ultis/user_utils.js";
 const adminRouter = express.Router();
 const databaseRequest = await databaseConnection();
 
-adminRouter.patch('/toggle-admin', authenToken, isAdmin, async function(req, res) {
-    let reqData = req.body;
-
-    if (typeof(req.body) == "string") {
-        reqData = JSON.parse(req.body);
-    }
-    
-    const userId = reqData['user_id'];
-
-    const currentUserId = await getCurrentUserId(req, res);
-
-    if (userId == currentUserId) {
-        res.status(202).send({messages: "You can't toggle yourself"});
-        return;
-    }
-
-    var sql = `SELECT is_admin FROM [user] WHERE id = '${userId}'`;
-
-    var isAdmin = 0;
-
+adminRouter.patch('/toggle-admin', authenToken, isAdmin, async function (req, res) {
     try {
-        isAdmin = await databaseQuery(databaseRequest, sql);
-        isAdmin = isAdmin[0]['is_admin'];
-    }
-    catch (err) {
-        res.status(202).send({messages: "Invalid user_id"});
-        return;
-    }
+        let reqData = req.body;
 
-    var set = "is_admin = 1";
+        if (typeof (req.body) == "string") {
+            reqData = JSON.parse(req.body);
+        }
 
-    if (isAdmin == 1) set = "is_admin = 0";
-    
+        const userId = reqData['user_id'];
 
-    var sql = `UPDATE [user] SET ${set} WHERE id = '${userId}'`;
-    var sqlResult = await databaseQuery(databaseRequest, sql);
+        const currentUserId = await getCurrentUserId(req, res);
 
-
-    if (sqlResult != 0) {
-        if (isAdmin != 0) {
-            res.status(200).send({messages: `${userId} is no longer admin`});
+        if (userId == currentUserId) {
+            res.status(202).send({ messages: "You can't toggle yourself" });
             return;
         }
-        res.status(200).send({messages: `${userId} is admin now`});
-        return;
-    }
 
-    res.status(202).send({messages: "ERROR: nothing to change"});
+        var sql = `SELECT is_admin FROM [user] WHERE id = '${userId}'`;
+
+        var isAdmin = 0;
+
+        try {
+            isAdmin = await databaseQuery(databaseRequest, sql);
+            isAdmin = isAdmin[0]['is_admin'];
+        }
+        catch (err) {
+            res.status(202).send({ messages: "Invalid user_id" });
+            return;
+        }
+
+        var set = "is_admin = 1";
+
+        if (isAdmin == 1) set = "is_admin = 0";
+
+
+        var sql = `UPDATE [user] SET ${set} WHERE id = '${userId}'`;
+        var sqlResult = await databaseQuery(databaseRequest, sql);
+
+
+        if (sqlResult != 0) {
+            if (isAdmin != 0) {
+                res.status(200).send({ messages: `${userId} is no longer admin` });
+                return;
+            }
+            res.status(200).send({ messages: `${userId} is admin now` });
+            return;
+        }
+
+        res.status(202).send({ messages: "ERROR: nothing to change" });
+    }
+    catch (err) {
+        console.log("ERROR[/admin/toggle-admin]:", err);
+    }
 });
 
 adminRouter.get('/user-list', authenToken, isAdmin, async function (req, res) {
-    var sql = `SELECT id, first_name, last_name, email, phone_number, is_verify, is_locked FROM [user] WHERE email IS NOT NULL`;
+    try {
+        var sql = `SELECT id, first_name, last_name, email, phone_number, is_verify, is_locked FROM [user] WHERE email IS NOT NULL`;
 
-    var sqlResult = await databaseQuery(databaseRequest, sql);
+        var sqlResult = await databaseQuery(databaseRequest, sql);
 
-    res.send(sqlResult);
+        res.send(sqlResult);
+    }
+    catch (err) {
+        console.log("ERROR[/admin/user-list]:", err);
+    }
 });
 
 adminRouter.patch('/toggle-lock-account', authenToken, isAdmin, async function (req, res) {
-    let reqData = req.body;
-
-    if (typeof(req.body) == "string") {
-        reqData = JSON.parse(req.body);
-    }
-    
-    const userId = reqData['user_id'];
-
-    const currentUserId = await getCurrentUserId(req, res);
-
-    if (userId == currentUserId) {
-        res.status(202).send({messages: "You can't toggle yourself"});
-        return;
-    }
-
-    var sql = `SELECT is_locked FROM [user] WHERE id = '${userId}'`;
-
-    var isLocked = 0;
-
     try {
-        isLocked = await databaseQuery(databaseRequest, sql);
-        isLocked = isLocked[0]['is_locked'];
-    }
-    catch (err) {
-        res.status(202).send({messages: "Invalid user_id"});
-        return;
-    }
+        let reqData = req.body;
 
-    var set = "is_locked = 1";
+        if (typeof (req.body) == "string") {
+            reqData = JSON.parse(req.body);
+        }
 
-    if (isLocked == 1) set = "is_locked = 0";
-    
-    var sql = `UPDATE [user] SET ${set} WHERE id = '${userId}'`;
-    var sqlResult = await databaseQuery(databaseRequest, sql);
+        const userId = reqData['user_id'];
 
-    if (sqlResult != 0) {
-        if (isLocked != 0) {
-            res.send({messages: `${userId} is unlocked`});
+        const currentUserId = await getCurrentUserId(req, res);
+
+        if (userId == currentUserId) {
+            res.status(202).send({ messages: "You can't toggle yourself" });
             return;
         }
-        res.send({messages: `${userId} is locked`});
-        return;
-    }
 
-    res.status(202).send({messages: "ERROR: nothing to change"});
+        var sql = `SELECT is_locked FROM [user] WHERE id = '${userId}'`;
+
+        var isLocked = 0;
+
+        try {
+            isLocked = await databaseQuery(databaseRequest, sql);
+            isLocked = isLocked[0]['is_locked'];
+        }
+        catch (err) {
+            res.status(202).send({ messages: "Invalid user_id" });
+            return;
+        }
+
+        var set = "is_locked = 1";
+
+        if (isLocked == 1) set = "is_locked = 0";
+
+        var sql = `UPDATE [user] SET ${set} WHERE id = '${userId}'`;
+        var sqlResult = await databaseQuery(databaseRequest, sql);
+
+        if (sqlResult != 0) {
+            if (isLocked != 0) {
+                res.send({ messages: `${userId} is unlocked` });
+                return;
+            }
+            res.send({ messages: `${userId} is locked` });
+            return;
+        }
+
+        res.status(202).send({ messages: "ERROR: nothing to change" });
+    }
+    catch (err) {
+        console.log("ERROR[/admin/toggle-lock-account]:", err);
+    }
 });
 
 adminRouter.patch('/map-student', authenToken, isAdmin, async function (req, res) {
-    let reqData = req.body;
+    try {
+        let reqData = req.body;
 
-    if (typeof(req.body) == "string") {
-        reqData = JSON.parse(req.body);
+        if (typeof (req.body) == "string") {
+            reqData = JSON.parse(req.body);
+        }
+
+        const studentId = reqData['student_id'];
+        const classId = reqData['class_id'];
+        const inClassId = reqData['in_class_id'];
+
+        const messages = await mapStudentByInClassId(classId, studentId, inClassId);
+        var statusCode = 200;
+        if (messages.includes("ERROR")) statusCode = 202;
+
+        res.status(statusCode).send({ messages: messages });
     }
-
-    const studentId = reqData['student_id'];
-    const classId = reqData['class_id'];
-    const inClassId = reqData['in_class_id'];
-
-    const messages = await mapStudentByInClassId(classId, studentId, inClassId);
-    var statusCode = 200;
-    if (messages.includes("ERROR"))  statusCode = 202;
-
-    res.status(statusCode).send({messages: messages});
+    catch (err) {
+        console.log("ERROR[/admin/map-student]:", err);
+    }
 });
 
 adminRouter.get('/classes', authenToken, isAdmin, async function (req, res) {
-    var sql = `SELECT id, name, subject, is_active FROM classroom`;
+    try {
+        var sql = `SELECT id, name, subject, is_active FROM classroom`;
 
-    var sqlResult = await databaseQuery(databaseRequest, sql);
+        var sqlResult = await databaseQuery(databaseRequest, sql);
 
-    res.send(sqlResult);
+        res.send(sqlResult);
+    }
+    catch (err) {
+        console.log("ERROR[/admin/classes]:", err);
+    }
 });
 
 adminRouter.patch('/toggle-class', authenToken, isAdmin, async function (req, res) {
-    let reqData = req.body;
+    try {
+        let reqData = req.body;
 
-    if (typeof(req.body) == "string") {
-        reqData = JSON.parse(req.body);
-    }
-    
-    const classId = reqData['class_id'];
+        if (typeof (req.body) == "string") {
+            reqData = JSON.parse(req.body);
+        }
 
-    var sql = `SELECT is_active FROM classroom WHERE id = '${classId}'`;
-    var isActive = await databaseQuery(databaseRequest, sql);
-    if (isActive.length == 0) {
-        res.status(202).send({messages: "ERROR: invalid class_id"});
-        return;
-    }
-    isActive = isActive[0]['is_active'];
-    isActive = !isActive;
+        const classId = reqData['class_id'];
 
-    var value = (isActive == false) ? 0 : 1;
+        var sql = `SELECT is_active FROM classroom WHERE id = '${classId}'`;
+        var isActive = await databaseQuery(databaseRequest, sql);
+        if (isActive.length == 0) {
+            res.status(202).send({ messages: "ERROR: invalid class_id" });
+            return;
+        }
+        isActive = isActive[0]['is_active'];
+        isActive = !isActive;
 
-    var sql = `UPDATE classroom 
+        var value = (isActive == false) ? 0 : 1;
+
+        var sql = `UPDATE classroom 
     SET is_active = ${value}
     WHERE id = '${classId}'`;
 
-    var result = await databaseQuery(databaseRequest, sql);
+        var result = await databaseQuery(databaseRequest, sql);
 
-    if (result != 0) {
-        if (!isActive) res.send({messages: `Class ${classId} is no longger active`});
-        else res.send({messages: `Class ${classId} is active now`});
-        return;
+        if (result != 0) {
+            if (!isActive) res.send({ messages: `Class ${classId} is no longger active` });
+            else res.send({ messages: `Class ${classId} is active now` });
+            return;
+        }
+
+        res.status(202).send({ messages: "ERROR: Notthing to change" });
     }
-
-    res.status(202).send({messages: "ERROR: Notthing to change"});
+    catch (err) {
+        console.log("ERROR[/admin/toggle-class]:", err);
+    }
 });
 
 export default adminRouter;
