@@ -15,7 +15,7 @@ export async function getCurrentUserId(req, res) {
         return userId[0]["user_id"];
     }
     else {
-        res.status(200).json({ "messages": "ERROR: Invalid access token" });
+        res.status(202).json({ "messages": "ERROR: Invalid access token" });
     }
 }
 
@@ -40,5 +40,36 @@ export async function isClassActive(req, res, next) {
         next();
         return;
     }
-    res.send({messages: "ERROR: This class is no longger active"});
+    res.status(202).send({messages: "ERROR: This class is no longger active"});
+}
+
+export async function isMemberInClass(classId, userId) {
+    var sql = `SELECT CONCAT(u.first_name,' ', u.last_name) as full_name
+    FROM classroom_student cs
+    JOIN [user] u ON u.id = cs.student_id
+    WHERE student_id = '${userId}' AND classroom_id = '${classId}' AND is_removed = 0`;
+
+    var sqlResult = await databaseQuery(databaseRequest, sql);
+    if (sqlResult.length != 0) {
+        return {
+            type: "student",
+            name: sqlResult[0]['full_name']
+        }
+    }
+
+    var sql = `SELECT CONCAT(u.first_name,' ', u.last_name) as full_name
+    FROM classroom_teacher td
+    JOIN [user] u ON u.id = td.teacher_id
+    WHERE teacher_id = '${userId}' AND classroom_id = '${classId}' AND is_deleted = 0`;
+
+    var sqlResult = await databaseQuery(databaseRequest, sql);
+
+    if (sqlResult.length != 0) {
+        return {
+            type: "teacher",
+            name: sqlResult[0]['full_name']
+        };
+    }
+
+    return false;
 }

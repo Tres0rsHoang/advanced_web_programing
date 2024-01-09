@@ -1,12 +1,8 @@
-import axios from "./axios";
+import { default as axios, default as request } from "./request";
 
-const getCurrentUserApi = () => {
-    return axios.get("/profile", {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem("token")
-        }
-      }); 
+const getCurrentUserApi = async () => {
+  const response = await request('GET', '/profile');
+  return response;
 }
 
 const updateUserProfileApi = (email, phoneNumber, firstName, lastName) => {
@@ -43,4 +39,4 @@ const getGradeApi = (classId) => {
     }); 
 }
 
-export { getCurrentUserApi, updateUserProfileApi, profileMapStudentApi, getGradeApi };
+export { getCurrentUserApi, getGradeApi, profileMapStudentApi, updateUserProfileApi };

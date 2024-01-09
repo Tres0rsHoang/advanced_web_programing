@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
-import { Avatar, Box, Button, Card, CardContent, CardHeader, Divider, Grid, IconButton, Tab, Tabs, TextField, Typography, useMediaQuery } from '@mui/material';
-import MiniDrawer from '../../../components/Drawer';
-import { useTheme } from '@mui/material/styles';
 import { ClassOutlined, MoreVert, SendOutlined } from '@mui/icons-material';
+import { Avatar, Box, Button, Card, CardContent, CardHeader, Divider, Grid, IconButton, Tab, Tabs, TextField, Typography, useMediaQuery } from '@mui/material';
+import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import { blue, grey } from '@mui/material/colors';
+import { useTheme } from '@mui/material/styles';
+import { default as React, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { classDetailsApi } from '../../../api/classService';
+import MiniDrawer from '../../../components/Drawer';
 
 export default function StudentStream() {
     const theme = useTheme();

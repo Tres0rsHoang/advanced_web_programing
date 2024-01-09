@@ -34,6 +34,7 @@ export const handleLoginRedux = (email, password) => {
                             lastName: response2.data.information.last_name,
                             imageUrl: response2.data.information.image_url,
                             auth: true,
+                            isAdmin: response2.data.information.is_admin,
                             authGoogle: false
                         }
                     })

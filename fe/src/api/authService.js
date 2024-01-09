@@ -1,4 +1,4 @@
-import axios from "./axios";
+import { default as axios, default as request } from "./request";
 
 const loginApi = async (email, password) => {
     return axios.post("/auth/login", {email, password}, {
@@ -31,5 +31,13 @@ const signUpApi = (email, password, phoneNumber, firstName, lastName) => {
   });
 }
 
-export { loginApi, logoutApi, signUpApi };
+const confirmResetPassword = async (email, resetCode, newPassword) => {
+  return await request('PATCH', '/auth/confirm-reset-password', {
+    "email": email,
+    "reset_code": resetCode,
+    "new_password": newPassword
+  });
+}
+
+export { confirmResetPassword, loginApi, logoutApi, signUpApi };
 

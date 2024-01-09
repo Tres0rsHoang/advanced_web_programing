@@ -1,21 +1,11 @@
-import axios from "./axios";
+import request from "./request";
 
-const classroomNotificationsApi = (classId) => {
-    return axios.get("/notification/classroom", {class_id: classId}, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
-          }
-    });
+const classroomNotificationsApi = async (classId) => {
+  return await request('GET', "/notification/classroom", {class_id: classId});
 }
 
-const selfNotificationsApi = () => {
-  return axios.get("/notification", {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + localStorage.getItem('token')
-    }
-  });
+const selfNotificationsApi = async () => {
+  return await request('GET', "/notification");
 }
 
 export { classroomNotificationsApi, selfNotificationsApi };

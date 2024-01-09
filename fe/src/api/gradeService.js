@@ -1,39 +1,20 @@
-import axios from "./axios";
+import request from "./request";
 
-const gradeStructureApi = (classId, orderBy) => {
-    return axios.post("/classroom/grade/struture", {classId, orderBy}, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
-          }
-    });
+const gradeStructureApi = async (classId, orderBy) => {
+  return await request('POST', "/classroom/grade/struture", { classId, orderBy });
 }
 
-const removeGradeApi = (classId, gradeId) => {
-  return axios.delete("/classroom/grade/remove", {classId, gradeId}, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + localStorage.getItem('token')
-    }
-  });
+const removeGradeApi = async (classId, gradeId) => {
+  return await request('DELETE', "/classroom/grade/remove", { classId, gradeId });
 }
 
-const updateGradeApi = (classId, gradeId, name, gradeScale) => {
-  return axios.patch("/classroom/grade/update", {classId, gradeId, name, gradeScale}, {
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token')
-      }
-  });
+const updateGradeApi = async (classId, gradeId, name, gradeScale) => {
+  return await request('PATCH', "/classroom/grade/update", { classId, gradeId, name, gradeScale });
 }
 
-const createGradeApi = (classId, gradeScale, name) => {
-    return axios.post("/classroom/grade/create", {classId, gradeScale, name}, {
-      headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        }
-    });
-  }
+const createGradeApi = async (classId, gradeScale, name) => {
+  return await request('POST', "/classroom/grade/create", { classId, gradeScale, name });
+}
 
-export { gradeStructureApi, removeGradeApi, updateGradeApi, createGradeApi  };
+export { createGradeApi, gradeStructureApi, removeGradeApi, updateGradeApi };
+

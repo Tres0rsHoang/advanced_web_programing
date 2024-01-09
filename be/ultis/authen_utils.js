@@ -49,5 +49,5 @@ export async function isAdmin(req, res, next) {
         return;
     }
     
-    res.send({message: "ERROR: You are not user admin"});
+    res.status(202).send({messages: "ERROR: You are not user admin"});
 }

@@ -1,57 +1,28 @@
-import axios from "./axios";
+import request from "./request";
 
-const toggleAdminApi = (userId) => {
-    return axios.patch("/admin/toggle-admin", {userId}, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
-          }
-    });
+const toggleAdminApi = async (userId) => {
+  return await request('PATCH', '/admin/toggle-admin', { userId });
 }
 
-const toggleLockAccountApi = (userId) => {
-  return axios.patch("/admin/toggle-lock-account", {userId}, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + localStorage.getItem('token')
-    }
-  });
+const toggleLockAccountApi = async (userId) => {
+  return await request('PATCH', '/admin/toggle-lock-account', { userId });
 }
 
-const toggleClassApi = (classId) => {
-  return axios.patch("/admin/toggle-class", {classId}, {
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token')
-      }
-  });
+const toggleClassApi = async (classId) => {
+  return await request('PATCH', '/admin/toggle-class', { classId });
 }
 
-const getUserListApi = () => {
-    return axios.post("/admin/user-list", {
-      headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        }
-    });
+const getUserListApi = async () => {
+  return await request('GET', '/admin/user-list');
 }
 
-const getClassroomListApi = () => {
-    return axios.post("/admin/classes", {
-      headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        }
-    });
+const getClassroomListApi = async () => {
+  return await request('POST', '/admin/classes');
 }
 
-const adminMapStudentApi = (classId, studentId, inClassId) => {
-    return axios.post("/admin/map-student", {classId, studentId, inClassId}, {
-      headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        }
-    });
+const adminMapStudentApi = async (classId, studentId, inClassId) => {
+  return await request('POST', '/admin/map-student', { classId, studentId, inClassId });
 }
 
-export { toggleAdminApi, toggleLockAccountApi, toggleClassApi, getUserListApi, getClassroomListApi, adminMapStudentApi  };
+export { adminMapStudentApi, getClassroomListApi, getUserListApi, toggleAdminApi, toggleClassApi, toggleLockAccountApi };
+

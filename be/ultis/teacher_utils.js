@@ -15,7 +15,7 @@ export async function isTeacher(req, res, next) {
     const classId = reqData['class_id'];
 
     if (!classId) {
-        res.send({"messages": "ERROR: Can't find class id"});
+        res.status(202).send({"messages": "ERROR: Can't find class id"});
         return;
     }
 
@@ -30,7 +30,7 @@ export async function isTeacher(req, res, next) {
         next();
         return;
     }
-    res.send({"messages": "ERROR: You are not teacher in this class"});
+    res.status(202).send({"messages": "ERROR: You are not teacher in this class"});
 }
 
 export async function mapGradeForNewStudent(classId, newStudentId, currentStudentId) {
@@ -47,7 +47,7 @@ export async function mapGradeForNewStudent(classId, newStudentId, currentStuden
 
     if (sqlResult != 0) return "Mapping successfully";
 
-    return "Mapping fail";
+    return "ERROR: Mapping fail";
 }
 
 export async function updateStudent(classId, userInfor, gradeInforList) {
@@ -71,7 +71,6 @@ export async function updateStudent(classId, userInfor, gradeInforList) {
         await databaseQuery(databaseRequest, sql);
 
         gradeInforList.forEach(async (element) => {
-            const id = uuidv4();
             const gradeId = element["gradeId"];
             const grade = element["grade"];
 
@@ -89,27 +88,56 @@ export async function updateStudent(classId, userInfor, gradeInforList) {
 
             var sql = `UPDATE student_grade
             SET grade = ${grade}
-            WHERE student_id = '${studentId}' AND grade_id = '${gradeId}'`;
+            WHERE student_id = '${studentId}' AND grade_id = '${gradeId}' AND is_finalized = 0`;
 
             await databaseQuery(databaseRequest, sql);
         });
     }
 }
 
-export async function unMapStudent(classId, studentId, inClassId) {
-    
+export async function unMapStudent(classId, studentId) {
+    const mapping = await isMapping(studentId);
+    if (!mapping) return "ERROR: This student don't mapping to any student";
+
+    var sql = `SELECT student_id
+    FROM classroom_student
+    WHERE previous_id = '${studentId}' AND classroom_id = '${classId}' AND is_removed = 1`;
+
+    var previousId = await databaseQuery(databaseRequest, sql);
+    previousId = previousId[0]['student_id'];
+
+    var sql = `UPDATE classroom_student
+    SET is_removed = 0, student_id = '${studentId}', previous_id = NULL
+    WHERE student_id = '${previousId}' 
+    AND previous_id = '${studentId}' AND classroom_id = '${classId}'`;
+
+    var updateResult = await databaseQuery(databaseRequest, sql);
+    if (updateResult == 0) return "ERROR: Can't update previous student with current student in this class";
+
+    var sql = `UPDATE classroom_student
+    SET is_removed = 0, student_id = '${previousId}', previous_id = NULL
+    WHERE student_id = '${studentId}'
+    AND previous_id = '${previousId}' AND classroom_id = '${classId}' AND previous_id IS NOT NULL`;
+
+    var updateResult = await databaseQuery(databaseRequest, sql);
+    if (updateResult == 0) return "ERROR: Can't update current student to previous student in this class";
+
+    const mapGradeResult = await mapGradeForNewStudent(classId, previousId, studentId);
+
+    if (mapGradeResult == "Mapping successfully") return 'Un-mapping successfully';
+    return "ERROR: Mapping grade fail";
 }
 
 export async function isMapping(studentId) {
-    var sql = `SELECT email 
+    var sql = `SELECT previous_id 
     FROM classroom_student cs 
-    JOIN [user] u ON u.id = cs.student_id
     WHERE cs.student_id = '${studentId}'`;
 
-    var result = databaseQuery(databaseRequest, sql);
+    var result = await databaseQuery(databaseRequest, sql);
+
     try{
-       if (result['email'] == null) return true;
-       return false;
+       if (result[0]['previous_id'] == null) return false;
+       return true;
     }
     catch (err) {
         console.log(err);
@@ -130,16 +158,15 @@ export async function mapStudentByInClassId(classId, newStudentId, inClassId) {
     var newStudentInClassId = await databaseQuery(databaseRequest, sql);
     if (newStudentInClassId.length == 0) return "ERROR: new student don't have in_class_id";
     newStudentInClassId = newStudentInClassId[0]['in_class_id'];
-
     var sql = `UPDATE classroom_student
-    SET is_removed = 1, student_id = '${currentStudentId}'
+    SET is_removed = 1, student_id = '${currentStudentId}', previous_id = '${newStudentId}'
     WHERE student_id = '${newStudentId}' 
     AND in_class_id = '${newStudentInClassId}' AND classroom_id = '${classId}'`;
     var updateResult = await databaseQuery(databaseRequest, sql);
     if (updateResult == 0) return "ERROR: Can't update new student to current student in this class";
 
     var sql = `UPDATE classroom_student
-    SET is_removed = 0, student_id = '${newStudentId}'
+    SET is_removed = 0, student_id = '${newStudentId}', previous_id = '${currentStudentId}'
     WHERE student_id = '${currentStudentId}' 
     AND in_class_id = '${inClassId}' AND classroom_id = '${classId}'`;
     var updateResult = await databaseQuery(databaseRequest, sql);
