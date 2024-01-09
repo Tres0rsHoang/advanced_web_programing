@@ -21,7 +21,7 @@ adminRouter.patch('/toggle-admin', authenToken, isAdmin, async function(req, res
     const currentUserId = await getCurrentUserId(req, res);
 
     if (userId == currentUserId) {
-        res.send({messages: "You can't toggle yourself"});
+        res.status(202).send({messages: "You can't toggle yourself"});
         return;
     }
 
@@ -34,7 +34,7 @@ adminRouter.patch('/toggle-admin', authenToken, isAdmin, async function(req, res
         isAdmin = isAdmin[0]['is_admin'];
     }
     catch (err) {
-        res.send({messages: "Invalid user_id"});
+        res.status(202).send({messages: "Invalid user_id"});
         return;
     }
 
@@ -49,14 +49,14 @@ adminRouter.patch('/toggle-admin', authenToken, isAdmin, async function(req, res
 
     if (sqlResult != 0) {
         if (isAdmin != 0) {
-            res.send({messages: `${userId} is no longer admin`});
+            res.status(200).send({messages: `${userId} is no longer admin`});
             return;
         }
-        res.send({messages: `${userId} is admin now`});
+        res.status(200).send({messages: `${userId} is admin now`});
         return;
     }
 
-    res.send({messages: "ERROR: nothing to change"});
+    res.status(202).send({messages: "ERROR: nothing to change"});
 });
 
 adminRouter.get('/user-list', authenToken, isAdmin, async function (req, res) {
@@ -79,7 +79,7 @@ adminRouter.patch('/toggle-lock-account', authenToken, isAdmin, async function (
     const currentUserId = await getCurrentUserId(req, res);
 
     if (userId == currentUserId) {
-        res.send({messages: "You can't toggle yourself"});
+        res.status(202).send({messages: "You can't toggle yourself"});
         return;
     }
 
@@ -92,7 +92,7 @@ adminRouter.patch('/toggle-lock-account', authenToken, isAdmin, async function (
         isLocked = isLocked[0]['is_locked'];
     }
     catch (err) {
-        res.send({messages: "Invalid user_id"});
+        res.status(202).send({messages: "Invalid user_id"});
         return;
     }
 
@@ -112,7 +112,7 @@ adminRouter.patch('/toggle-lock-account', authenToken, isAdmin, async function (
         return;
     }
 
-    res.send({messages: "ERROR: nothing to change"});
+    res.status(202).send({messages: "ERROR: nothing to change"});
 });
 
 adminRouter.patch('/map-student', authenToken, isAdmin, async function (req, res) {
@@ -127,8 +127,10 @@ adminRouter.patch('/map-student', authenToken, isAdmin, async function (req, res
     const inClassId = reqData['in_class_id'];
 
     const messages = await mapStudentByInClassId(classId, studentId, inClassId);
+    var statusCode = 200;
+    if (messages.includes("ERROR"))  statusCode = 202;
 
-    res.send({messages: messages});
+    res.status(statusCode).send({messages: messages});
 });
 
 adminRouter.get('/classes', authenToken, isAdmin, async function (req, res) {
@@ -151,7 +153,7 @@ adminRouter.patch('/toggle-class', authenToken, isAdmin, async function (req, re
     var sql = `SELECT is_active FROM classroom WHERE id = '${classId}'`;
     var isActive = await databaseQuery(databaseRequest, sql);
     if (isActive.length == 0) {
-        res.send({messages: "ERROR: invalid class_id"});
+        res.status(202).send({messages: "ERROR: invalid class_id"});
         return;
     }
     isActive = isActive[0]['is_active'];
@@ -171,7 +173,7 @@ adminRouter.patch('/toggle-class', authenToken, isAdmin, async function (req, re
         return;
     }
 
-    res.send({messages: "ERROR: Notthing to change"});
+    res.status(202).send({messages: "ERROR: Notthing to change"});
 });
 
 export default adminRouter;

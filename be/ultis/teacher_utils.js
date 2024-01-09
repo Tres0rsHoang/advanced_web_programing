@@ -15,7 +15,7 @@ export async function isTeacher(req, res, next) {
     const classId = reqData['class_id'];
 
     if (!classId) {
-        res.send({"messages": "ERROR: Can't find class id"});
+        res.status(202).send({"messages": "ERROR: Can't find class id"});
         return;
     }
 
@@ -30,7 +30,7 @@ export async function isTeacher(req, res, next) {
         next();
         return;
     }
-    res.send({"messages": "ERROR: You are not teacher in this class"});
+    res.status(202).send({"messages": "ERROR: You are not teacher in this class"});
 }
 
 export async function mapGradeForNewStudent(classId, newStudentId, currentStudentId) {

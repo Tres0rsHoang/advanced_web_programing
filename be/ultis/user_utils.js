@@ -15,7 +15,7 @@ export async function getCurrentUserId(req, res) {
         return userId[0]["user_id"];
     }
     else {
-        res.status(200).json({ "messages": "ERROR: Invalid access token" });
+        res.status(202).json({ "messages": "ERROR: Invalid access token" });
     }
 }
 
@@ -40,7 +40,7 @@ export async function isClassActive(req, res, next) {
         next();
         return;
     }
-    res.send({messages: "ERROR: This class is no longger active"});
+    res.status(202).send({messages: "ERROR: This class is no longger active"});
 }
 
 export async function isMemberInClass(classId, userId) {

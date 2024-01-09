@@ -3,7 +3,7 @@ export default async function(filePath, fileData) {
         (resolve, reject) => {
             fileData.mv(filePath, (err) => {
                 if (err) {
-                    reject(error);
+                    reject(err);
                     console.log(`ERROR FILE UPLOAD: ${fileData.name}`);
                     return;
                 }

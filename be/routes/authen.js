@@ -29,14 +29,15 @@ authenRouter.post('/login', async function(req, res, next) {
         return;
     }
     if (id == 'locked') {
-        res.send({message: "Your account is locked"});
+        res.send({messages: "Your account is locked"});
         return;
     }
+
     if (id) {
         const refreshTokenId = await createRefreshToken(id);
         const accessToken = jwt.sign(
             { "refresh_token_id": refreshTokenId },
-            process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '30m' }
+            process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '5m' }
         );
         res.json({ 'access_token': accessToken });
     }
@@ -75,7 +76,7 @@ authenRouter.get('/refreshToken', authenToken, async function(req, res, next) {
                 });
             }
             else {
-                res.status(403).json({ "message": "Refresh token is revoked" });
+                res.status(403).json({ "messages": "Refresh token is revoked" });
             }
         }
         else {
@@ -98,7 +99,7 @@ authenRouter.get('/logout', authenToken, async function(req, res, next) {
 
         await databaseQuery(databaseRequest, sql);
 
-        res.json({ "message": "Logout successfully" });
+        res.json({ "messages": "Logout successfully" });
     });
 
 });
@@ -135,7 +136,7 @@ authenRouter.post('/register', async function(req, res, next) {
         await sendMail(email, emailSubject, emailContent);
 
         await databaseQuery(databaseRequest, sql);
-        res.status(200).json({ "message": "Send verify email success" });
+        res.status(200).json({ "messages": "Send verify email success" });
     }
 });
 
@@ -143,7 +144,7 @@ authenRouter.get('/register/verify-email', async function(req, res, next) {
     const userId = req.query.userId;
     const sql = `UPDATE [user] SET is_verify = 1 WHERE id = '${userId}'`;
     await databaseQuery(databaseRequest, sql);
-    res.send("Verify successfully");
+    res.send({messages: "Verify successfully"});
 });
 
 function getRandomInt(min, max) {
@@ -166,7 +167,7 @@ authenRouter.post('/reset-password', async function (req, res, next) {
     var numberOfUser = sqlResult[0]['number_of_user'];
 
     if (numberOfUser == 0) {
-        res.status(200).json({"messages": "ERROR: Invalid email"});
+        res.status(202).json({"messages": "ERROR: Invalid email"});
     }
 
     sql = `UPDATE [user] SET reset_password_code = ${resetPasswordCode} WHERE email = '${email}'`;
@@ -201,7 +202,7 @@ authenRouter.patch('/confirm-reset-password', async function (req, res, next) {
         res.status(200).json({"messages" : "Change password successfully"})
     }
     else {
-        res.status(200).json({"messages" : "Fail to change password"});
+        res.status(202).json({"messages" : "Fail to change password"});
     }
 });
 

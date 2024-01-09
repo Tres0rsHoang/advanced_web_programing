@@ -43,7 +43,7 @@ classroomRouter.post('/create', authenToken, async function (req, res, next) {
         res.status(200).json({ "messages": "Create classroom successfully" });
     }
     catch (err) {
-        res.send({ messages: "Create class fail" });
+        res.status(202).send({ messages: "Create class fail" });
     }
 });
 
@@ -81,7 +81,7 @@ classroomRouter.get('/join', authenToken, async function (req, res, next) {
             result = await databaseQuery(databaseRequest, sql);
 
             if (result.length != 0) {
-                res.status(200).json({ 'messages': "You already in this class" });
+                res.status(202).json({ 'messages': "You already in this class" });
                 return;
             }
 
@@ -130,11 +130,11 @@ classroomRouter.get('/join', authenToken, async function (req, res, next) {
             }
         }
         catch (err) {
-            console.log(err);
+            res.status(202).json({ "Error": err });
         }
     }
     catch (err) {
-        res.status(200).json({ "Error": err });
+        res.status(202).json({ "Error": err });
     }
 });
 
@@ -160,7 +160,7 @@ classroomRouter.post('/sendInviteMail', authenToken, async function (req, res, n
     var sqlResult = await databaseQuery(databaseRequest, sql);
 
     if (sqlResult.length == 0) {
-        res.status(200).json({ 'messages': "You are not teacher of this class" });
+        res.status(202).json({ 'messages': "You are not teacher of this class" });
         return;
     }
 
@@ -178,7 +178,7 @@ classroomRouter.post('/sendInviteMail', authenToken, async function (req, res, n
     sqlResult = await databaseQuery(databaseRequest, sql);
 
     if (sqlResult.length != 0) {
-        res.status(200).json({ 'messages': "This email already in this class" });
+        res.status(202).json({ 'messages': "This email already in this class" });
         return;
     }
 
@@ -201,7 +201,7 @@ classroomRouter.get('/detail', authenToken, async function (req, res, next) {
         WHERE classroom.id = '${classId}'`;
         var sqlResult = await databaseQuery(databaseRequest, sql);
         if (sqlResult.length == 0) {
-            res.status(200).json({ "messages": "Invalid class id" });
+            res.status(202).json({ "messages": "Invalid class id" });
             return;
         }
         var result = sqlResult[0];
