@@ -21,7 +21,7 @@ notificationRouter.get('/classroom', authenToken, isClassActive, async function(
     var isMember = isMemberInClass(classId, currentUserId);
 
     if (!isMember) {
-        res.send({messages: "You are not member in this class"});
+        res.status(202).send({messages: "You are not member in this class"});
         return;   
     }
 

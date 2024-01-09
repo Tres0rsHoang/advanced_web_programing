@@ -84,7 +84,7 @@ profileRouter.patch('/', authenToken, async function(req, res, next) {
     setSql = setSql.slice(0, -1); 
 
     const result = await databaseQuery(databaseRequest, `${sql} ${setSql} ${whereSql}`).catch(err => {
-        res.status(200).json({"messages" : "Update user profile fail (error query)"});
+        res.status(202).json({"messages" : "Update user profile fail (error query)"});
     });
 
     res.status(200).json({"messages" : "Update user profile successfully"});
@@ -103,7 +103,10 @@ profileRouter.patch('/map-student', authenToken, isClassActive, isStudent, async
 
     const messages = await mapStudentByInClassId(classId, currentUserId, inClassId);
 
-    res.send({messages: messages});
+    var statusCode = 200;
+    if (messages.includes("ERROR")) statusCode = 202;
+
+    res.status(statusCode).send({messages: messages});
 });
 
 profileRouter.get('/get-grade', authenToken, isClassActive, isStudent, async function(req, res) {
@@ -143,7 +146,7 @@ profileRouter.post('/comment', authenToken, async function(req, res) {
 
     var classId = await databaseQuery(databaseRequest, sql);
     if (classId.length == 0) {
-        res.send({messages: "ERROR: invalid grade_id"});
+        res.status(202).send({messages: "ERROR: invalid grade_id"});
         return;
     }
     const className = classId[0]['name']
@@ -152,14 +155,14 @@ profileRouter.post('/comment', authenToken, async function(req, res) {
     var sql = `SELECT is_active FROM classroom WHERE id = '${classId}'`;
     var isActive = await databaseQuery(databaseRequest, sql);
     if (isActive[0]['is_active'] == false) {
-        res.send({messages: "ERROR: This class is no longger active"});
+        res.status(202).send({messages: "ERROR: This class is no longger active"});
         return;
     }
 
     var isMember = await isMemberInClass(classId, userId);
 
     if (!isMember) {
-        res.send({messages: "ERROR: You are not member in this class"});
+        res.status(202).send({messages: "ERROR: You are not member in this class"});
         return
     }
 

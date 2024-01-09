@@ -229,7 +229,7 @@ classroomRouter.get('/detail', authenToken, async function (req, res, next) {
         res.status(200).json(result);
     }
     catch (err) {
-        console.log(err);
+        res.status(202).json({messages: err});
     }
 });
 
@@ -245,7 +245,7 @@ classroomRouter.post('/uploadFile', fileUpload({ createParentPath: true }), auth
     const uploadFile = req.files.files
     var fileType = uploadFile.name.split(".")[1];
     if (fileType != "xlsx" && fileType != "csv") {
-        res.send({ "messages": "ERROR: Invalid file type" });
+        res.status(202).send({ "messages": "ERROR: Invalid file type" });
     }
 
     const filePath = path.join(__dirname, "uploads", uploadFile.name);
@@ -329,7 +329,7 @@ classroomRouter.post('/uploadFile', fileUpload({ createParentPath: true }), auth
         }
 
         result["missing_values"] = missingValues;
-        res.send(result);
+        res.status(202).send(result);
         return;
     }
 
@@ -415,7 +415,7 @@ classroomRouter.patch('/update-grade', authenToken, isClassActive, isTeacher, as
         else if (parseFloat(grade) < 0) grade = 0;
     }
     catch (err) {
-        res.send({ "messages": "ERROR: invalid grade" });
+        res.status(202).send({ "messages": "ERROR: invalid grade" });
         return;
     }
 
@@ -426,7 +426,7 @@ classroomRouter.patch('/update-grade', authenToken, isClassActive, isTeacher, as
         res.send({ messages: "Update successfully" });
     }
     else {
-        res.send({ messages: "ERROR: Update fail" });
+        res.status(202).send({ messages: "ERROR: Update fail" });
     }
 });
 
@@ -448,12 +448,14 @@ classroomRouter.patch('/map-student', authenToken, isClassActive, isTeacher, asy
     var inClassId = databaseQuery(databaseRequest, sql);
 
     if (inClassId.length == 0) {
-        res.send({ messages: "Invalid current_student_id" });
+        res.status(202).send({ messages: "Invalid current_student_id" });
         return;
     }
     inClassId = inClassId[0]["in_class_id"];
 
-    const messages = mapStudentByInClassId(classId, studentId, inClassId);
+    const messages = await mapStudentByInClassId(classId, studentId, inClassId);
+    var statusCode = 200;
+    if (messages.includes("ERROR")) var statusCode = 202;
     res.send({ messages: messages });
 });
 
@@ -485,7 +487,7 @@ classroomRouter.patch('/finalized-grade', authenToken, isClassActive, isTeacher,
     const success = await databaseQuery(databaseRequest, sql);
 
     if (success == 0) {
-        res.send({ messages: "ERROR: grade already finalized" });
+        res.status(202).send({ messages: "ERROR: grade already finalized" });
         return;
     }
 

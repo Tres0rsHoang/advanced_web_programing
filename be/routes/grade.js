@@ -28,7 +28,7 @@ gradeRouter.post('/create', authenToken, isClassActive, isTeacher, async functio
     const existGrade = await databaseQuery(databaseRequest, sql);
 
     if (existGrade[0]['exist_grade'] != 0) {
-        res.status(200).json({"messages": "ERROR: grade name already exists"});
+        res.status(202).json({"messages": "ERROR: grade name already exists"});
         return;
     }
 
@@ -45,7 +45,7 @@ gradeRouter.post('/create', authenToken, isClassActive, isTeacher, async functio
     });
 
     if (gradeScale + totalGradeInClass > 100) {
-        res.status(200).json({"messages": "ERROR: invalid grade scales", "maxium_valid_scale": 100 - totalGradeInClass});
+        res.status(202).json({"messages": "ERROR: invalid grade scales", "maxium_valid_scale": 100 - totalGradeInClass});
         return;
     }
 
@@ -96,7 +96,7 @@ gradeRouter.delete('/remove', authenToken, isClassActive, isTeacher, async funct
     var sqlResult = await databaseQuery(databaseRequest, sql);
 
     if (sqlResult.length == 0) {
-        res.status(200).json({"messages": "ERROR: invalid classroom id or grade id"});
+        res.status(202).json({"messages": "ERROR: invalid classroom id or grade id"});
         return;
     }
 
@@ -106,7 +106,7 @@ gradeRouter.delete('/remove', authenToken, isClassActive, isTeacher, async funct
     var sqlResult = await databaseQuery(databaseRequest, sql);
 
     if (sqlResult.length == 0) {
-        res.status(200).json({"messages": "ERROR: can't find this grade id"});
+        res.status(202).json({"messages": "ERROR: can't find this grade id"});
         return;
     }
 
@@ -145,13 +145,13 @@ gradeRouter.patch('/update', authenToken, isClassActive, isTeacher, async functi
         var sql = `${update} ${set} ${where}`;
         var sqlResult = await databaseQuery(databaseRequest, sql);
         if (sqlResult == 0) {
-            res.status(200).json({"messages": "ERROR: Can't find classroom id or grade id"});
+            res.status(202).json({"messages": "ERROR: Can't find classroom id or grade id"});
             return;
         }
         res.status(200).json({"messages": "Update grade successfully"});
     }
     else {
-        res.status(200).json({"messages": "ERROR: empty grade name and grade scale"});
+        res.status(202).json({"messages": "ERROR: empty grade name and grade scale"});
     }
 });
 
