@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import axios from '../api/axios';
+import { confirmResetPassword } from '../api/authService';
 
 const CONFIRM_RESET_PASSWORD_URL = '/confirm-reset-password';
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
@@ -53,19 +53,9 @@ export default function ConfirmResetPassword() {
             const resetCode = searchParams.get("reset-code");
             const email = searchParams.get("email");
 
-            const params = {
-                "email": email,
-                "reset_code": resetCode,
-                "new_password": password,
-            };
-
-            const response = await axios.patch(CONFIRM_RESET_PASSWORD_URL, params, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            console.log(JSON.stringify(response?.data));
+            
+            const response = await confirmResetPassword(email, resetCode, password);
+            
             if (response?.data?.messages === "Change password successfully") {
                 setPassword('');
                 setMatchPwd('');

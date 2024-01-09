@@ -1,12 +1,11 @@
-import { Tab, Tabs, useMediaQuery } from '@mui/material';
+import { Tab, Tabs } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
-import { useTheme } from '@mui/material/styles';
 import React from 'react';
 import MiniDrawer from '../../components/Drawer';
 
 export default function AdminMapping() {
-    const theme = useTheme();
-    const isMatch = useMediaQuery(theme.breakpoints.down('lg'));
+    // const theme = useTheme();
+    // const isMatch = useMediaQuery(theme.breakpoints.down('lg'));
     
     return (
         <React.Fragment>

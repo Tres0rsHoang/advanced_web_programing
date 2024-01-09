@@ -3,7 +3,7 @@ import { Avatar, Box, Button, Card, CardContent, CardHeader, Divider, Grid, Icon
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import { blue, grey } from '@mui/material/colors';
 import { useTheme } from '@mui/material/styles';
-import { default as React, default as React, useEffect, useState } from 'react';
+import { default as React, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { classDetailsApi } from '../../../api/classService';

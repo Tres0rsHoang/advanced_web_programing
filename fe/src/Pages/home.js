@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
-import MiniDrawer from '../components/Drawer';
 import { Box, Grid } from '@mui/material';
+import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { getCurrentUserApi } from '../api/profileService';
+import MiniDrawer from '../components/Drawer';
 import StudentClassCard from '../components/StudentClassCard';
 import TeacherClassCard from '../components/TeacherClassCard';
-import { getCurrentUserApi } from '../api/profileService';
 
 export default function Home() {
   const user = useSelector(state => state.user.account);
@@ -23,7 +23,7 @@ export default function Home() {
   }, [user]);
 
   useEffect(() => {
-    async function fetchData(){
+    const fetchData = async () => {
       let response = await getCurrentUserApi();
       setTeachingInfo(response.data.is_teacher_classes);
       setEnrolledInfo(response.data.is_student_classes);

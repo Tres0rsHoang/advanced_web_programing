@@ -1,21 +1,20 @@
-import { Divider, Tab, Tabs, useMediaQuery } from '@mui/material';
+import { Divider, Tab, Tabs } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
-import { useTheme } from '@mui/material/styles';
 import { DataGrid } from '@mui/x-data-grid';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { getUserListApi } from '../../api/adminService';
 import MiniDrawer from '../../components/Drawer';
 
 export default function AdminAccount() {
-    const theme = useTheme();
-    const isMatch = useMediaQuery(theme.breakpoints.down('lg'));
-    const [rowsData, setRowsData] = useState([]);
+    // const theme = useTheme();
+    // const isMatch = useMediaQuery(theme.breakpoints.down('lg'));
+    // const [rowsData, setRowsData] = useState([]);
 
     useEffect(() => {
         async function fetchData() {
             var response = await getUserListApi();
             console.log(response);
-            setRowsData(response);
+            // setRowsData(response);
         }
         fetchData();
     }, []);

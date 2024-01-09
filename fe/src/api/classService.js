@@ -1,70 +1,36 @@
-import axios from "./axios";
+import request from "./request";
 
-const createClassApi = (name, section, subject, room) => {
-    return axios.post("/classroom/create", {name, section, subject, room}, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token')
-      }
-    });
+const createClassApi = async (name, section, subject, room) => {
+  return await request('POST', "/classroom/create", {name, section, subject, room});
 }
 
-const joinClassApi = (classCode, type) => {
-  return axios.get(`/classroom/join?classCode=${classCode}&type=${type}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + localStorage.getItem('token')
-    }
-  });
+const joinClassApi = async (classCode, type) => {
+  return await request('GET', `/classroom/join?classCode=${classCode}&type=${type}`);
 }
 
-const sendInviteMailApi = (invitationType, classCode, studentEmail) => {
-  return axios.post("/classroom/sendInviteMail", {
+const sendInviteMailApi = async (invitationType, classCode, studentEmail) => {
+  return await request('POST', "/classroom/sendInviteMail", {
     invitation_type: invitationType, 
     class_code: classCode, 
     student_email: studentEmail
-  }, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + localStorage.getItem('token')
-    }
   });
 }
 
-const classDetailsApi = (classId) => {
-    return axios.get(`classroom/detail?classId=${classId}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem("token")
-        }
-      }); 
+const classDetailsApi = async (classId) => {
+  return await request('POST', `classroom/detail?classId=${classId}`);
 }
 
-const uploadFileApi = (files, classId) => {
-  return axios.post("/classroom/uploadFile", {files, classId}, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem("token")
-      }
-    }); 
+const uploadFileApi = async (files, classId) => {
+  return await request('POST', "/classroom/uploadFile", {files, classId});
 }
 
-const updateGradeApi = (classId, gradeId, grade, studentId) => {
-    return axios.patch("/classroom/update-grade", {classId, gradeId, grade, studentId}, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem("token")
-        }
-    }); 
+const updateGradeApi = async (classId, gradeId, grade, studentId) => {
+  return await request('PATCH', "/classroom/update-grade", {classId, gradeId, grade, studentId});
 }
 
-const mapStudentApi = (classId, currentStudentId, newStudentId) => {
-    return axios.patch("/classroom/map-student", {classId, currentStudentId, newStudentId}, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem("token")
-        }
-    }); 
+const mapStudentApi = async (classId, currentStudentId, newStudentId) => {
+  return await request('PATCH', "/classroom/map-student", {classId, currentStudentId, newStudentId});
 }
 
-export { createClassApi, joinClassApi, sendInviteMailApi, classDetailsApi, uploadFileApi, updateGradeApi, mapStudentApi };
+export { classDetailsApi, createClassApi, joinClassApi, mapStudentApi, sendInviteMailApi, updateGradeApi, uploadFileApi };
+
