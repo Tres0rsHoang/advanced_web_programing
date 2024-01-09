@@ -101,15 +101,15 @@ export async function unMapStudent(classId, studentId, inClassId) {
 }
 
 export async function isMapping(studentId) {
-    var sql = `SELECT email 
+    var sql = `SELECT previous_id 
     FROM classroom_student cs 
-    JOIN [user] u ON u.id = cs.student_id
     WHERE cs.student_id = '${studentId}'`;
 
-    var result = databaseQuery(databaseRequest, sql);
+    var result = await databaseQuery(databaseRequest, sql);
+
     try{
-       if (result['email'] == null) return true;
-       return false;
+       if (result[0]['previous_id'] == null) return false;
+       return true;
     }
     catch (err) {
         console.log(err);
@@ -132,19 +132,21 @@ export async function mapStudentByInClassId(classId, newStudentId, inClassId) {
     newStudentInClassId = newStudentInClassId[0]['in_class_id'];
 
     var sql = `UPDATE classroom_student
-    SET is_removed = 1, student_id = '${currentStudentId}'
+    SET is_removed = 1, student_id = '${currentStudentId}', previous_id = '${newStudentId}'
     WHERE student_id = '${newStudentId}' 
     AND in_class_id = '${newStudentInClassId}' AND classroom_id = '${classId}'`;
     var updateResult = await databaseQuery(databaseRequest, sql);
     if (updateResult == 0) return "ERROR: Can't update new student to current student in this class";
 
     var sql = `UPDATE classroom_student
-    SET is_removed = 0, student_id = '${newStudentId}'
+    SET is_removed = 0, student_id = '${newStudentId}', previous_id = '${currentStudentId}'
     WHERE student_id = '${currentStudentId}' 
     AND in_class_id = '${inClassId}' AND classroom_id = '${classId}'`;
     var updateResult = await databaseQuery(databaseRequest, sql);
     if (updateResult == 0) return "ERROR: Can't update current student to new student in this class";
 
-    const mapGradeResult = await mapGradeForNewStudent(classId, newStudentId, currentStudentId);
-    return mapGradeResult;
+    // const mapGradeResult = await mapGradeForNewStudent(classId, newStudentId, currentStudentId);
+    // return mapGradeResult;
+
+    return 'OK';
 }

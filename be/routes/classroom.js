@@ -11,7 +11,7 @@ import UploadFile from "../helper/upload_file.js";
 import { makeClassCode } from "../ultis/string_utils.js";
 import { getStudentScore } from "../ultis/student_utils.js";
 import { isTeacher, mapStudentByInClassId, updateStudent } from "../ultis/teacher_utils.js";
-import { getCurrentUserId, isClassActive } from "../ultis/user_utils.js";
+import { getCurrentUserId, isClassActive, isMemberInClass } from "../ultis/user_utils.js";
 import { sendToAllMemberInClass } from "./notifications.js";
 
 const classroomRouter = express.Router();
@@ -74,19 +74,9 @@ classroomRouter.get('/join', authenToken, async function (req, res, next) {
         await isClassActive(req, res, () => { });
 
         try {
-            var sql = `SELECT classroom_student.student_id
-            FROM classroom_student
-            WHERE classroom_student.is_removed = 0
-            AND classroom_student.student_id = '${currentUser}'
-            UNION
-            SELECT classroom_teacher.teacher_id
-            FROM classroom_teacher
-            WHERE classroom_teacher.is_deleted = 0
-            AND classroom_teacher.teacher_id = '${currentUser}'`;
+            var isMember = await isMemberInClass(classId, currentUser);
 
-            result = await databaseQuery(databaseRequest, sql);
-
-            if (result.length != 0) {
+            if (isMember) {
                 res.status(202).json({ 'messages': "You already in this class" });
                 return;
             }
@@ -110,7 +100,7 @@ classroomRouter.get('/join', authenToken, async function (req, res, next) {
                         var sqlResult = await databaseQuery(databaseRequest, sql);
                         if (sqlResult[0]['number_of_is_class_id'] == 0) break;
                     }
-                    sql = `INSERT INTO classroom_student VALUES ('${currentUser}', '${classId}', 0, '${inClassId}')`;
+                    sql = `INSERT INTO classroom_student VALUES ('${currentUser}', '${classId}', 0, '${inClassId}', NULL)`;
                     await databaseQuery(databaseRequest, sql);
                 }
 

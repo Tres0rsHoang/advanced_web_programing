@@ -22,13 +22,14 @@ export async function isStudent(req, res, next) {
     var sql = `SELECT 1
     FROM classroom_student 
     WHERE student_id = '${currentUserId}' AND classroom_id = '${classId}' AND is_removed = 0`;
-
+    
     var sqlResult = await databaseQuery(databaseRequest, sql);
 
     if (sqlResult.length != 0) {
         next();
         return;
     }
+
     res.status(202).send({"messages": "ERROR: You are not student in this class"});
 }
 
