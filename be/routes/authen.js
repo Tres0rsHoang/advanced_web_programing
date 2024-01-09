@@ -144,7 +144,7 @@ authenRouter.get('/register/verify-email', async function(req, res, next) {
     const userId = req.query.userId;
     const sql = `UPDATE [user] SET is_verify = 1 WHERE id = '${userId}'`;
     await databaseQuery(databaseRequest, sql);
-    res.send("Verify successfully");
+    res.send({messages: "Verify successfully"});
 });
 
 function getRandomInt(min, max) {
