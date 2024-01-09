@@ -71,7 +71,6 @@ export async function updateStudent(classId, userInfor, gradeInforList) {
         await databaseQuery(databaseRequest, sql);
 
         gradeInforList.forEach(async (element) => {
-            const id = uuidv4();
             const gradeId = element["gradeId"];
             const grade = element["grade"];
 
@@ -89,7 +88,7 @@ export async function updateStudent(classId, userInfor, gradeInforList) {
 
             var sql = `UPDATE student_grade
             SET grade = ${grade}
-            WHERE student_id = '${studentId}' AND grade_id = '${gradeId}'`;
+            WHERE student_id = '${studentId}' AND grade_id = '${gradeId}' AND is_finalized = 0`;
 
             await databaseQuery(databaseRequest, sql);
         });

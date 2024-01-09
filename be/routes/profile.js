@@ -149,13 +149,25 @@ profileRouter.get('/get-grade', authenToken, isClassActive, isStudent, async fun
 
         const classId = reqData['class_id'];
         const currentUserId = await getCurrentUserId(req, res);
+        
+        var sql = `SELECT in_class_id, student_id, first_name, u.last_name, u.email
+        FROM classroom_student cstudent 
+        JOIN [user] u ON cstudent.student_id = u.id
+        WHERE classroom_id = '${classId}' AND cstudent.is_removed = 0 AND cstudent.student_id = '${currentUserId}'`;
+
+        var sqlResult = await databaseQuery(databaseRequest, sql);
+
+        var studentInfor = sqlResult[0];
+
         const studentScore = await getStudentScore(classId, currentUserId);
 
-        const result = studentScore.filter((element) => {
+        var gradeList = studentScore.filter((element) => {
             return element['is_finalized'] != false;
         });
 
-        res.send(result);
+        studentInfor['grade_list'] = gradeList;
+        
+        res.send(studentInfor);
     }
     catch (err) {
         console.log("ERROR[/profile/get-grade]:", err);

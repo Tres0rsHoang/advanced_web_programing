@@ -77,7 +77,6 @@ classroomRouter.get('/join', authenToken, async function (req, res, next) {
             var isMember = await isMemberInClass(classId, currentUser);
 
             console.log(isMember);
-1
             if (isMember) {
                 res.status(202).json({ 'messages': "You already in this class" });
                 return;
@@ -400,7 +399,7 @@ classroomRouter.get('/grade-list', authenToken, isClassActive, isTeacher, async 
         var sql = `SELECT in_class_id, student_id, first_name, u.last_name, u.email
     FROM classroom_student cstudent 
     JOIN [user] u ON cstudent.student_id = u.id
-    WHERE classroom_id = '${classId}'`;
+    WHERE classroom_id = '${classId}' AND cstudent.is_removed = 0`;
 
         var sqlResult = await databaseQuery(databaseRequest, sql);
 
