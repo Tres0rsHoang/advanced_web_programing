@@ -7,9 +7,13 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { DialogContentText, IconButton } from '@mui/material';
 import { PersonAddAlt1Outlined } from '@mui/icons-material';
+import { sendInviteMailApi } from '../api/classService';
+import { toast } from 'react-toastify';
 
-export default function InviteTeacher() {
+export default function InviteTeacher({classCode}) {
   const [open, setOpen] = React.useState(false);
+  const [email, setEmail] = React.useState('');
+
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -18,6 +22,19 @@ export default function InviteTeacher() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const handleSubmit = async () => {
+    let response = await sendInviteMailApi('teacher', classCode, email);
+    if (response.status === 200) {
+      toast.success('Invite student successful');
+    }
+    else {
+      toast.error(response.data.messages);
+    }
+  };
+
+  React.useEffect(() => {
+  }, [email]);
 
   return (
     <React.Fragment>
@@ -41,6 +58,8 @@ export default function InviteTeacher() {
                 type="email"
                 fullWidth
                 variant="outlined"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
             />
             <DialogContentText sx={{mt: '30px'}}>
                 Teachers you add can do everything you can, except delete the class.
@@ -48,7 +67,7 @@ export default function InviteTeacher() {
         </DialogContent>
         <DialogActions>
             <Button onClick={handleClose} sx={{textTransform: 'none', fontSize: '16px', color: '#0C8590'}}>Cancel</Button>
-            <Button onClick={handleClose} sx={{textTransform: 'none', fontSize: '16px', color: '#0C8590'}}>Invite</Button>
+            <Button onClick={handleSubmit} sx={{textTransform: 'none', fontSize: '16px', color: '#0C8590'}}>Invite</Button>
         </DialogActions>
       </Dialog>
     </React.Fragment>

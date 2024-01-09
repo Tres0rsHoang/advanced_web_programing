@@ -1,8 +1,10 @@
 import * as React from 'react';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { Avatar, Badge, Box, Divider, IconButton, Typography } from '@mui/material';
+import { Avatar, Badge, Box, Divider, IconButton, Tooltip, Typography } from '@mui/material';
 import { Notifications } from '@mui/icons-material';
+import { selfNotificationsApi } from '../api/notificationService';
+import { grey } from '@mui/material/colors';
 
 export default function Notification() {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -14,8 +16,18 @@ export default function Notification() {
     setAnchorEl(null);
   };
 
+  const [notifications, setNotifications] = React.useState([]);
+
+  React.useEffect(() => {
+      async function fetchData() {
+          let response = await selfNotificationsApi();
+          setNotifications(response.data);
+      }
+      fetchData();
+  }, []);
+
   return (
-    <div>
+    <>
       <IconButton
         sx={{padding: '10px'}}
         aria-controls={open ? 'basic-menu' : undefined}
@@ -23,7 +35,7 @@ export default function Notification() {
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
       >
-        <Badge badgeContent={4} color="error">
+        <Badge badgeContent={notifications.length} color="error">
             <Notifications style={{ fontSize: '25px', color: 'white' }}/>
         </Badge>
       </IconButton>
@@ -41,65 +53,63 @@ export default function Notification() {
       >
         <Typography sx={{fontSize: '22px', fontWeight: 'bold', margin: '20px 40px'}}>Notifications</Typography>
         <Divider />
-        <Box sx={{minHeight: '180px', minWidth: '500px', margin: '0 20px 20px 20px'}}>
-            <MenuItem onClick={handleClose}>
-                <Typography sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', fontSize: '15px', fontWeight: 'bold'}}>
-                    <Avatar src={null} sx={{margin: '20px 10px 20px 5px', bgcolor: '#0074cc', height: '35px', width: '35px', fontSize: '20px', fontWeight: 500}}>K</Avatar> Khánh Nguyễn Huy
-                </Typography>
-                <Typography 
-                    sx={{ml: '5px',
-                    width: '270px',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'}}
-                > 
-                    finalizes a grade composition
-                </Typography>
-            </MenuItem>
-            <MenuItem onClick={handleClose}>
-                <Typography sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', fontSize: '15px', fontWeight: 'bold'}}>
-                    <Avatar src={null} sx={{margin: '20px 10px 20px 5px', bgcolor: '#0074cc', height: '35px', width: '35px', fontSize: '20px', fontWeight: 500}}>K</Avatar> Khánh Nguyễn Huy
-                </Typography>
-                <Typography 
-                    sx={{ml: '5px',
-                    width: '270px',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'}}
-                > 
-                    finalizes a grade composition
-                </Typography>
-            </MenuItem>
-            <MenuItem onClick={handleClose}>
-                <Typography sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', fontSize: '15px', fontWeight: 'bold'}}>
-                    <Avatar src={null} sx={{margin: '20px 10px 20px 5px', bgcolor: '#0074cc', height: '35px', width: '35px', fontSize: '20px', fontWeight: 500}}>K</Avatar> Khánh Nguyễn Huy
-                </Typography>
-                <Typography 
-                    sx={{ml: '5px',
-                    width: '270px',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'}}
-                > 
-                    finalizes a grade composition
-                </Typography>
-            </MenuItem>
-            <MenuItem onClick={handleClose}>
-                <Typography sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', fontSize: '15px', fontWeight: 'bold'}}>
-                    <Avatar src={null} sx={{margin: '20px 10px 20px 5px', bgcolor: '#0074cc', height: '35px', width: '35px', fontSize: '20px', fontWeight: 500}}>K</Avatar> Khánh Nguyễn Huy
-                </Typography>
-                <Typography 
-                    sx={{ml: '5px',
-                    width: '270px',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'}}
-                > 
-                    finalizes a grade composition
-                </Typography>
-            </MenuItem>
-        </Box>
+        {
+          notifications? (
+            <Box sx={{minHeight: '180px', minWidth: '500px', margin: '0 20px 20px 20px'}}>
+            {notifications.map(element => 
+                <MenuItem onClick={handleClose} sx={{
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'space-between',
+                  bgcolor: grey[200], 
+                  margin: '5px 0',
+                  borderRadius: '15px'}}
+                >
+                    <Tooltip title={<Typography 
+                        sx={{fontSize: '13px'}}
+                      > 
+                          {element.content}
+                      </Typography>} placement="right" arrow >
+                      <Typography 
+                        sx={{ml: '5px',
+                        width: '330px',
+                        padding: '18px 0',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'}}
+                      > 
+                          {element.content}
+                      </Typography>
+                    </Tooltip>
+                    <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-end'}}>
+                      <Typography 
+                        sx={{
+                        padding: '18px 0',
+                        fontSize: '13px',
+                        color: grey[600]
+                        }}
+                      > 
+                          {element.create_time.slice(0, 10)}
+                      </Typography>
+                      <Typography 
+                        sx={{
+                          padding: '18px 0',
+                          ml: '3px',
+                          fontSize: '13px',
+                          color: grey[600]
+                          }}
+                      > 
+                          {element.create_time.slice(12, 16)}
+                      </Typography>
+                    </Box>
+                </MenuItem>)
+            }
+            </Box>
+          ) : (
+            <Box sx={{minHeight: '180px', minWidth: '500px', margin: '0 20px 20px 20px'}}></Box>
+          )
+        }
       </Menu>
-    </div>
+    </>
   );
 }

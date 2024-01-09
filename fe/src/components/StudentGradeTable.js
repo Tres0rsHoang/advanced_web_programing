@@ -7,8 +7,18 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { grey } from '@mui/material/colors';
+import { useSelector } from 'react-redux';
 
-const columns = [
+
+export default function StudentGradeTable() {
+  const user = useSelector(state => state.user.account);
+
+  function createData(id, firstName, lastName, assignments, midterm, final) {
+    const avg = assignments * 0.3 + midterm * 0.3 + final * 0.4;
+    return { id, firstName, lastName, assignments, midterm, final, avg };
+  }
+
+  const columns = [
   
     { field: 'id', label: 'Student ID', width: 150, format: (value) => value.toFixed(2) },
     { field: 'firstName', label: 'First name', width: 200, format: (value) => value.toFixed(2) },
@@ -17,16 +27,9 @@ const columns = [
     { field: 'midterm', label: 'Midterm Project (30%)', width: 250, format: (value) => value.toFixed(2) },
     { field: 'final', label: 'Final Project (40%)', width: 200, format: (value) => value.toFixed(2) },
     { field: 'avg', label: 'Total Grade', width: 200, format: (value) => value.toFixed(2) },
-];
+  ];
 
-function createData(id, firstName, lastName, assignments, midterm, final) {
-  const avg = assignments * 0.3 + midterm * 0.3 + final * 0.4;
-  return { id, firstName, lastName, assignments, midterm, final, avg };
-}
-
-const rows =  createData('20127531', 'Khánh', 'Trương Trọng', 9, 10, 8.5);
-
-export default function StudentGradeTable() {
+  const rows =  createData('20127531', user.firstName, user.lastName, 9, 10, 8.5);
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden', boxShadow: 0 }}>
