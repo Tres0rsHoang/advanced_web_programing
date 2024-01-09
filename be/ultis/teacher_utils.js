@@ -47,7 +47,7 @@ export async function mapGradeForNewStudent(classId, newStudentId, currentStuden
 
     if (sqlResult != 0) return "Mapping successfully";
 
-    return "Mapping fail";
+    return "ERROR: Mapping fail";
 }
 
 export async function updateStudent(classId, userInfor, gradeInforList) {
@@ -113,13 +113,20 @@ export async function unMapStudent(classId, studentId) {
     AND previous_id = '${studentId}' AND classroom_id = '${classId}'`;
 
     var updateResult = await databaseQuery(databaseRequest, sql);
+    if (updateResult == 0) return "ERROR: Can't update previous student with current student in this class";
 
     var sql = `UPDATE classroom_student
-    SET is_removed = 0, student_id = '${studentId}', previous_id = NULL
-    WHERE student_id = '${previousId}' 
-    AND previous_id = '${studentId}' AND classroom_id = '${classId}'`;
+    SET is_removed = 0, student_id = '${previousId}', previous_id = NULL
+    WHERE student_id = '${studentId}'
+    AND previous_id = '${previousId}' AND classroom_id = '${classId}' AND previous_id IS NOT NULL`;
 
-    return '';
+    var updateResult = await databaseQuery(databaseRequest, sql);
+    if (updateResult == 0) return "ERROR: Can't update current student to previous student in this class";
+
+    const mapGradeResult = await mapGradeForNewStudent(classId, previousId, studentId);
+
+    if (mapGradeForNewStudent == "Mapping successfully") return 'Un-mapping successfully';
+    return "ERROR: Mapping grade fail";
 }
 
 export async function isMapping(studentId) {
