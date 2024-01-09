@@ -15,7 +15,7 @@ export async function getCurrentUserId(req, res) {
         return userId[0]["user_id"];
     }
     else {
-        res.status(200).json({ "message": "ERROR: Invalid access token" });
+        res.status(200).json({ "messages": "ERROR: Invalid access token" });
     }
 }
 

@@ -23,7 +23,6 @@ export const handleLoginRedux = (email, password) => {
                 localStorage.setItem('token', response.data.access_token);
                 try {
                 let response2 = await getCurrentUserApi();
-                console.log(response2);
                 if (response2 && response2.data) {
                     localStorage.setItem('user', JSON.stringify(response2.data.information));
                     dispatch({
