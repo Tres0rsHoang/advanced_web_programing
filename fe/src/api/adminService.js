@@ -17,7 +17,7 @@ const getUserListApi = async () => {
 }
 
 const getClassroomListApi = async () => {
-  return await request('POST', '/admin/classes');
+  return await request('GET', '/admin/classes');
 }
 
 const adminMapStudentApi = async (classId, studentId, inClassId) => {

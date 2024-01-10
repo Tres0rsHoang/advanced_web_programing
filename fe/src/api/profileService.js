@@ -18,7 +18,7 @@ const profileMapStudentApi = async (classId, inClassId) => {
 }
 
 const getGradeApi = async (classId) => {
-  return await request('GET', "/profile/get-grade", { class_id: classId });
+  return await request('POST', "/profile/get-grade", { class_id: classId });
 }
 
 export { getCurrentUserApi, getGradeApi, profileMapStudentApi, updateUserProfileApi };
