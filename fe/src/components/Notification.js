@@ -21,7 +21,6 @@ export default function Notification() {
   React.useEffect(() => {
       async function fetchData() {
           var response = await selfNotificationsApi();
-          console.log(response.data);
           setNotifications(response.data);
       }
       fetchData();
