@@ -4,7 +4,7 @@ import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import { DataGrid, GridDeleteIcon } from '@mui/x-data-grid';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { getUserListApi, toggleAdminApi, toggleLockAccountApi } from '../../api/adminService';
+import { getClassroomListApi, toggleAdminApi, toggleLockAccountApi } from '../../api/adminService';
 import MiniDrawer from '../../components/Drawer';
 
 export default function AdminClasses() {
@@ -14,18 +14,13 @@ export default function AdminClasses() {
 
     useEffect(() => {
         async function fetchData() {
-            var response = await getUserListApi();
+            var response = await getClassroomListApi();
             setRowsData(response.data.map((element) => {
                 return {
                     id: element['id'],
-                    firstName: element['first_name'],
-                    lastName: element['last_name'],
-                    email: element['email'],
-                    isVerify: element['is_verify'],
-                    isLocked: element['is_locked'],
-                    isAdmin: element['is_admin'],
-                    phoneNumber: element['phone_number'],
-                    imageUrl: element['image_url'],
+                    name: element['name'],
+                    subject: element['subject'],
+                    isActive: element['is_active']
                 }
             }));
         }
@@ -39,47 +34,20 @@ export default function AdminClasses() {
             flex: 1
         },
         {
-            field: 'firstName',
-            headerName: 'First name',
+            field: 'name',
+            headerName: 'Name',
             flex: 1
         },
         {
-            field: 'lastName',
-            headerName: 'Last name',
+            field: 'subject',
+            headerName: 'Subject',
             flex: 1
         },
         {
-            field: 'email',
-            headerName: 'Email',
-            flex: 1
-        },
-        {
-            field: 'isVerify',
-            headerName: 'Email Verify',
+            field: 'isActive',
+            headerName: 'Active',
             flex: 1,
             type: "boolean"
-        },
-        {
-            field: 'isLocked',
-            headerName: 'Account Locked',
-            flex: 1,
-            type: "boolean"
-        },
-        {
-            field: 'isAdmin',
-            headerName: 'Is Admin',
-            flex: 1,
-            type: "boolean"
-        },
-        {
-            field: 'phoneNumber',
-            headerName: 'Phone Number',
-            flex: 1
-        },
-        {
-            field: 'imageUrl',
-            headerName: 'Image URL',
-            flex: 1
         }
     ];
 
