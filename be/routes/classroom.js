@@ -397,9 +397,9 @@ classroomRouter.get('/grade-list', authenToken, isClassActive, isTeacher, async 
         const classId = reqData['class_id'];
 
         var sql = `SELECT in_class_id, student_id, first_name, u.last_name, u.email
-    FROM classroom_student cstudent 
-    JOIN [user] u ON cstudent.student_id = u.id
-    WHERE classroom_id = '${classId}' AND cstudent.is_removed = 0`;
+        FROM classroom_student cstudent 
+        JOIN [user] u ON cstudent.student_id = u.id
+        WHERE classroom_id = '${classId}' AND cstudent.is_removed = 0`;
 
         var sqlResult = await databaseQuery(databaseRequest, sql);
 
