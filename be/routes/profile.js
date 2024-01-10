@@ -146,7 +146,7 @@ profileRouter.get('/get-grade', authenToken, isClassActive, isStudent, async fun
         if (typeof (req.body) == "string") {
             reqData = JSON.parse(req.body);
         }
-
+        
         const classId = reqData['class_id'];
         const currentUserId = await getCurrentUserId(req, res);
         
