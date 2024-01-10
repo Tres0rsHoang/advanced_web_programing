@@ -139,14 +139,14 @@ profileRouter.patch('/map-student', authenToken, isClassActive, isStudent, async
     }
 });
 
-profileRouter.get('/get-grade', authenToken, isClassActive, isStudent, async function (req, res) {
+profileRouter.post('/get-grade', authenToken, isClassActive, isStudent, async function (req, res) {
     try {
         let reqData = req.body;
 
         if (typeof (req.body) == "string") {
             reqData = JSON.parse(req.body);
         }
-        
+
         const classId = reqData['class_id'];
         const currentUserId = await getCurrentUserId(req, res);
         

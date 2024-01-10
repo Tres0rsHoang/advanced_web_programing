@@ -27,7 +27,7 @@ export async function isClassActive(req, res, next) {
     var sql = `SELECT is_active FROM classroom WHERE id = '${classId}'`;
     var isActive = await databaseQuery(databaseRequest, sql);
     if (isActive.length == 0) {
-        res.status(202).send({messages: "ERROR: "});
+        res.status(202).send({messages: "ERROR: invalid class_id"});
         return;
     }
     isActive = isActive[0]['is_active'];

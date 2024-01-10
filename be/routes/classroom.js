@@ -375,7 +375,7 @@ classroomRouter.post('/uploadFile', fileUpload({ createParentPath: true }), auth
     }
 });
 
-classroomRouter.get('/grade-list', authenToken, isClassActive, isTeacher, async function (req, res) {
+classroomRouter.post('/grade-list', authenToken, isClassActive, isTeacher, async function (req, res) {
     try {
         let reqData = req.body;
 
@@ -557,7 +557,7 @@ classroomRouter.patch('/finalized-grade', authenToken, isClassActive, isTeacher,
     }
 });
 
-classroomRouter.get('/comment-list', authenToken, isClassActive, async function (req, res) {
+classroomRouter.post('/comment-list', authenToken, isClassActive, async function (req, res) {
     try {
         let reqData = req.body;
 
