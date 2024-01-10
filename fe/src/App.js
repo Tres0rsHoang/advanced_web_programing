@@ -7,7 +7,7 @@ import './App.css';
 import AdminAccount from './Pages/admin/adminAcount';
 import AdminClasses from './Pages/admin/adminClasses';
 import AdminMapping from './Pages/admin/adminMapping';
-import ConfirmResetPassword from './Pages/confirmResetPassword';
+import ConfirmResetPassword from './Pages/cofirmResetPassword';
 import Home from './Pages/home';
 import JoinClass from './Pages/joinClass';
 import Login from './Pages/login';
