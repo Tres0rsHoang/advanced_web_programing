@@ -191,7 +191,31 @@ adminRouter.get('/classes', authenToken, isAdmin, async function (req, res) {
 
         var sqlResult = await databaseQuery(databaseRequest, sql);
 
-        res.send(sqlResult);
+        if (sqlResult.length != 0) {
+            for (const classroom of sqlResult) {
+                var classId = classroom['id'];
+                var sql = `SELECT previous_id, in_class_id, student_id, CONCAT(u.first_name,' ', u.last_name) as student_name
+                FROM classroom_student cs
+                JOIN [user] u ON u.id = cs.student_id
+                WHERE classroom_id = '${classId}' AND is_removed = 0`;
+
+                var userInClassRes = await databaseQuery(databaseRequest, sql);
+
+                var userInClass = [];
+
+                for (const element of userInClassRes) {
+                    if (element['previous_id'] != null) element['is_mapping'] = true;
+                    else element['is_mapping'] = false;
+                    delete element['previous_id'];
+                    userInClass.push(element);
+                }
+
+                classroom['user_in_class'] = userInClass;
+            }
+            res.send(sqlResult);
+        }
+
+        res.send([]);
     }
     catch (err) {
         console.log("ERROR[/admin/classes]:", err);

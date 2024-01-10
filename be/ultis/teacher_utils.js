@@ -129,9 +129,9 @@ export async function unMapStudent(classId, studentId) {
 }
 
 export async function isMapping(studentId) {
-    var sql = `SELECT previous_id 
+    var sql = `SELECT student_id 
     FROM classroom_student cs 
-    WHERE cs.student_id = '${studentId}'`;
+    WHERE cs.previous_id = '${studentId}'`;
 
     try{
        var result = await databaseQuery(databaseRequest, sql);

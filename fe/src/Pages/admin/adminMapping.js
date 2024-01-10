@@ -10,13 +10,15 @@ export default function AdminMapping() {
     const [classId, setClassId] = React.useState('');
     const [studentId, setStudentId] = React.useState('');
     const [inClassId, setInClassId] = React.useState('');
+
     const [classList, setClassList] = React.useState([]);
 
     React.useEffect(() => {
         async function fetchData() {
             var response = await getClassroomListApi();
             if (response.status === 200) {
-                const classes = response.data.map(element => {
+                var temp = response.data.filter(value => value['is_active'] === true);
+                const classes = temp.map(element => {
                     return {
                         classId: element['id'],
                         className: element['name']
