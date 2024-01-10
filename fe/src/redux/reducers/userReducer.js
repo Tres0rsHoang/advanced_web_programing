@@ -65,9 +65,8 @@ export default function userReducer(state = INITIAL_STATE, action) {
             };
 
         case USER_LOGOUT:
+            localStorage.clear();
             logoutApi();
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
 
             return {
                 ...state,
@@ -84,8 +83,7 @@ export default function userReducer(state = INITIAL_STATE, action) {
             };
 
         case GOOGLE_LOGOUT:
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
+            localStorage.clear();
 
             return {
                 ...state,

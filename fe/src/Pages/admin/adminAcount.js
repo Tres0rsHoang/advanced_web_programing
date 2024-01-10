@@ -1,22 +1,36 @@
-import { Box, Divider, Tab, Tabs } from '@mui/material';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import { Box, Button, Divider, Stack, Tab, Tabs } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridDeleteIcon } from '@mui/x-data-grid';
 import React, { useEffect, useState } from 'react';
-import { getUserListApi } from '../../api/adminService';
+import { toast } from 'react-toastify';
+import { getUserListApi, toggleLockAccountApi } from '../../api/adminService';
 import MiniDrawer from '../../components/Drawer';
 
 export default function AdminAccount() {
-    //const theme = useTheme();
-    //const isMatch = useMediaQuery(theme.breakpoints.down('lg'));
-    const [rowsData, setRowsData] = useState([]);
+    const [selectedRows, setSelectedRows] = React.useState([]);
+    const [rows, setRowsData] = useState([]);
+    const [fetchData, setFetchData] = useState(false);
 
     useEffect(() => {
         async function fetchData() {
             var response = await getUserListApi();
-            setRowsData(prevState => prevState.concat(response.data));
+            setRowsData(response.data.map((element) => {
+                return {
+                    id: element['id'],
+                    firstName: element['first_name'],
+                    lastName: element['last_name'],
+                    email: element['email'],
+                    isVerify: element['is_verify'],
+                    isLocked: element['is_locked'],
+                    isAdmin: element['is_admin'],
+                    phoneNumber: element['phone_number'],
+                    imageUrl: element['image_url'],
+                }
+            }));
         }
         fetchData();
-    }, []);
+    }, [fetchData]);
 
     const columns = [
         {
@@ -42,17 +56,20 @@ export default function AdminAccount() {
         {
             field: 'isVerify',
             headerName: 'Email Verify',
-            flex: 1
+            flex: 1,
+            type: "boolean"
         },
         {
             field: 'isLocked',
             headerName: 'Account Locked',
-            flex: 1
+            flex: 1,
+            type: "boolean"
         },
         {
             field: 'isAdmin',
             headerName: 'Is Admin',
-            flex: 1
+            flex: 1,
+            type: "boolean"
         },
         {
             field: 'phoneNumber',
@@ -66,59 +83,19 @@ export default function AdminAccount() {
         }
     ];
 
-    // var rows = rowsData.map((element) => {
-    //     return {
-    //         id: element['id'],
-    //         firstName: element['first_name'],
-    //         lastName: element['last_name'],
-    //         email: element['email'],
-    //         isVerify: element['is_verify'],
-    //         isLocked: element['is_locked'],
-    //         isAdmin: element['is_admin'],
-    //         phoneNumber: element['phone_number'],
-    //         imageUrl: element['image_url'],
-    //     }
-    // });
 
-    // var temp = rowsData.map((element) => {
-    //     return {
-    //         id: element['id'],
-    //         firstName: element['first_name'],
-    //         lastName: element['last_name'],
-    //         email: element['email'],
-    //         isVerify: element['is_verify'],
-    //         isLocked: element['is_locked'],
-    //         isAdmin: element['is_admin'],
-    //         phoneNumber: element['phone_number'],
-    //         imageUrl: element['image_url'],
-    //     }
-    // });
-
-    const rows = [
-        {
-            id: 'id',
-            firstName: 'first_name',
-            lastName: 'last_name',
-            email: 'email',
-            isVerify: 'is_verify',
-            isLocked: 'is_locked',
-            isAdmin: 'is_admin',
-            phoneNumber: 'phone_number',
-            imageUrl: 'image_url',
-        },
-        {
-            id: 'id',
-            firstName: 'first_name',
-            lastName: 'last_name',
-            email: 'email',
-            isVerify: 'is_verify',
-            isLocked: 'is_locked',
-            isAdmin: 'is_admin',
-            phoneNumber: 'phone_number',
-            imageUrl: 'image_url',
+    const handleLockAccount = () => {
+        if (selectedRows.length === 0) {
+            toast.error("No user sellected");
+            return;
         }
-    ]
 
+        var element = selectedRows[0];
+
+        toggleLockAccountApi(element['id']).then(response => {
+            console.log(response);
+        });
+    }
 
     return (
         <React.Fragment>
@@ -136,8 +113,9 @@ export default function AdminAccount() {
                 <Divider />
                 <Box md={{ height: '25%' }}>
                     <DataGrid
-                        rows={rows}
-                        columns={columns}
+                        autosizeOptions
+                        rows = {rows}
+                        columns = {columns}
                         initialState={{
                             pagination: {
                                 paginationModel: {
@@ -145,10 +123,21 @@ export default function AdminAccount() {
                                 },
                             },
                         }}
-                        pageSizeOptions={[5]}
-                        checkboxSelection
-                        disableRowSelectionOnClick
+                        pageSizeOptions={[5, 10]}
+                        onRowSelectionModelChange={(ids) => {
+                            const selectedIDs = new Set(ids);
+                            const selectedRows = rows.filter((row) =>
+                                selectedIDs.has(row.id),
+                            );
+                            setSelectedRows(selectedRows);
+                        }}
                     />
+                </Box>
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "start" }}>
+                    <Stack direction="row" spacing={2}>
+                        <Button variant="contained" color="error" startIcon={<GridDeleteIcon />} onClick={handleLockAccount}>Toggle Lock</Button>
+                        <Button variant="contained" startIcon={<CheckBoxIcon />}>Toggle Admin</Button>
+                    </Stack>
                 </Box>
             </MiniDrawer>
         </React.Fragment>

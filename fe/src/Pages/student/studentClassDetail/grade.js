@@ -16,8 +16,10 @@ export default function StudentGrade() {
 
     useEffect(() => {
         async function fetchData() {
-        let response = await getGradeApi(classId);
-            setGradeInfo(response.data);
+            if (classId !== undefined) {
+                let response = await getGradeApi(classId);
+                setGradeInfo(response.data);
+            }
         }
         fetchData();
         

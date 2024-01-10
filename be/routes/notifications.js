@@ -8,7 +8,7 @@ import { getCurrentUserId, isClassActive, isMemberInClass } from "../ultis/user_
 const notificationRouter = express.Router();
 const databaseRequest = await databaseConnection();
 
-notificationRouter.get('/classroom', authenToken, isClassActive, async function (req, res) {
+notificationRouter.post('/classroom', authenToken, isClassActive, async function (req, res) {
     try {
         let reqData = req.body;
 

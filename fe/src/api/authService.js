@@ -24,15 +24,15 @@ const signUpApi = async (email, password, phoneNumber, firstName, lastName) => {
 
 const confirmResetPassword = async (email, resetCode, newPassword) => {
   return await request('PATCH', '/auth/confirm-reset-password', {
-    "email": email,
-    "reset_code": resetCode,
-    "new_password": newPassword
+    email: email,
+    reset_code: resetCode,
+    new_password: newPassword
   });
 }
 
 const resetPassword = async ( email ) => {
   return await request('POST', '/auth/reset-password', {
-    "email": email
+    email: email
   });
 }
 
