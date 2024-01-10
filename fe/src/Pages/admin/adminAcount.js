@@ -14,10 +14,11 @@ export default function AdminAccount() {
         async function fetchData() {
             var response = await getUserListApi();
             setRowsData(response.data);
-            console.log(response);
         }
         fetchData();
     }, []);
+
+
     
     const columns = [
         {
@@ -67,7 +68,23 @@ export default function AdminAccount() {
         }
     ];
 
-    const rows = [];
+    // const temp = rowsData.map((element) => {
+    //     {
+    //         id: element['id']
+    //         firstName: element['first_name']
+    //         lastName: element['last_name']
+    //         email: element['email']
+    //         isVerify: element['is_verify']
+    //         isLocked: element['is_locked']
+    //         isAdmin: element['is_admin']
+    //         phoneNumber: element['phone_number']
+    //         imageUrl:  element['image_url']
+    //     }
+    // });
+
+    console.log(temp);
+
+    var rows = [];
 
     return (
         <React.Fragment>

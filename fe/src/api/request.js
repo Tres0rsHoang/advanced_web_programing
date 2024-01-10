@@ -1,5 +1,6 @@
 import axios from "axios";
 import { toast } from "react-toastify";
+import { refreshToken } from "./authService";
 
 export default async function request(method, uri, body) {
     let config = {
@@ -26,12 +27,13 @@ export default async function request(method, uri, body) {
         async function (error) {
             if (error.response.status === 403) {
                 try {
-                    // const refreshResponse = await refreshToken();
-                    // console.log(refreshResponse);
+                    const refreshResponse = await refreshToken();
+                    localStorage.setItem('token', refreshResponse.data.access_token);
                 }
                 catch (err) {
                     toast.error("Server not responding...");
                 }
+                return request(method, uri, body);
             }
             return Promise.reject(error);
         }
