@@ -3,6 +3,7 @@ import databaseConnection from '../helper/database_connection.js';
 import databaseQuery from '../helper/database_query.js';
 
 const databaseRequest = await databaseConnection();
+
 export async function getCurrentUserId(req, res) {
     if (req.cookies?.bao_home_server_jwt) {
         const refreshToken = req.cookies.bao_home_server_jwt
