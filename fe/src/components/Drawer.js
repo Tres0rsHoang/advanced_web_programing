@@ -67,15 +67,6 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 export default function MiniDrawer({ children }) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [openDialog, setOpenDialog] = React.useState(false);
-
-  const handleClickOpen = () => {
-    setOpenDialog(true);
-  };
-
-  const handleClose = () => {
-    setOpenDialog(false);
-  };
 
   const user = useSelector(state => state.user.account);
 

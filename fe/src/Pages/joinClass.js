@@ -16,10 +16,11 @@ export default function JoinClass() {
 
   React.useEffect(()=>{
     let ignore = false;
-    if(!localStorage.getItem('token')) {
-      navigate('/login');
-    }
     async function fetchData() {
+      if(!localStorage.getItem('token')) {
+        navigate('/login');
+      }
+
       var response = await joinClassApi(classCode, invitationType);
 
       if (!ignore) {

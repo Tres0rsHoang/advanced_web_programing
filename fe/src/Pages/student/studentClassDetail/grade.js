@@ -16,13 +16,12 @@ export default function StudentGrade() {
 
     useEffect(() => {
         async function fetchData() {
-        let response = await getGradeApi(classId);
+            let response = await getGradeApi(classId);
+            console.log(response);
             setGradeInfo(response.data);
         }
         fetchData();
     }, []);
-
-    console.log(gradeInfo);
 
     return (
         <React.Fragment>
