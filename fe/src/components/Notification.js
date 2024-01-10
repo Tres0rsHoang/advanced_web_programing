@@ -1,10 +1,10 @@
-import * as React from 'react';
+import { Notifications } from '@mui/icons-material';
+import { Badge, Box, Divider, IconButton, Tooltip, Typography } from '@mui/material';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { Avatar, Badge, Box, Divider, IconButton, Tooltip, Typography } from '@mui/material';
-import { Notifications } from '@mui/icons-material';
-import { selfNotificationsApi } from '../api/notificationService';
 import { grey } from '@mui/material/colors';
+import * as React from 'react';
+import { selfNotificationsApi } from '../api/notificationService';
 
 export default function Notification() {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -35,7 +35,7 @@ export default function Notification() {
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
       >
-        <Badge badgeContent={notifications.length} color="error">
+        <Badge badgeContent={notifications.length ?? 0} color="error">
             <Notifications style={{ fontSize: '25px', color: 'white' }}/>
         </Badge>
       </IconButton>

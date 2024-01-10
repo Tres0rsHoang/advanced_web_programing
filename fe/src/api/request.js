@@ -1,4 +1,6 @@
 import axios from "axios";
+import { redirect } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default async function request(method, uri, body) {
     let config = {
@@ -17,12 +19,14 @@ export default async function request(method, uri, body) {
 
     const response = await axios(config).then(
         function (response) {
+            if (response.status === 202) toast.error(response.data.messages);
             return response;
         }
     ).catch(
         function (error) {
-            console.log('Show error notification!')
-            return Promise.reject(error)
+            toast.error("Server not responding...");
+            return redirect("/login");
+            //return Promise.reject(error)
         }
     );
 
