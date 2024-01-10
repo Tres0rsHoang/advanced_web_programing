@@ -65,10 +65,10 @@ export default function AdminMapping() {
                         <FormControl required sx={{ m: 1, minWidth: "30%", maxWidth: "30%" }}>
                             <InputLabel>Student Id</InputLabel>
                             <Select
-                                value={classId}
+                                value={studentId}
                                 label="Classroom id"
                                 onChange={event => {
-                                    setClassId(event.target.value);
+                                    setStudentId(event.target.value);
                                 }}
                             >
                                 <MenuItem value=""><em>None</em></MenuItem>
@@ -82,11 +82,11 @@ export default function AdminMapping() {
                         </FormControl>
 
                         <FormControl required sx={{ m: 1, minWidth: "20%", maxWidth: "20%" }}>
-                            <InputLabel>Student Id</InputLabel>
+                            <InputLabel>In Class Id</InputLabel>
                             <Select
-                                value={classId}
+                                value={inClassId}
                                 onChange={event => {
-                                    setClassId(event.target.value);
+                                    setInClassId(event.target.value);
                                 }}
                             >
                                 <MenuItem value=""><em>None</em></MenuItem>

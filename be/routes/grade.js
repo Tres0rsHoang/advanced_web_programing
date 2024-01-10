@@ -5,7 +5,7 @@ import databaseConnection from '../helper/database_connection.js';
 import databaseQuery from '../helper/database_query.js';
 import { isNumeric } from "../ultis/string_utils.js";
 import { isTeacher } from "../ultis/teacher_utils.js";
-import { isClassActive } from "../ultis/user_utils.js";
+import { isClassActive, isMemberInClass } from "../ultis/user_utils.js";
 
 const gradeRouter = express.Router();
 const databaseRequest = await databaseConnection();
@@ -62,7 +62,7 @@ gradeRouter.post('/create', authenToken, isClassActive, isTeacher, async functio
     }
 });
 
-gradeRouter.post('/struture', authenToken, isClassActive, isTeacher, async function (req, res, next) {
+gradeRouter.post('/structure', authenToken, isClassActive, async function (req, res, next) {
     try {
         let reqData = req.body;
 
@@ -72,9 +72,15 @@ gradeRouter.post('/struture', authenToken, isClassActive, isTeacher, async funct
 
         const classId = reqData['class_id'];
 
+        const isMember = await isMemberInClass(classId);
+
+        if (!isMember) {
+            res.status(202).send({messages: "You are not in this class"});
+        }
+
         var sql = `SELECT id, grade_scale, name
-    FROM classroom_grade
-    WHERE classroom_id = '${classId}'`;
+        FROM classroom_grade
+        WHERE classroom_id = '${classId}'`;
 
         if (reqData['order_by'] != '' && reqData['order_by'] != undefined) {
             sql = `${sql} ORDER BY ${reqData['order_by']}`;
