@@ -29,7 +29,7 @@ export default function TeacherGrade() {
                     <Typography sx={{mb: '20px', fontWeight: 'bold'}}>
                         Grade Structure
                     </Typography>
-                    <GradeStructure />
+                    <GradeStructure classId={classId}/>
                     <Divider sx={{margin: '40px 0'}}/>
                     <Typography sx={{mb: '20px', fontWeight: 'bold'}}>
                         Grade Management
