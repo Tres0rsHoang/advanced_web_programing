@@ -31,12 +31,15 @@ export default async function request(method, uri, body) {
                     localStorage.setItem('token', refreshResponse.data.access_token);            
                     return request(method, uri, body);
                 }
+                if (error.code === "ERR_NETWORK") { 
+                    localStorage.clear();
+                    //window.location = '/login';
+                }
                 return Promise.reject(error);
             }
             catch (err) {    
                 localStorage.clear();
                 window.location = '/login';
-                //return Promise.reject(error);
             }
         }
     );
