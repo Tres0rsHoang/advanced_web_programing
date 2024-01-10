@@ -1,5 +1,4 @@
 import axios from "axios";
-import { redirect } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export default async function request(method, uri, body) {
@@ -25,8 +24,11 @@ export default async function request(method, uri, body) {
     ).catch(
         function (error) {
             toast.error("Server not responding...");
-            return redirect("/login");
-            //return Promise.reject(error)
+            if (error.response.status === 403) {
+                localStorage.clear();
+                window.location = '/login';
+            }
+            return Promise.reject(error);
         }
     );
 

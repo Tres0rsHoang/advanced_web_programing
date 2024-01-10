@@ -103,7 +103,6 @@ export default function userReducer(state = INITIAL_STATE, action) {
 
         case USER_REFRESH:
             const user = JSON.parse(localStorage.getItem('user'));
-            
             return {
                 ...state,
                 account: {
@@ -120,11 +119,8 @@ export default function userReducer(state = INITIAL_STATE, action) {
             };
 
         case FETCH_USER_EDIT_PROFILE:
-
             return {
-
                 ...state,
-
             };
 
         default: return state;

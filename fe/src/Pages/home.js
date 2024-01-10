@@ -1,29 +1,26 @@
 import { Box, Grid } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { getCurrentUserApi } from '../api/profileService';
 import MiniDrawer from '../components/Drawer';
 import StudentClassCard from '../components/StudentClassCard';
 import TeacherClassCard from '../components/TeacherClassCard';
 
 export default function Home() {
-  const user = useSelector(state => state.user.account);
-
   const [teachingInfo, setTeachingInfo] = useState([]);
   const [enrolledInfo, setEnrolledInfo] = useState([]);
-
-  const navigate = useNavigate();
-
+  
   useEffect(() => {
     const fetchData = async () => {
-      let response = await getCurrentUserApi();
-      if (response.status != 200) {
-        //navigate('/login');
+      try {
+        var response = await getCurrentUserApi();
+        setTeachingInfo(response.data.is_teacher_classes);
+        setEnrolledInfo(response.data.is_student_classes);
       }
-      setTeachingInfo(response.data.is_teacher_classes);
-      setEnrolledInfo(response.data.is_student_classes);
+      catch(err){
+        toast.error("Server not responding...");
+      }
     }
     fetchData();
   }, [])

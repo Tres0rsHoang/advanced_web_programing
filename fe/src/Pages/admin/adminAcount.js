@@ -13,8 +13,8 @@ export default function AdminAccount() {
     useEffect(() => {
         async function fetchData() {
             var response = await getUserListApi();
-            console.log(response);
             setRowsData(response.data);
+            console.log(response);
         }
         fetchData();
     }, []);
@@ -68,11 +68,6 @@ export default function AdminAccount() {
     ];
 
     const rows = [];
-
-    for (const element of rowsData) {
-        console.log(element);
-    }
-
 
     return (
         <React.Fragment>
