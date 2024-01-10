@@ -13,12 +13,10 @@ export default function AdminAccount() {
     useEffect(() => {
         async function fetchData() {
             var response = await getUserListApi();
-            setRowsData(response.data);
+            setRowsData(prevState => prevState.concat(response.data));
         }
         fetchData();
     }, []);
-
-
 
     const columns = [
         {
@@ -68,33 +66,58 @@ export default function AdminAccount() {
         }
     ];
 
-    var rows = rowsData.map((element) => {
-        return {
-            id: element['id'],
-            firstName: element['first_name'],
-            lastName: element['last_name'],
-            email: element['email'],
-            isVerify: element['is_verify'],
-            isLocked: element['is_locked'],
-            isAdmin: element['is_admin'],
-            phoneNumber: element['phone_number'],
-            imageUrl: element['image_url'],
-        }
-    });
+    // var rows = rowsData.map((element) => {
+    //     return {
+    //         id: element['id'],
+    //         firstName: element['first_name'],
+    //         lastName: element['last_name'],
+    //         email: element['email'],
+    //         isVerify: element['is_verify'],
+    //         isLocked: element['is_locked'],
+    //         isAdmin: element['is_admin'],
+    //         phoneNumber: element['phone_number'],
+    //         imageUrl: element['image_url'],
+    //     }
+    // });
 
-    var temp = rowsData.map((element) => {
-        return {
-            id: element['id'],
-            firstName: element['first_name'],
-            lastName: element['last_name'],
-            email: element['email'],
-            isVerify: element['is_verify'],
-            isLocked: element['is_locked'],
-            isAdmin: element['is_admin'],
-            phoneNumber: element['phone_number'],
-            imageUrl: element['image_url'],
+    // var temp = rowsData.map((element) => {
+    //     return {
+    //         id: element['id'],
+    //         firstName: element['first_name'],
+    //         lastName: element['last_name'],
+    //         email: element['email'],
+    //         isVerify: element['is_verify'],
+    //         isLocked: element['is_locked'],
+    //         isAdmin: element['is_admin'],
+    //         phoneNumber: element['phone_number'],
+    //         imageUrl: element['image_url'],
+    //     }
+    // });
+
+    const rows = [
+        {
+            id: 'id',
+            firstName: 'first_name',
+            lastName: 'last_name',
+            email: 'email',
+            isVerify: 'is_verify',
+            isLocked: 'is_locked',
+            isAdmin: 'is_admin',
+            phoneNumber: 'phone_number',
+            imageUrl: 'image_url',
+        },
+        {
+            id: 'id',
+            firstName: 'first_name',
+            lastName: 'last_name',
+            email: 'email',
+            isVerify: 'is_verify',
+            isLocked: 'is_locked',
+            isAdmin: 'is_admin',
+            phoneNumber: 'phone_number',
+            imageUrl: 'image_url',
         }
-    });
+    ]
 
 
     return (
@@ -117,11 +140,14 @@ export default function AdminAccount() {
                         columns={columns}
                         initialState={{
                             pagination: {
-                                paginationModel: { page: 0, pageSize: 5 },
+                                paginationModel: {
+                                    pageSize: 5,
+                                },
                             },
                         }}
-                        pageSizeOptions={[5, 10]}
+                        pageSizeOptions={[5]}
                         checkboxSelection
+                        disableRowSelectionOnClick
                     />
                 </Box>
             </MiniDrawer>
