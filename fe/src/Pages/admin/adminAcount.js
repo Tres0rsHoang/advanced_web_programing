@@ -67,9 +67,12 @@ export default function AdminAccount() {
         }
     ];
 
+    const rows = [];
+
     for (const element of rowsData) {
         console.log(element);
     }
+
 
     return (
         <React.Fragment>
