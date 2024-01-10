@@ -63,7 +63,7 @@ authenRouter.get('/refreshToken', async function (req, res, next) {
     try {
         if (req.cookies?.bao_home_server_jwt) {
             const refreshToken = req.cookies.bao_home_server_jwt;
-            var sql = `SELECT user_id FROM refresh_authen WHERE token = '${refreshToken}'`;
+            var sql = `SELECT user_id FROM refresh_authen WHERE token = '${refreshToken}' AND is_revoked = 0`;
             var userId = await databaseQuery(databaseRequest, sql);
             if (userId.length == 0) return res.status(406).json({ message: 'Unauthorized' });
             userId = userId[0]['user_id'];
@@ -92,21 +92,28 @@ authenRouter.get('/refreshToken', async function (req, res, next) {
 
 authenRouter.get('/logout', authenToken, async function (req, res, next) {
     try {
-        const authorizationHeader = req.headers['authorization'];
-        const accessToken = authorizationHeader.split(' ')[1];
+        if (req.cookies?.bao_home_server_jwt) {
+            const refreshToken = req.cookies.bao_home_server_jwt;
+            var sql = `SELECT user_id FROM refresh_authen WHERE token = '${refreshToken}'`;
+            var userId = await databaseQuery(databaseRequest, sql);
+            if (userId.length == 0) return res.status(406).json({ message: 'Unauthorized' });
+            userId = userId[0]['user_id'];
 
-        jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET_KEY, async (err, data) => {
-            if (err) {
-                res.status(403).json({ "Error": err });
-                throw err;
-            }
-            const refreshTokenId = data['refresh_token_id'];
-            const sql = `UPDATE [refresh_authen] SET is_revoked = 1 WHERE id = '${refreshTokenId}'`;
+            jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET_KEY, async (err, data) => {
+                if (err) {
+                    return res.status(406).json({ message: 'Unauthorized' });
+                }
+                else {
+                    const sql = `UPDATE [refresh_authen] SET is_revoked = 1 WHERE token = '${refreshToken}'`;
 
-            await databaseQuery(databaseRequest, sql);
+                    await databaseQuery(databaseRequest, sql);
 
-            res.json({ "messages": "Logout successfully" });
-        });
+                    res.json({ "messages": "Logout successfully" });
+                }
+            });
+        } else {
+            return res.status(406).json({ message: 'Unauthorized' });
+        }
     }
     catch (err) {
         console.log("ERROR[/auth/logout]:", err);
