@@ -1,4 +1,4 @@
-import { Divider, Tab, Tabs } from '@mui/material';
+import { Box, Divider, Tab, Tabs } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import { DataGrid } from '@mui/x-data-grid';
 import React, { useEffect, useState } from 'react';
@@ -19,56 +19,56 @@ export default function AdminAccount() {
     }, []);
 
 
-    
+
     const columns = [
         {
-            field: 'id', 
+            field: 'id',
             headerName: 'Account ID',
             flex: 1
         },
-        { 
-            field: 'firstName', 
-            headerName: 'First name', 
+        {
+            field: 'firstName',
+            headerName: 'First name',
             flex: 1
         },
-        { 
-            field: 'lastName', 
-            headerName: 'Last name', 
+        {
+            field: 'lastName',
+            headerName: 'Last name',
             flex: 1
         },
-        { 
-            field: 'email', 
-            headerName: 'Email', 
+        {
+            field: 'email',
+            headerName: 'Email',
             flex: 1
         },
-        { 
-            field: 'isVerify', 
-            headerName: 'Verify', 
+        {
+            field: 'isVerify',
+            headerName: 'Email Verify',
             flex: 1
         },
-        { 
-            field: 'isLocked', 
-            headerName: 'Locked', 
+        {
+            field: 'isLocked',
+            headerName: 'Account Locked',
             flex: 1
         },
-        { 
-            field: 'isAdmin', 
-            headerName: 'Admin', 
+        {
+            field: 'isAdmin',
+            headerName: 'Is Admin',
             flex: 1
         },
-        { 
-            field: 'phoneNumber', 
-            headerName: 'Phone Number', 
+        {
+            field: 'phoneNumber',
+            headerName: 'Phone Number',
             flex: 1
         },
-        { 
-            field: 'imageUrl', 
-            headerName: 'Image URL', 
+        {
+            field: 'imageUrl',
+            headerName: 'Image URL',
             flex: 1
         }
     ];
 
-    const rows = rowsData.map((element) => {
+    var rows = rowsData.map((element) => {
         return {
             id: element['id'],
             firstName: element['first_name'],
@@ -78,9 +78,24 @@ export default function AdminAccount() {
             isLocked: element['is_locked'],
             isAdmin: element['is_admin'],
             phoneNumber: element['phone_number'],
-            imageUrl:  element['image_url'],
+            imageUrl: element['image_url'],
         }
     });
+
+    var temp = rowsData.map((element) => {
+        return {
+            id: element['id'],
+            firstName: element['first_name'],
+            lastName: element['last_name'],
+            email: element['email'],
+            isVerify: element['is_verify'],
+            isLocked: element['is_locked'],
+            isAdmin: element['is_admin'],
+            phoneNumber: element['phone_number'],
+            imageUrl: element['image_url'],
+        }
+    });
+
 
     return (
         <React.Fragment>
@@ -96,17 +111,19 @@ export default function AdminAccount() {
                     <Tab label="Mapping" href='/admin/mapping' />
                 </Tabs>
                 <Divider />
-                <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    initialState={{
-                        pagination: {
-                            paginationModel: { page: 0, pageSize: 5 },
-                        },
-                    }}
-                    pageSizeOptions={[5, 10]}
-                    checkboxSelection
-                />
+                <Box md={{ height: '25%' }}>
+                    <DataGrid
+                        rows={rows}
+                        columns={columns}
+                        initialState={{
+                            pagination: {
+                                paginationModel: { page: 0, pageSize: 5 },
+                            },
+                        }}
+                        pageSizeOptions={[5, 10]}
+                        checkboxSelection
+                    />
+                </Box>
             </MiniDrawer>
         </React.Fragment>
     );
