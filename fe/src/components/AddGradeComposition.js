@@ -78,7 +78,7 @@ export default function AddGradeComposition({classId}) {
                 variant="outlined"
                 InputProps={{ inputProps: { min: 1, max: 100 } }}
                 onChange={(e) => setGradeScale(e.target.value)}
-                value={gradeScale * 0.1}
+                value={gradeScale}
             />
         </DialogContent>
         <DialogActions>
