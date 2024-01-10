@@ -87,6 +87,7 @@ adminRouter.patch('/toggle-lock-account', authenToken, isAdmin, async function (
 
         const userId = reqData['user_id'];
 
+
         const currentUserId = await getCurrentUserId(req, res);
 
         if (userId == currentUserId) {
