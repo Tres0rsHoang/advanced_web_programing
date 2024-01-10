@@ -30,7 +30,6 @@ export default function JoinClass() {
         }
         else {
           navigate('/');
-          toast.error(response.data.messages);
         }    
       }
     }

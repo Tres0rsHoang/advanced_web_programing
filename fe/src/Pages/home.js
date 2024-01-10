@@ -9,7 +9,6 @@ import StudentClassCard from '../components/StudentClassCard';
 import TeacherClassCard from '../components/TeacherClassCard';
 
 export default function Home() {
-  const user = useSelector(state => state.user.account);
 
   const [teachingInfo, setTeachingInfo] = useState([]);
   const [enrolledInfo, setEnrolledInfo] = useState([]);
@@ -19,11 +18,11 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       let response = await getCurrentUserApi();
-      if (response.status != 200) {
-        //navigate('/login');
+      console.log(response);
+      if(response.data) {
+        setTeachingInfo(response.data.is_teacher_classes);
+        setEnrolledInfo(response.data.is_student_classes);
       }
-      setTeachingInfo(response.data.is_teacher_classes);
-      setEnrolledInfo(response.data.is_student_classes);
     }
     fetchData();
   }, [])

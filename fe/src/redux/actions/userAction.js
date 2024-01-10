@@ -39,25 +39,19 @@ export const handleLoginRedux = (email, password) => {
                             }
                         })
                     } else {
-                        toast.error(response2.data.messages);
-
                         dispatch({
                             type: FETCH_USER_ERROR,
                         })
                     }
                 } catch {
-                    toast.error("Server not responding...");
                     return;
                 }
             } else {
-                toast.error(response.data.messages);
-
                 dispatch({
                     type: FETCH_USER_ERROR,
                 })
             }
         } catch {
-            toast.error("Server not responding...");
             return;
         }
     }

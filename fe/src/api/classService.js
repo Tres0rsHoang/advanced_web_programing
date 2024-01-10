@@ -17,7 +17,7 @@ const sendInviteMailApi = async (invitationType, classCode, studentEmail) => {
 }
 
 const classDetailsApi = async (classId) => {
-  return await request('POST', `classroom/detail?classId=${classId}`);
+  return await request('GET', `classroom/detail?classId=${classId}`);
 }
 
 const uploadFileApi = async (files, classId) => {

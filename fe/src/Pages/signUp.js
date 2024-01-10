@@ -92,7 +92,6 @@ export default function SignUp() {
       console.log(response)
 
       if(response.status !== 200) {
-        toast.error(response.data.messages);
         return;
       }
       //clear state and controlled inputs

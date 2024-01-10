@@ -35,7 +35,7 @@ export default function Notification() {
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
       >
-        <Badge badgeContent={notifications ?? 0} color="error">
+        <Badge badgeContent={notifications ? notifications.length : 0} color="error">
             <Notifications style={{ fontSize: '25px', color: 'white' }}/>
         </Badge>
       </IconButton>
