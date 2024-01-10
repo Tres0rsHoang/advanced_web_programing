@@ -8,6 +8,10 @@ const logoutApi = async () => {
   return await request('GET', '/auth/logout');
 }
 
+const refreshToken = async () => {
+  return await request('GET', '/auth/refreshToken');
+}
+
 const signUpApi = async (email, password, phoneNumber, firstName, lastName) => {
   return await request('POST', '/auth/register', {
     email: email, 
@@ -32,5 +36,5 @@ const resetPassword = async ( email ) => {
   });
 }
 
-export { confirmResetPassword, loginApi, logoutApi, resetPassword, signUpApi };
+export { confirmResetPassword, loginApi, logoutApi, refreshToken, resetPassword, signUpApi };
 

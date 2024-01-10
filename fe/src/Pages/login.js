@@ -56,7 +56,6 @@ export default function Login() {
   }, [email, password]);
 
   useEffect(() => {
-    console.log(account);
     if (account && account.auth === true) {      
       navigate('/');
     }

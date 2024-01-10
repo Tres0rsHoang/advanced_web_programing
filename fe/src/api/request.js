@@ -22,11 +22,15 @@ export default async function request(method, uri, body) {
             return response;
         }
     ).catch(
-        function (error) {
-            toast.error("Server not responding...");
+        async function (error) {
             if (error.response.status === 403) {
-                localStorage.clear();
-                window.location = '/login';
+                try {
+                    // const refreshResponse = await refreshToken();
+                    // console.log(refreshResponse);
+                }
+                catch (err) {
+                    toast.error("Server not responding...");
+                }
             }
             return Promise.reject(error);
         }
