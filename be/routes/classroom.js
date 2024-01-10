@@ -135,7 +135,7 @@ classroomRouter.get('/join', authenToken, async function (req, res, next) {
     }
 });
 
-classroomRouter.post('/sendInviteMail', authenToken, isTeacher, async function (req, res, next) {
+classroomRouter.post('/sendInviteMail', authenToken, async function (req, res, next) {
     try {
         let reqData = req.body;
 
@@ -146,6 +146,7 @@ classroomRouter.post('/sendInviteMail', authenToken, isTeacher, async function (
         const invitationType = reqData['invitation_type'];
         const classCode = reqData['class_code'];
         const email = reqData['student_email'];
+        const currentUserId = await getCurrentUserId(req, res);
 
         var sql = `SELECT id FROM [user] WHERE email = '${email}'`;
 
@@ -158,15 +159,19 @@ classroomRouter.post('/sendInviteMail', authenToken, isTeacher, async function (
 
         var userId = sqlResult[0]['id'];
 
-        var sql = `SELECT id FROM classroom WHERE class_code = '${classCode}'`;
+        var sql = `SELECT c.id 
+        FROM classroom c
+        JOIN classroom_teacher ct ON ct.teacher_id = '${currentUserId}'
+        WHERE c.class_code = '${classCode}'`;
+
         var sqlResult = await databaseQuery(databaseRequest, sql);
         if (sqlResult.length == 0) {
-            res.status(202).json({ 'messages': "Invalid email. This email don't have account in this system" });
+            res.status(202).json({ 'messages': "Invalid class_code. You are not teacher of this class" });
             return;
         }
         var classId = sqlResult[0]['id'];
 
-        var isMember = isMemberInClass(classId, userId);
+        var isMember = await isMemberInClass(classId, userId);
 
         if (isMember) {
             res.status(202).json({ 'messages': "This email already in this class" });

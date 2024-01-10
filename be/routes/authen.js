@@ -104,7 +104,7 @@ authenRouter.get('/logout', authenToken, async function (req, res, next) {
                     return res.status(406).json({ message: 'Unauthorized' });
                 }
                 else {
-                    const sql = `UPDATE [refresh_authen] SET is_revoked = 1 WHERE id = '${refreshToken}'`;
+                    const sql = `UPDATE [refresh_authen] SET is_revoked = 1 WHERE token = '${refreshToken}'`;
 
                     await databaseQuery(databaseRequest, sql);
 
