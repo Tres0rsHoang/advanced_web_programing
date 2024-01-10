@@ -36,10 +36,18 @@ authenRouter.post('/login', async function (req, res, next) {
 
         if (id) {
             const refreshTokenId = await createRefreshToken(id);
+
             const accessToken = jwt.sign(
-                { "refresh_token_id": refreshTokenId },
+                { "user_id": id },
                 process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '5m' }
             );
+
+            res.cookie('bao_home_server_jwt', refreshTokenId, {
+                httpOnly: true,
+                sameSite: 'None', secure: true,
+                maxAge: 24 * 60 * 60 * 1000
+            });
+
             res.json({ 'access_token': accessToken });
         }
         else {
@@ -51,44 +59,31 @@ authenRouter.post('/login', async function (req, res, next) {
     }
 });
 
-authenRouter.get('/refreshToken', authenToken, async function (req, res, next) {
+authenRouter.get('/refreshToken', async function (req, res, next) {
     try {
-        const authorizationHeader = req.headers['authorization'];
-        const accessToken = authorizationHeader.split(' ')[1];
-        jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET_KEY, async (err, data) => {
-            if (err) {
-                res.status(403).json({ "Error": err });
-                throw err;
-            }
-            const refreshTokenId = data['refresh_token_id'];
-            const sql = `SELECT * FROM refresh_authen WHERE id = '${refreshTokenId}'`;
+        if (req.cookies?.bao_home_server_jwt) {
+            const refreshToken = req.cookies.bao_home_server_jwt;
+            var sql = `SELECT user_id FROM refresh_authen WHERE token = '${refreshToken}'`;
+            var userId = await databaseQuery(databaseRequest, sql);
+            if (userId.length == 0) return res.status(406).json({ message: 'Unauthorized' });
+            userId = userId[0]['user_id'];
 
-            const result = await databaseQuery(databaseRequest, sql);
-
-            if (result.length > 0) {
-                const refreshToken = result[0]['token'];
-                const refreshTokenRevoked = result[0]['is_revoked'];
-                if (refreshTokenRevoked == 0) {
-                    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET_KEY, (err, data) => {
-                        if (err) {
-                            res.status(403).json({ "Error": err });
-                            throw err;
-                        }
-                        const accessToken = jwt.sign(
-                            { "refresh_token_id": refreshTokenId },
-                            process.env.ACCESS_TOKEN_SECRET_KEY, { expiresIn: '5m' }
-                        );
-                        res.status(200).json({ "access_token": accessToken });
-                    });
+            jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET_KEY, (err, data) => {
+                if (err) {
+                    return res.status(406).json({ message: 'Unauthorized' });
                 }
                 else {
-                    res.status(403).json({ "messages": "Refresh token is revoked" });
+                    const accessToken = jwt.sign({
+                        user_id: userId
+                    }, process.env.ACCESS_TOKEN_SECRET_KEY, {
+                        expiresIn: '5m'
+                    });
+                    return res.json({ access_token: accessToken });
                 }
-            }
-            else {
-                res.status(403).json({ "Error": "Invalid Access Token" });
-            }
-        });
+            });
+        } else {
+            return res.status(406).json({ message: 'Unauthorized' });
+        }
     }
     catch (err) {
         console.log("ERROR[/auth/refreshToken]:", err);

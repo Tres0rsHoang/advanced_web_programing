@@ -26,16 +26,17 @@ export async function authenPassword(email, password) {
 
 export async function createRefreshToken(userId) {
     const refreshTokenId = uuidv4();
+
     const refreshToken = jwt.sign(
-        { "id": refreshTokenId },
+        { "id": userId },
         process.env.REFRESH_TOKEN_SECRET_KEY,
         { expiresIn: "7d" }
     )
-    const sql = `INSERT INTO [refresh_authen] (id, user_id, token, is_revoked) VALUES ( '${refreshTokenId}', '${userId}', '${refreshToken}', 0)`;
     
+    const sql = `INSERT INTO [refresh_authen] (id, user_id, token, is_revoked) VALUES ( '${refreshTokenId}', '${userId}', '${refreshToken}', 0)`;
     await databaseQuery(databaseRequest, sql);
 
-    return refreshTokenId;
+    return refreshToken;
 }
 
 export async function isAdmin(req, res, next) {
