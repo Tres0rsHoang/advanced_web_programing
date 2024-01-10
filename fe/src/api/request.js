@@ -1,9 +1,10 @@
 import axios from "axios";
-import { redirect } from "react-router-dom";
 import { toast } from "react-toastify";
+import { refreshToken } from "./authService";
 
 export default async function request(method, uri, body) {
     let config = {
+        withCredentials: true,
         method: method.toLowerCase(),
         url: uri,
         baseURL: process.env.REACT_APP_SITE_API,
@@ -23,10 +24,18 @@ export default async function request(method, uri, body) {
             return response;
         }
     ).catch(
-        function (error) {
-            toast.error("Server not responding...");
-            return redirect("/login");
-            //return Promise.reject(error)
+        async function (error) {
+            if (error.response.status === 403) {
+                try {
+                    const refreshResponse = await refreshToken();
+                    localStorage.setItem('token', refreshResponse.data.access_token);
+                }
+                catch (err) {
+                    toast.error("Server not responding...");
+                }
+                return request(method, uri, body);
+            }
+            return Promise.reject(error);
         }
     );
 

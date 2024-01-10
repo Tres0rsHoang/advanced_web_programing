@@ -66,7 +66,7 @@ adminRouter.patch('/toggle-admin', authenToken, isAdmin, async function (req, re
 
 adminRouter.get('/user-list', authenToken, isAdmin, async function (req, res) {
     try {
-        var sql = `SELECT id, first_name, last_name, email, phone_number, is_verify, is_locked FROM [user] WHERE email IS NOT NULL`;
+        var sql = `SELECT id, first_name, last_name, email, phone_number, is_verify, is_locked, is_admin, image_url FROM [user] WHERE email IS NOT NULL`;
 
         var sqlResult = await databaseQuery(databaseRequest, sql);
 

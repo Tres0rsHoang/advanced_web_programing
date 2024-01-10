@@ -1,8 +1,7 @@
 import { default as axios, default as request } from "./request";
 
 const getCurrentUserApi = async () => {
-  const response = await request('GET', '/profile');
-  return response;
+  return await request('GET', '/profile');
 }
 
 const updateUserProfileApi = (email, phoneNumber, firstName, lastName) => {

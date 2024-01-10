@@ -56,7 +56,7 @@ export default function Login() {
   }, [email, password]);
 
   useEffect(() => {
-    if(account && account.auth === true) {
+    if (account && account.auth === true) {      
       navigate('/');
       toast.success('Login successful');
     }

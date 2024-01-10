@@ -13,11 +13,12 @@ export default function AdminAccount() {
     useEffect(() => {
         async function fetchData() {
             var response = await getUserListApi();
-            console.log(response);
             setRowsData(response.data);
         }
         fetchData();
     }, []);
+
+
     
     const columns = [
         {
@@ -67,12 +68,19 @@ export default function AdminAccount() {
         }
     ];
 
-    const rows = [];
-
-    for (const element of rowsData) {
-        console.log(element);
-    }
-
+    const rows = rowsData.map((element) => {
+        return {
+            id: element['id'],
+            firstName: element['first_name'],
+            lastName: element['last_name'],
+            email: element['email'],
+            isVerify: element['is_verify'],
+            isLocked: element['is_locked'],
+            isAdmin: element['is_admin'],
+            phoneNumber: element['phone_number'],
+            imageUrl:  element['image_url'],
+        }
+    });
 
     return (
         <React.Fragment>
