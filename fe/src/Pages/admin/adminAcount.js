@@ -36,7 +36,7 @@ export default function AdminAccount() {
         {
             field: 'id',
             headerName: 'Account ID',
-            flex: 1
+            flex: 3
         },
         {
             field: 'firstName',
@@ -132,9 +132,14 @@ export default function AdminAccount() {
                 <Divider />
                 <div style={{ height: 500, width: '100%' }} >
                     <DataGrid
+                        sx={{
+                            "& .MuiDataGrid-cell:focus-within, & .MuiDataGrid-cell:focus": {
+                                outline: "none"
+                            }
+                        }}
                         autosizeOptions
-                        rows = {rows}
-                        columns = {columns}
+                        rows={rows}
+                        columns={columns}
                         initialState={{
                             pagination: {
                                 paginationModel: { page: 0, pageSize: 10 },

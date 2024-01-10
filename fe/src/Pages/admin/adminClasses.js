@@ -1,10 +1,9 @@
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { Box, Button, Divider, Stack, Tab, Tabs } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import { DataGrid, GridDeleteIcon } from '@mui/x-data-grid';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { getClassroomListApi, toggleAdminApi, toggleLockAccountApi } from '../../api/adminService';
+import { getClassroomListApi, toggleClassApi } from '../../api/adminService';
 import MiniDrawer from '../../components/Drawer';
 
 export default function AdminClasses() {
@@ -20,7 +19,8 @@ export default function AdminClasses() {
                     id: element['id'],
                     name: element['name'],
                     subject: element['subject'],
-                    isActive: element['is_active']
+                    isActive: element['is_active'],
+                    teacherName: element['teacher_name']
                 }
             }));
         }
@@ -31,7 +31,7 @@ export default function AdminClasses() {
         {
             field: 'id',
             headerName: 'Account ID',
-            flex: 1
+            flex: 2
         },
         {
             field: 'name',
@@ -44,6 +44,11 @@ export default function AdminClasses() {
             flex: 1
         },
         {
+            field: 'teacherName',
+            headerName: 'Teacher name',
+            flex: 1
+        },
+        {
             field: 'isActive',
             headerName: 'Active',
             flex: 1,
@@ -52,7 +57,7 @@ export default function AdminClasses() {
     ];
 
 
-    const handleLockAccount = () => {
+    const handleActiveClass = () => {
         if (selectedRows.length === 0) {
             toast.error("No user sellected");
             return;
@@ -60,7 +65,7 @@ export default function AdminClasses() {
 
         var element = selectedRows[0];
 
-        toggleLockAccountApi(element['id']).then(response => {
+        toggleClassApi(element['id']).then(response => {
             if (response.status === 200) {
                 toast.success(response.data.messages);
                 setFetchData(!fetchData);
@@ -68,23 +73,6 @@ export default function AdminClasses() {
         });
     }
 
-    const handleToggleAdmin = () => {
-        if (selectedRows.length === 0) {
-            toast.error("No user sellected");
-            return;
-        }
-
-        var element = selectedRows[0];
-
-        toggleAdminApi(element['id']).then(response => {
-            if (response.status === 200) {
-                toast.success(response.data.messages);
-                setFetchData(!fetchData);
-            }
-        });
-    }
-    
-    
     return (
         <React.Fragment>
             <CssBaseline />
@@ -92,18 +80,23 @@ export default function AdminClasses() {
                 <Tabs
                     aria-label="nav tabs example"
                     role="navigation"
-                    value= {1}
+                    value={1}
                 >
-                    <Tab label="Account" href='/admin/account' sx={{ml: '20px'}} />
+                    <Tab label="Account" href='/admin/account' sx={{ ml: '20px' }} />
                     <Tab label="Classes" href='/admin/classes' />
                     <Tab label="Mapping" href='/admin/mapping' />
                 </Tabs>
                 <Divider />
                 <div style={{ height: 500, width: '100%' }} >
                     <DataGrid
+                        sx={{
+                            "& .MuiDataGrid-cell:focus-within, & .MuiDataGrid-cell:focus": {
+                                outline: "none"
+                            }
+                        }}
                         autosizeOptions
-                        rows = {rows}
-                        columns = {columns}
+                        rows={rows}
+                        columns={columns}
                         initialState={{
                             pagination: {
                                 paginationModel: { page: 0, pageSize: 10 },
@@ -121,8 +114,7 @@ export default function AdminClasses() {
                 </div>
                 <Box sx={{ display: "flex", alignItems: "center", justifyContent: "start" }}>
                     <Stack direction="row" spacing={2}>
-                        <Button variant="contained" color="error" startIcon={<GridDeleteIcon />} onClick={handleLockAccount}>Toggle Lock</Button>
-                        <Button variant="contained" startIcon={<CheckBoxIcon />} onClick={handleToggleAdmin}>Toggle Admin</Button>
+                        <Button variant="contained" color="error" startIcon={<GridDeleteIcon />} onClick={handleActiveClass}>Toggle Active</Button>
                     </Stack>
                 </Box>
             </MiniDrawer>
