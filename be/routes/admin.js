@@ -178,7 +178,10 @@ adminRouter.patch('/un-mapping', authenToken, isAdmin, async function (req, res)
 
 adminRouter.get('/classes', authenToken, isAdmin, async function (req, res) {
     try {
-        var sql = `SELECT id, name, subject, is_active FROM classroom`;
+        var sql = `SELECT c.id, c.name, c.subject, c.is_active, CONCAT(u.first_name,' ', u.last_name) as teacher_name
+        FROM classroom c
+        JOIN classroom_teacher ct ON ct.classroom_id = c.id
+        JOIN [user] u ON u.id = ct.teacher_id`;
 
         var sqlResult = await databaseQuery(databaseRequest, sql);
 
