@@ -34,6 +34,7 @@ export default async function request(method, uri, body) {
                 if (error.code === "ERR_NETWORK") { 
                     localStorage.clear();
                     window.location = '/login';
+                    return;
                 }
                 return Promise.reject(error);
             }
