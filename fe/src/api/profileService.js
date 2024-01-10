@@ -21,7 +21,7 @@ const updateUserProfileApi = (email, phoneNumber, firstName, lastName) => {
 }
 
 const profileMapStudentApi = (classId, inClassId) => {
-    return axios.patch("/profile/map-student", {classId, inClassId}, {
+    return axios.patch("/profile/map-student", {class_id: classId, in_class_id: inClassId}, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + localStorage.getItem("token")
@@ -30,7 +30,7 @@ const profileMapStudentApi = (classId, inClassId) => {
 }
 
 const getGradeApi = (classId) => {
-    return axios.patch("/profile/get-grade", {classId}, {
+    return axios.get("/profile/get-grade", {class_id: classId}, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + localStorage.getItem("token")

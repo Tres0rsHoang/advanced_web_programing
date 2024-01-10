@@ -25,11 +25,10 @@ export default function InviteStudent({classCode}) {
 
   const handleSubmit = async () => {
     let response = await sendInviteMailApi('student', classCode, email);
+    
+    console.log(response);
     if (response.status === 200) {
       toast.success('Invite student successful');
-    }
-    else {
-      toast.error(response.data.messages);
     }
   };
 

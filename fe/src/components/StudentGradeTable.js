@@ -7,12 +7,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { grey } from '@mui/material/colors';
-import { useSelector } from 'react-redux';
 
 
-export default function StudentGradeTable() {
-  const user = useSelector(state => state.user.account);
-
+export default function StudentGradeTable({gradeInfo}) {
   function createData(id, firstName, lastName, assignments, midterm, final) {
     const avg = assignments * 0.3 + midterm * 0.3 + final * 0.4;
     return { id, firstName, lastName, assignments, midterm, final, avg };
@@ -29,7 +26,7 @@ export default function StudentGradeTable() {
     { field: 'avg', label: 'Total Grade', width: 200, format: (value) => value.toFixed(2) },
   ];
 
-  const rows =  createData('20127531', user.firstName, user.lastName, 9, 10, 8.5);
+  const rows =  createData(gradeInfo.in_class_id, gradeInfo.first_name, gradeInfo.last_name, 9, 10, 8.5);
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden', boxShadow: 0 }}>

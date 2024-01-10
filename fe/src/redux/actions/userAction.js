@@ -40,7 +40,6 @@ export const handleLoginRedux = (email, password) => {
                 }
             }
         } catch {
-            toast.error("Server not responding...");
             return;
         }
     }

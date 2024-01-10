@@ -38,7 +38,6 @@ export default function CreateClass() {
       setTimeout(() => {
         navigate(0);
       }, 1000);
-      toast.error(response.data.messages);
     }
   };
 
