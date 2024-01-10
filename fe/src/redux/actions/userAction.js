@@ -33,6 +33,7 @@ export const handleLoginRedux = (email, password) => {
                             firstName: userInfoRes.data.information.first_name,
                             lastName: userInfoRes.data.information.last_name,
                             imageUrl: userInfoRes.data.information.image_url,
+                            isAdmin: userInfoRes.data.information.is_admin,
                             auth: true,
                             authGoogle: false
                         }
