@@ -68,23 +68,19 @@ export default function AdminAccount() {
         }
     ];
 
-    // const temp = rowsData.map((element) => {
-    //     {
-    //         id: element['id']
-    //         firstName: element['first_name']
-    //         lastName: element['last_name']
-    //         email: element['email']
-    //         isVerify: element['is_verify']
-    //         isLocked: element['is_locked']
-    //         isAdmin: element['is_admin']
-    //         phoneNumber: element['phone_number']
-    //         imageUrl:  element['image_url']
-    //     }
-    // });
-
-    console.log(temp);
-
-    var rows = [];
+    const rows = rowsData.map((element) => {
+        return {
+            id: element['id'],
+            firstName: element['first_name'],
+            lastName: element['last_name'],
+            email: element['email'],
+            isVerify: element['is_verify'],
+            isLocked: element['is_locked'],
+            isAdmin: element['is_admin'],
+            phoneNumber: element['phone_number'],
+            imageUrl:  element['image_url'],
+        }
+    });
 
     return (
         <React.Fragment>
