@@ -10,7 +10,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { confirmResetPassword } from '../api/authService';
 
-const CONFIRM_RESET_PASSWORD_URL = '/confirm-reset-password';
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 const defaultTheme = createTheme();

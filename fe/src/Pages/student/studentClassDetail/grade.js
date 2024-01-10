@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import { Box, Divider, Tab, Tabs } from '@mui/material';
 import MiniDrawer from '../../../components/Drawer';
@@ -6,13 +6,23 @@ import StudentGradeTable from '../../../components/StudentGradeTable';
 import GradeRequest from '../../../components/GradeRequest';
 import GradeReviewDetail from '../../../components/GradeReviewDetail';
 import { useSearchParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { getGradeApi } from '../../../api/profileService';
 
 export default function StudentGrade() {
     const [searchParams, setSearchParams] = useSearchParams();
     const classId = searchParams.get("classId");
 
-    const user = useSelector(state => state.user.account);
+    const [gradeInfo, setGradeInfo] = useState({});
+
+    useEffect(() => {
+        async function fetchData() {
+            if (classId !== undefined) {
+                let response = await getGradeApi(classId);
+                setGradeInfo(response.data);
+            }
+        }
+        fetchData();
+    }, []);
 
     return (
         <React.Fragment>
@@ -29,7 +39,7 @@ export default function StudentGrade() {
                 </Tabs>
                 <Divider />
                 <Box sx={{margin: '40px'}}>
-                    <StudentGradeTable />
+                    <StudentGradeTable gradeInfo = {gradeInfo} />
                     <GradeRequest />
                     <Divider sx={{margin: '30px 0'}}/>
                     <GradeReviewDetail />

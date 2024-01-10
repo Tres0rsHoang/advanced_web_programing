@@ -139,7 +139,7 @@ profileRouter.patch('/map-student', authenToken, isClassActive, isStudent, async
     }
 });
 
-profileRouter.get('/get-grade', authenToken, isClassActive, isStudent, async function (req, res) {
+profileRouter.post('/get-grade', authenToken, isClassActive, isStudent, async function (req, res) {
     try {
         let reqData = req.body;
 

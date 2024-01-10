@@ -28,9 +28,6 @@ export default function InviteTeacher({classCode}) {
     if (response.status === 200) {
       toast.success('Invite student successful');
     }
-    else {
-      toast.error(response.data.messages);
-    }
   };
 
   React.useEffect(() => {

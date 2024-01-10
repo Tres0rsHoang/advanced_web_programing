@@ -21,7 +21,6 @@ export default function Notification() {
   React.useEffect(() => {
       async function fetchData() {
           var response = await selfNotificationsApi();
-          console.log(response.data);
           setNotifications(response.data);
       }
       fetchData();
@@ -36,7 +35,7 @@ export default function Notification() {
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
       >
-        <Badge badgeContent={notifications ?? 0} color="error">
+        <Badge badgeContent={notifications ? notifications.length : 0} color="error">
             <Notifications style={{ fontSize: '25px', color: 'white' }}/>
         </Badge>
       </IconButton>
@@ -62,9 +61,9 @@ export default function Notification() {
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: 'space-between',
-                  bgcolor: grey[200], 
                   margin: '5px 0',
-                  borderRadius: '15px'}}
+                  borderRadius: '15px',
+                  ":hover":{bgcolor: '#f1f9fe'}}}
                 >
                     <Tooltip title={<Typography 
                         sx={{fontSize: '13px'}}
