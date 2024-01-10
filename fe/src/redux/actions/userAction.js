@@ -21,6 +21,23 @@ export const handleLoginRedux = (email, password) => {
             let response = await loginApi(email.trim(), password);
             if (response && response.data.access_token) {
                 localStorage.setItem('token', response.data.access_token);
+
+                const userInfoRes = await getCurrentUserApi();
+                if (userInfoRes.status === 200) {
+                    localStorage.setItem('user', JSON.stringify(userInfoRes.data.information));
+                    dispatch({
+                        type: FETCH_USER_SUCCESS,
+                        data: {
+                            email: email.trim(),
+                            token: response.data.access_token,
+                            firstName: userInfoRes.data.information.first_name,
+                            lastName: userInfoRes.data.information.last_name,
+                            imageUrl: userInfoRes.data.information.image_url,
+                            auth: true,
+                            authGoogle: false
+                        }
+                    });
+                }
             }
         } catch {
             toast.error("Server not responding...");

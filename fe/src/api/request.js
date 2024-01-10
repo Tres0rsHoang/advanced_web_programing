@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 
 export default async function request(method, uri, body) {
     let config = {
+        withCredentials: true,
         method: method.toLowerCase(),
         url: uri,
         baseURL: process.env.REACT_APP_SITE_API,
