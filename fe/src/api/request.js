@@ -1,28 +1,34 @@
 import axios from "axios";
+import { redirect } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default async function request(method, uri, body) {
     let config = {
         method: method.toLowerCase(),
         url: uri,
-        baseURL: process.env.REACT_APP_API_URL,
+        baseURL: process.env.REACT_APP_SITE_API,
         headers: { 
             'Authorization': 'Bearer ' + localStorage.getItem('token') ,
             'Content-Type': 'application/json'
         },
-        body: body,
+        data: body,
         validateStatus: function (status) {
             return status >= 200 && status < 400
         }
-    }
+    };
 
-    return axios(config).then(
+    const response = await axios(config).then(
         function (response) {
-            return response.data
+            if (response.status === 202) toast.error(response.data.messages);
+            return response;
         }
     ).catch(
         function (error) {
-            console.log('Show error notification!')
-            return Promise.reject(error)
+            toast.error("Server not responding...");
+            return redirect("/login");
+            //return Promise.reject(error)
         }
-    )
+    );
+
+    return response;
 }

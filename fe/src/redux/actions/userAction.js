@@ -16,35 +16,35 @@ export const FETCH_USER_EDIT_PROFILE = 'FETCH_USER_EDIT_PROFILE';
 
 export const handleLoginRedux = (email, password) => {
     return async (dispatch, getState) => {
-        dispatch({type: FETCH_USER_LOGIN});
+        dispatch({ type: FETCH_USER_LOGIN });
         try {
             let response = await loginApi(email.trim(), password);
             if (response && response.data.access_token) {
                 localStorage.setItem('token', response.data.access_token);
                 try {
-                let response2 = await getCurrentUserApi();
-                if (response2 && response2.data) {
-                    localStorage.setItem('user', JSON.stringify(response2.data.information));
-                    dispatch({
-                        type: FETCH_USER_SUCCESS,
-                        data: {
-                            email: email.trim(),
-                            token: response.data.access_token,
-                            firstName: response2.data.information.first_name,
-                            lastName: response2.data.information.last_name,
-                            imageUrl: response2.data.information.image_url,
-                            auth: true,
-                            isAdmin: response2.data.information.is_admin,
-                            authGoogle: false
-                        }
-                    })
-                } else {
-                    toast.error(response2.data.messages);
+                    let response2 = await getCurrentUserApi();
+                    if (response2 && response2.data) {
+                        localStorage.setItem('user', JSON.stringify(response2.data.information));
+                        dispatch({
+                            type: FETCH_USER_SUCCESS,
+                            data: {
+                                email: email.trim(),
+                                token: response.data.access_token,
+                                firstName: response2.data.information.first_name,
+                                lastName: response2.data.information.last_name,
+                                imageUrl: response2.data.information.image_url,
+                                auth: true,
+                                isAdmin: response2.data.information.is_admin,
+                                authGoogle: false
+                            }
+                        })
+                    } else {
+                        toast.error(response2.data.messages);
 
-                    dispatch({
-                        type: FETCH_USER_ERROR,
-                    })
-                }
+                        dispatch({
+                            type: FETCH_USER_ERROR,
+                        })
+                    }
                 } catch {
                     toast.error("Server not responding...");
                     return;
@@ -57,16 +57,15 @@ export const handleLoginRedux = (email, password) => {
                 })
             }
         } catch {
-          toast.error("Server not responding...");
-          return;
+            toast.error("Server not responding...");
+            return;
         }
     }
 }
 
 export const handleGoogleLoginRedux = (res) => {
     return async (dispatch, getState) => {
-        dispatch({type: FETCH_USER_LOGIN});
-
+        dispatch({ type: FETCH_USER_LOGIN });
         if (res) {
             localStorage.setItem('token', res.accessToken);
             localStorage.setItem('user', JSON.stringify(res.profileObj));
@@ -118,35 +117,35 @@ export const handleRefresh = () => {
 
 export const handleEditProfileRedux = (email, phoneNumber, firstName, lastName) => {
     return async (dispatch, getState) => {
-        dispatch({type: FETCH_USER_EDIT_PROFILE});
+        dispatch({ type: FETCH_USER_EDIT_PROFILE });
         try {
             let response = await updateUserProfileApi(email.trim(), phoneNumber, firstName, lastName);
             if (response && response.data) {
                 try {
-                let response2 = await getCurrentUserApi();
-                if (response2 && response2.data) {
-                    localStorage.setItem('user', JSON.stringify(response2.data.information));
-                    dispatch({
-                        type: FETCH_USER_SUCCESS,
-                        data: {
-                            email: email.trim(),
-                            token: response.data.access_token,
-                            firstName: response2.data.information.first_name,
-                            lastName: response2.data.information.last_name,
-                            imageUrl: response2.data.information.image_url,
-                            auth: true,
-                            authGoogle: false
+                    let response2 = await getCurrentUserApi();
+                    if (response2 && response2.data) {
+                        localStorage.setItem('user', JSON.stringify(response2.data.information));
+                        dispatch({
+                            type: FETCH_USER_SUCCESS,
+                            data: {
+                                email: email.trim(),
+                                token: response.data.access_token,
+                                firstName: response2.data.information.first_name,
+                                lastName: response2.data.information.last_name,
+                                imageUrl: response2.data.information.image_url,
+                                auth: true,
+                                authGoogle: false
+                            }
+                        })
+                    } else {
+                        if (response2 && response2.data.error) {
+                            toast.error(response2.data.error);
                         }
-                    })
-                } else {
-                    if (response2 && response2.data.error) {
-                        toast.error(response2.data.error);
-                    }
 
-                    dispatch({
-                        type: FETCH_USER_ERROR,
-                    })
-                }
+                        dispatch({
+                            type: FETCH_USER_ERROR,
+                        })
+                    }
                 } catch {
                     toast.error("Server not responding...");
                     return;
@@ -161,8 +160,8 @@ export const handleEditProfileRedux = (email, phoneNumber, firstName, lastName) 
                 })
             }
         } catch {
-          toast.error("Server not responding...");
-          return;
+            toast.error("Server not responding...");
+            return;
         }
     }
 }

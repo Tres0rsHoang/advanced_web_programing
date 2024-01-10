@@ -1,20 +1,20 @@
 import { Divider, Tab, Tabs } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import { DataGrid } from '@mui/x-data-grid';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getUserListApi } from '../../api/adminService';
 import MiniDrawer from '../../components/Drawer';
 
 export default function AdminAccount() {
-    // const theme = useTheme();
-    // const isMatch = useMediaQuery(theme.breakpoints.down('lg'));
-    // const [rowsData, setRowsData] = useState([]);
+    //const theme = useTheme();
+    //const isMatch = useMediaQuery(theme.breakpoints.down('lg'));
+    const [rowsData, setRowsData] = useState([]);
 
     useEffect(() => {
         async function fetchData() {
             var response = await getUserListApi();
             console.log(response);
-            // setRowsData(response);
+            setRowsData(response.data);
         }
         fetchData();
     }, []);
@@ -67,12 +67,12 @@ export default function AdminAccount() {
         }
     ];
 
-    function createData(id, firstName, lastName, assignments, midterm, final) {
-        const avg = assignments * 0.3 + midterm * 0.3 + final * 0.4;
-        return { id, firstName, lastName, assignments, midterm, final, avg };
+    const rows = [];
+
+    for (const element of rowsData) {
+        console.log(element);
     }
 
-    const rows = createData('20127531', 'Khánh', 'Trương Trọng', 9, 10, 8.5);
 
     return (
         <React.Fragment>

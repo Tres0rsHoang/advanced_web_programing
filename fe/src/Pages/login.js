@@ -35,7 +35,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
 
   const account = useSelector(state => state.user.account);
-
+  
   useEffect(() => {
     function start() {
       gapi.client.init({
@@ -67,8 +67,7 @@ export default function Login() {
       toast.error("Email/Password is required!");
       return;
     }
-
-    await dispatch(handleLoginRedux(email, password));
+    dispatch(handleLoginRedux(email, password));
   }
 
   const responseFacebook = (response) => {
@@ -76,7 +75,7 @@ export default function Login() {
   }
 
   const onSuccess = async (res) => {
-    await dispatch(handleGoogleLoginRedux(res));
+    dispatch(handleGoogleLoginRedux(res));
   }
 
   const onFailure = (res) => {

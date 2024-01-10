@@ -15,16 +15,13 @@ export default function Home() {
   const [enrolledInfo, setEnrolledInfo] = useState([]);
 
   const navigate = useNavigate();
-  
-  useEffect(() => {
-    if(user && user.auth === false){
-        navigate('/login');
-    }
-  }, [user]);
 
   useEffect(() => {
     const fetchData = async () => {
       let response = await getCurrentUserApi();
+      if (response.status != 200) {
+        //navigate('/login');
+      }
       setTeachingInfo(response.data.is_teacher_classes);
       setEnrolledInfo(response.data.is_student_classes);
     }

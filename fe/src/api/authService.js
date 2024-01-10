@@ -1,33 +1,20 @@
-import { default as axios, default as request } from "./request";
+import { default as request } from "./request";
 
 const loginApi = async (email, password) => {
-    return axios.post("/auth/login", {email, password}, {
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    });
+  return await request('POST', "/auth/login", {email, password});
 }
 
-const logoutApi = () => {
-  return axios.get("/auth/logout", {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + localStorage.getItem('token')
-    }
-  });
+const logoutApi = async () => {
+  return await request('GET', '/auth/logout');
 }
 
-const signUpApi = (email, password, phoneNumber, firstName, lastName) => {
-  return axios.post("/auth/register", {
+const signUpApi = async (email, password, phoneNumber, firstName, lastName) => {
+  return await request('POST', '/auth/register', {
     email: email, 
     password: password, 
     phone_number: phoneNumber, 
     first_name: firstName, 
     last_name: lastName
-  }, {
-    headers: {
-      'Content-Type': 'application/json',
-    }
   });
 }
 
@@ -39,5 +26,11 @@ const confirmResetPassword = async (email, resetCode, newPassword) => {
   });
 }
 
-export { confirmResetPassword, loginApi, logoutApi, signUpApi };
+const resetPassword = async ( email ) => {
+  return await request('POST', '/auth/reset-password', {
+    "email": email
+  });
+}
+
+export { confirmResetPassword, loginApi, logoutApi, resetPassword, signUpApi };
 
