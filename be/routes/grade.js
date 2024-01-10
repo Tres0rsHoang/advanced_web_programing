@@ -5,7 +5,7 @@ import databaseConnection from '../helper/database_connection.js';
 import databaseQuery from '../helper/database_query.js';
 import { isNumeric } from "../ultis/string_utils.js";
 import { isTeacher } from "../ultis/teacher_utils.js";
-import { isClassActive, isMemberInClass } from "../ultis/user_utils.js";
+import { getCurrentUserId, isClassActive, isMemberInClass } from "../ultis/user_utils.js";
 
 const gradeRouter = express.Router();
 const databaseRequest = await databaseConnection();
@@ -71,8 +71,8 @@ gradeRouter.post('/structure', authenToken, isClassActive, async function (req, 
         }
 
         const classId = reqData['class_id'];
-
-        const isMember = await isMemberInClass(classId);
+        const userId = await getCurrentUserId(req, res);
+        const isMember = await isMemberInClass(classId, userId);
 
         if (!isMember) {
             res.status(202).send({messages: "You are not in this class"});

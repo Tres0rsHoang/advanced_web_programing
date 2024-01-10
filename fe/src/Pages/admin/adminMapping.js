@@ -47,9 +47,26 @@ export default function AdminMapping() {
                             <InputLabel>Classroom Id</InputLabel>
                             <Select
                                 value={classId}
-                                label="Classroom id"
                                 onChange={event => {
                                     setClassId(event.target.value);
+                                }}
+                            >
+                                <MenuItem value=""><em>None</em></MenuItem>
+                                {
+                                    classList.map(element => {
+                                        return <MenuItem value={element['classId']}> {element['classId']} - {element['className']} </MenuItem>
+                                    })
+                                }
+                            </Select>
+                            <FormHelperText>Required</FormHelperText>
+                        </FormControl>
+
+                        <FormControl required sx={{ m: 1, minWidth: "20%", maxWidth: "20%" }}>
+                            <InputLabel>In Class Id</InputLabel>
+                            <Select
+                                value={inClassId}
+                                onChange={event => {
+                                    setInClassId(event.target.value);
                                 }}
                             >
                                 <MenuItem value=""><em>None</em></MenuItem>
@@ -69,24 +86,6 @@ export default function AdminMapping() {
                                 label="Classroom id"
                                 onChange={event => {
                                     setStudentId(event.target.value);
-                                }}
-                            >
-                                <MenuItem value=""><em>None</em></MenuItem>
-                                {
-                                    classList.map(element => {
-                                        return <MenuItem value={element['classId']}> {element['classId']} - {element['className']} </MenuItem>
-                                    })
-                                }
-                            </Select>
-                            <FormHelperText>Required</FormHelperText>
-                        </FormControl>
-
-                        <FormControl required sx={{ m: 1, minWidth: "20%", maxWidth: "20%" }}>
-                            <InputLabel>In Class Id</InputLabel>
-                            <Select
-                                value={inClassId}
-                                onChange={event => {
-                                    setInClassId(event.target.value);
                                 }}
                             >
                                 <MenuItem value=""><em>None</em></MenuItem>
