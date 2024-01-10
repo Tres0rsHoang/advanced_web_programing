@@ -25,17 +25,19 @@ export default async function request(method, uri, body) {
         }
     ).catch(
         async function (error) {
-            if (error.response.status === 403) {
-                try {
+            try {
+                if (error.response?.status === 403) {
                     const refreshResponse = await refreshToken();
-                    localStorage.setItem('token', refreshResponse.data.access_token);
+                    localStorage.setItem('token', refreshResponse.data.access_token);            
+                    return request(method, uri, body);
                 }
-                catch (err) {
-                    toast.error("Server not responding...");
-                }
-                return request(method, uri, body);
+                return Promise.reject(error);
             }
-            return Promise.reject(error);
+            catch (err) {    
+                localStorage.clear();
+                window.location = '/login';
+                //return Promise.reject(error);
+            }
         }
     );
 
