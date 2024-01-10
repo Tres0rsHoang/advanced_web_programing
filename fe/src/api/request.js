@@ -26,8 +26,8 @@ export default async function request(method, uri, body) {
         async function (error) {
             if (error.response.status === 403) {
                 try {
-                    // const refreshResponse = await refreshToken();
-                    // console.log(refreshResponse);
+                    const refreshResponse = await refreshToken();
+                    window.location = '/login';
                 }
                 catch (err) {
                     toast.error("Server not responding...");
