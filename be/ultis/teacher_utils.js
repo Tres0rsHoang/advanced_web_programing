@@ -133,10 +133,9 @@ export async function isMapping(studentId) {
     FROM classroom_student cs 
     WHERE cs.student_id = '${studentId}'`;
 
-    var result = await databaseQuery(databaseRequest, sql);
-
     try{
-       if (result[0]['previous_id'] == null) return false;
+       var result = await databaseQuery(databaseRequest, sql);
+       if (result.length == 0) return false;
        return true;
     }
     catch (err) {

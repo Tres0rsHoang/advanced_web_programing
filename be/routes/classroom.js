@@ -360,9 +360,9 @@ classroomRouter.post('/uploadFile', fileUpload({ createParentPath: true }), auth
                 });
 
                 var userInfor = {
-                    inClassId: rowsValue[studentIdColumnIndex],
-                    firstName: rowsValue[firstNameColumnIndex],
-                    lastName: rowsValue[lastNameColumnIndex]
+                    inClassId: rowsValue[studentIdColumnIndex]??null,
+                    firstName: rowsValue[firstNameColumnIndex]??null,
+                    lastName: rowsValue[lastNameColumnIndex]??null
                 }
                 updateStudent(classId, userInfor, gradeInforList);
             }

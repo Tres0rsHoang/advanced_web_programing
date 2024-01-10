@@ -1,13 +1,18 @@
+import Excel from "exceljs";
 import express from "express";
+import fileUpload from "express-fileupload";
+import path from "path";
 import authenToken from "../helper/authenticate_token.js";
 import databaseConnection from '../helper/database_connection.js';
 import databaseQuery from '../helper/database_query.js';
+import UploadFile from "../helper/upload_file.js";
 import { isAdmin } from "../ultis/authen_utils.js";
 import { mapStudentByInClassId, unMapStudent } from "../ultis/teacher_utils.js";
 import { getCurrentUserId } from "../ultis/user_utils.js";
 
 const adminRouter = express.Router();
 const databaseRequest = await databaseConnection();
+const __dirname = path.resolve(path.dirname(''));
 
 adminRouter.patch('/toggle-admin', authenToken, isAdmin, async function (req, res) {
     try {
@@ -166,7 +171,7 @@ adminRouter.patch('/un-mapping', authenToken, isAdmin, async function (req, res)
         const classId = reqData['class_id'];
 
         const messages = await unMapStudent(classId, studentId);
-        
+
         var statusCode = 200;
         if (messages.includes("ERROR")) statusCode = 202;
 
@@ -230,6 +235,105 @@ adminRouter.patch('/toggle-class', authenToken, isAdmin, async function (req, re
     }
     catch (err) {
         console.log("ERROR[/admin/toggle-class]:", err);
+    }
+});
+
+adminRouter.post('/uploadFile', fileUpload({ createParentPath: true }), authenToken, isAdmin, async function (req, res) {
+    try {
+        let reqData = req.body;
+        var result = {};
+
+        if (typeof (req.body) == "string") {
+            reqData = JSON.parse(req.body);
+        }
+        const classId = reqData['class_id'];
+
+        const uploadFile = req.files.files
+
+        var fileType = uploadFile.name.split(".")[1];
+        if (fileType != "xlsx" && fileType != "csv") {
+            res.status(202).send({ "messages": "ERROR: Invalid file type" });
+        }
+
+        const filePath = path.join(__dirname, "uploads", uploadFile.name);
+
+        const newFilePath = await UploadFile(filePath, uploadFile);
+
+        const workbook = new Excel.Workbook();
+        if (fileType == "xlsx") await workbook.xlsx.readFile(newFilePath);
+        else await workbook.csv.readFile(newFilePath);
+
+        const worksheet = workbook.getWorksheet(1);
+
+        var studentIdIndex = -1;
+        var inClassIdIndex = -1;
+
+        worksheet.getRow(1).values.forEach((columnName, index) => {
+            const formattedNameInFile = columnName.toUpperCase().replace(/\s/g, '');
+            switch (formattedNameInFile) {
+                case "STUDENTID": {
+                    studentIdIndex = index;
+                    break;
+                }
+                case "INCLASSID": {
+                    inClassIdIndex = index;
+                    break;
+                }
+            }
+        });
+
+        var missingValues = [];
+
+        if (studentIdIndex == -1 || inClassIdIndex == -1) {
+            result["messages"] = "ERROR: Missing mapping value";
+
+            if (studentIdIndex == -1) {
+                missingValues.push("Student Id");
+            }
+
+            if (inClassIdIndex == -1) {
+                missingValues.push("In Class Id");
+            }
+
+            result["missing_values"] = missingValues;
+            res.status(202).send(result);
+            return;
+        }
+
+        const invalid = [];
+
+        const mappingSuccess = [];
+
+        await new Promise((resolve) => {
+            worksheet.eachRow(async (row, rowNumber) => {
+                if (rowNumber != 1) {
+                    var rowValues = row.values;
+                    var messages = await mapStudentByInClassId(classId, rowValues[studentIdIndex] ?? null, rowValues[inClassIdIndex] ?? null);
+                    if (messages.includes("ERROR")) {
+                        invalid.push({
+                            student_id: rowValues[studentIdIndex],
+                            in_class_id: rowValues[inClassIdIndex],
+                            reason: messages
+                        });
+                    }
+                    else {
+                        mappingSuccess.push({
+                            student_id: rowValues[studentIdIndex],
+                            in_class_id: rowValues[inClassIdIndex]
+                        });
+                    }
+                }
+
+                if (rowNumber === worksheet.rowCount) {
+                    resolve()
+                }
+            })
+        });
+
+        res.send({ mapping_error_list: invalid, mapping_success_list: mappingSuccess });
+    }
+    catch (err) {
+        console.log("ERROR[/admin/uploadFile]:", err);
     }
 });
 
