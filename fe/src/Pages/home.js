@@ -4,8 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { getCurrentUserApi } from '../api/profileService';
 import MiniDrawer from '../components/Drawer';
-import TeacherClassCard from '../components/acherClassCard';
-import StudentClassCard from '../components/udentClassCard';
+import StudentClassCard from '../components/StudentClassCard';
+import TeacherClassCard from '../components/TeacherClassCard';
 
 export default function Home() {
   const [teachingInfo, setTeachingInfo] = useState([]);

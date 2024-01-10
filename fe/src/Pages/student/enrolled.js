@@ -3,7 +3,7 @@ import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import React, { useEffect, useState } from 'react';
 import { getCurrentUserApi } from '../../api/profileService';
 import MiniDrawer from '../../components/Drawer';
-import StudentClassCard from '../../components/udentClassCard';
+import StudentClassCard from '../../components/StudentClassCard';
 
 export default function Enrolled() {
   const [classInfo, setClassInfo] = useState([]);
