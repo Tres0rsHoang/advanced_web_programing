@@ -166,7 +166,9 @@ authenRouter.get('/register/verify-email', async function (req, res, next) {
     try {
         const userId = req.query.userId;
         const sql = `UPDATE [user] SET is_verify = 1 WHERE id = '${userId}'`;
-        await databaseQuery(databaseRequest, sql);
+        
+        const result = await databaseQuery(databaseRequest, sql);
+        console.log(userId);
         res.send({ messages: "Verify successfully" });
     }
     catch (err) {
