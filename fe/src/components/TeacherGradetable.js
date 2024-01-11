@@ -1,12 +1,12 @@
 import * as React from 'react';
 import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import { grey } from '@mui/material/colors';
+import {
+  DataGridPremium,
+  GridToolbar,
+} from '@mui/x-data-grid-premium';
+import { LicenseInfo } from '@mui/x-data-grid-premium';
+
+LicenseInfo.setLicenseKey('e0d9bb8070ce0054c9d9ecb6e82cb58fTz0wLEU9MzI0NzIxNDQwMDAwMDAsUz1wcmVtaXVtLExNPXBlcnBldHVhbCxLVj0y');
 
 const columns = [
   
@@ -25,56 +25,25 @@ function createData(id, firstName, lastName, assignments, midterm, final) {
 }
 
 const rows =  [
-  createData('20127531', 'Khánh', 'Trương Trọng', 9, 10, 8.5),
-  createData('20127531', 'Khánh', 'Trương Trọng', 9, 10, 8.5),
-  createData('20127531', 'Khánh', 'Trương Trọng', 9, 10, 8.5),
-  createData('20127531', 'Khánh', 'Trương Trọng', 9, 10, 8.5),
-  createData('20127531', 'Khánh', 'Trương Trọng', 9, 10, 8.5),
-  createData('20127531', 'Khánh', 'Trương Trọng', 9, 10, 8.5)
+  createData('20127003', 'Bảo', 'Hoàng Quốc', 9, 10, 8.5),
+  createData('20127531', 'Khánh', 'Trương Trọng', 9, 9, 8),
+  createData('20127010', 'Đạt', 'Kha Vĩnh', 8, 10, 7.5),
+  createData('2012311', 'Sự', 'Nguyễn Quốc', 9, 6, 9.5),
 ];
 
 export default function TeacherGradeTable() {
 
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden', boxShadow: 0 }}>
-      <TableContainer sx={{ maxHeight: 440, border: 0.5, borderColor: grey[500]}}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.field}
-                  align={column.align}
-                  style={{ width: column.width }}
-                  sx={{border: 0.5, borderColor: grey[500], fontWeight: 'bold'}}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows
-              .map((row) => {
-                return (
-                  <TableRow key={rows.id}>
-                    {columns.map((column) => {
-                      const value = row[column.field];
-                      return (
-                        <TableCell key={column.field} align={column.align} sx={{border: 0.5, borderColor: grey[500]}}>
-                          {column.format && typeof value === 'number'
-                                  ? column.format(value)
-                                  : value}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })
-            }
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Paper>
+    <Paper sx={{ overflow: 'hidden',  width: '100%', boxShadow: 0 }}>
+          <DataGridPremium
+              getRowId={(row) => row.id}
+              rows = {rows}
+              columns={columns}
+              disableRowSelectionOnClick
+              hideFooter
+              rowReordering
+              slots={{ toolbar: GridToolbar }}
+          />
+      </Paper>
   );
 }
