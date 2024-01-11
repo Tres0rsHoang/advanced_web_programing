@@ -29,23 +29,18 @@ export default async function request(method, uri, body) {
         }
     ).catch(
         async function (error) {
-            try {
-                if (error.response?.status === 403) {
-                    const refreshResponse = await refreshToken();
-                    localStorage.setItem('token', refreshResponse.data.access_token);            
-                    return request(method, uri, body);
-                }
-                if (error.code === "ERR_NETWORK") { 
-                    localStorage.clear();
-                    window.location = '/login';
-                    return;
-                }
-                return Promise.reject(error);
+            if (error.response?.status === 403) {
+                const refreshResponse = await refreshToken();
+                localStorage.setItem('token', refreshResponse.data.access_token);            
+                return request(method, uri, body);
             }
-            catch (err) {    
-                localStorage.clear();
-                window.location = '/login';
+
+            if (error.code === "ERR_NETWORK") { 
+                //localStorage.clear();
+                //window.location = '/login';
+                return;
             }
+            return Promise.reject(error);
         }
     );
 

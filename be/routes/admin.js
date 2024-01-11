@@ -7,7 +7,7 @@ import databaseConnection from '../helper/database_connection.js';
 import databaseQuery from '../helper/database_query.js';
 import UploadFile from "../helper/upload_file.js";
 import { isAdmin } from "../ultis/authen_utils.js";
-import { mapStudentByInClassId, unMapStudent } from "../ultis/teacher_utils.js";
+import { isMapping, mapStudentByInClassId, unMapStudent } from "../ultis/teacher_utils.js";
 import { getCurrentUserId } from "../ultis/user_utils.js";
 
 const adminRouter = express.Router();
@@ -167,9 +167,24 @@ adminRouter.patch('/un-mapping', authenToken, isAdmin, async function (req, res)
             reqData = JSON.parse(req.body);
         }
 
-        const studentId = reqData['student_id'];
+        var studentId = reqData['student_id']??undefined;
         const classId = reqData['class_id'];
+        const inClassId = reqData['in_class_id'];
 
+        if (studentId) {
+            var isMap = await isMapping(studentId);
+        }
+        if (!isMap) {
+            var sql = `SELECT student_id FROM classroom_student WHERE in_class_id = '${inClassId}' AND is_removed = 0`;
+            var sqlResult = await databaseQuery(databaseRequest, sql);
+
+            if (sqlResult.length == 0) {
+                res.status(202).send({ messages: "Invalid in_class_id" });
+                return;
+            }
+            studentId = sqlResult[0]['student_id'];
+        }
+        
         const messages = await unMapStudent(classId, studentId);
 
         var statusCode = 200;
@@ -272,7 +287,7 @@ adminRouter.post('/uploadFile', fileUpload({ createParentPath: true }), authenTo
         }
         const classId = reqData['class_id'];
 
-        const uploadFile = req.files.files
+        const uploadFile = req.files.files;
 
         var fileType = uploadFile.name.split(".")[1];
         if (fileType != "xlsx" && fileType != "csv") {

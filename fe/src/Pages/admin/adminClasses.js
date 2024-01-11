@@ -56,7 +56,6 @@ export default function AdminClasses() {
         }
     ];
 
-
     const handleActiveClass = () => {
         if (selectedRows.length === 0) {
             toast.error("No user sellected");

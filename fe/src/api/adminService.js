@@ -1,7 +1,7 @@
 import request from "./request";
 
 const toggleAdminApi = async (userId) => {
-  return await request('PATCH', '/admin/toggle-admin', {user_id:  userId });
+  return await request('PATCH', '/admin/toggle-admin', { user_id: userId });
 }
 
 const toggleLockAccountApi = async (userId) => {
@@ -9,7 +9,7 @@ const toggleLockAccountApi = async (userId) => {
 }
 
 const toggleClassApi = async (classId) => {
-  return await request('PATCH', '/admin/toggle-class', {class_id:  classId });
+  return await request('PATCH', '/admin/toggle-class', { class_id: classId });
 }
 
 const getUserListApi = async () => {
@@ -21,8 +21,16 @@ const getClassroomListApi = async () => {
 }
 
 const adminMapStudentApi = async (classId, studentId, inClassId) => {
-  return await request('POST', '/admin/map-student', { class_id: classId,student_id: studentId,in_class_id: inClassId });
+  return await request('PATCH', '/admin/map-student', { class_id: classId, student_id: studentId, in_class_id: inClassId });
 }
 
-export { adminMapStudentApi, getClassroomListApi, getUserListApi, toggleAdminApi, toggleClassApi, toggleLockAccountApi };
+const adminUnMappingStudentApi = async (classId, studentId, inClassId) => {
+  return await request('PATCH', '/admin/un-mapping', { class_id: classId, student_id: studentId, in_class_id: inClassId });
+}
+
+const uploadFile = async (classId, files) => {
+  return await request('POST', '/admin/uploadFile', { class_id: classId, files: files });
+}
+
+export { adminMapStudentApi, adminUnMappingStudentApi, getClassroomListApi, getUserListApi, toggleAdminApi, toggleClassApi, toggleLockAccountApi, uploadFile };
 
