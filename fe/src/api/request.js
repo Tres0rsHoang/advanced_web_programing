@@ -24,9 +24,7 @@ export default async function request(method, uri, body) {
     };
     const response = await axios(config).then(
         function (response) {
-            console.log(config, response);
             if (response.status === 202) toast.error(response.data.messages);
-            console.log(config, '/n', response);
             return response;
         }
     ).catch(

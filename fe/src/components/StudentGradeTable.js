@@ -7,26 +7,52 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { grey } from '@mui/material/colors';
+import { gradeStructureApi } from '../api/gradeService';
 
 
-export default function StudentGradeTable({gradeInfo}) {
-  function createData(id, firstName, lastName, assignments, midterm, final) {
-    const avg = assignments * 0.3 + midterm * 0.3 + final * 0.4;
-    return { id, firstName, lastName, assignments, midterm, final, avg };
+export default function StudentGradeTable({gradeInfo, classId}) {
+  const [gradeStructure, setGradeStructure] = React.useState([]);
+
+  React.useEffect(() => {
+      async function fetchData() {
+          var response = await gradeStructureApi(classId, 'grade_scale ASC');
+          setGradeStructure(response.data.data);
+      }
+      fetchData();
+  }, []);
+
+  if(!gradeStructure || gradeStructure.length === 0) {
+    setGradeStructure([createColumn('', '', 0, 200)]);
+  }
+
+  function createData(id, firstName, lastName) {
+    let total = 0;
+
+    if (gradeInfo.grade_list !== undefined) {
+      gradeInfo.grade_list.length > 0 ? gradeInfo.grade_list.map(element => total = total + element.grade * element.grade_scale) : total=''
+    }
+    return { id, firstName, lastName,  total };
+  }
+
+  function createColumn(field, name, scale, width) {
+    const label = name + ' (' + (scale * 100).toString() + '%)';
+    return { field, label, width, format: (value) => value.toFixed(2) };
   }
 
   const columns = [
   
-    { field: 'id', label: 'Student ID', width: 150, format: (value) => value.toFixed(2) },
-    { field: 'firstName', label: 'First name', width: 200, format: (value) => value.toFixed(2) },
-    { field: 'lastName', label: 'Last name', width: 250, format: (value) => value.toFixed(2) },
-    { field: 'assignments', label: 'Assignments (30%)', width: 200, format: (value) => value.toFixed(2) },
-    { field: 'midterm', label: 'Midterm Project (30%)', width: 250, format: (value) => value.toFixed(2) },
-    { field: 'final', label: 'Final Project (40%)', width: 200, format: (value) => value.toFixed(2) },
-    { field: 'avg', label: 'Total Grade', width: 200, format: (value) => value.toFixed(2) },
+    { field: 'id', label: 'Student ID', width: 150},
+    { field: 'firstName', label: 'First name', width: 150},
+    { field: 'lastName', label: 'Last name', width: 200 },
   ];
 
-  const rows =  createData(gradeInfo.in_class_id, gradeInfo.first_name, gradeInfo.last_name, 9, 10, 8.5);
+  gradeStructure.map(element => 
+    columns.push(createColumn(element.id, element.name, element.grade_scale, 200)
+  ));
+
+  columns.push({ field: 'total', label: 'Total Grade', width: 150 });
+
+  const rows =  createData(gradeInfo.in_class_id, gradeInfo.first_name, gradeInfo.last_name, );
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden', boxShadow: 0 }}>
@@ -37,7 +63,7 @@ export default function StudentGradeTable({gradeInfo}) {
               {columns.map((column) => (
                 <TableCell
                   key={column.field}
-                  align={column.align}
+                  align={'center'}
                   style={{ width: column.width }}
                   sx={{border: 0.5, borderColor: grey[500], fontWeight: 'bold'}}
                 >
@@ -49,14 +75,23 @@ export default function StudentGradeTable({gradeInfo}) {
           <TableBody>
             <TableRow key={rows.id}>
               {columns.map((column) => {
-                const value = rows[column.field];
-                return (
-                  <TableCell key={column.field} align={column.align} sx={{border: 0.5, borderColor: grey[500]}}>
-                    {column.format && typeof value === 'number'
-                            ? column.format(value)
-                            : value}
-                  </TableCell>
-                );
+                let value = rows[column.field];
+                if (gradeInfo.grade_list !== undefined) {
+                  if(gradeInfo.grade_list.length > 0) {
+                    gradeInfo.grade_list.map((element) => {
+                      if(element.id === column.field) {
+                        value = element.grade
+                      }
+                  })
+                }
+              }
+              return (
+                <TableCell key={column.field} align={'center'} sx={{border: 0.5, borderColor: grey[500], }}>
+                  {column.format && typeof value === 'number'
+                          ? column.format(value)
+                          : value}
+                </TableCell>
+              );
               })}
             </TableRow>
           </TableBody>

@@ -4,12 +4,11 @@ import {
   useGridApiRef
 } from '@mui/x-data-grid-premium';
 import { LicenseInfo } from '@mui/x-data-grid-premium';
-import { Box, Button, IconButton, Paper, Typography } from '@mui/material';
-import { Add, Delete } from '@mui/icons-material';
+import { Box, Button, IconButton, Paper } from '@mui/material';
+import { Delete, Done } from '@mui/icons-material';
 import { red } from '@mui/material/colors';
 import { toast } from 'react-toastify';
-import { gradeStructureApi } from '../api/classService';
-import { removeGradeApi } from '../api/gradeService';
+import { gradeStructureApi, removeGradeApi } from '../api/gradeService';
 import AddGradeComposition from './AddGradeComposition';
 
 LicenseInfo.setLicenseKey('e0d9bb8070ce0054c9d9ecb6e82cb58fTz0wLEU9MzI0NzIxNDQwMDAwMDAsUz1wcmVtaXVtLExNPXBlcnBldHVhbCxLVj0y');
@@ -91,10 +90,20 @@ export default function GradeStructure({classId}) {
     setRows(newRows);
   };
 
+  const handleSave = () => {
+    
+  }
+
+
   return (
     <Box>
       <Box sx={{display: 'flex', justifyContent: 'flex-end', margin: '20px'}}>
         <AddGradeComposition classId={classId} />
+        <Button variant="contained" sx={{textTransform: 'none', ml: '10px'}}
+          onClick={handleSave}
+        >
+          <Done />
+        </Button>
       </Box>
       <Paper sx={{ overflow: 'hidden',  width: '100%', boxShadow: 0 }}>
           <DataGridPremium

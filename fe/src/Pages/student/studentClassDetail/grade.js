@@ -7,6 +7,7 @@ import GradeRequest from '../../../components/GradeRequest';
 import GradeReviewDetail from '../../../components/GradeReviewDetail';
 import { useSearchParams } from 'react-router-dom';
 import { getGradeApi } from '../../../api/profileService';
+import ProfileMapStudent from '../../../components/ProfileMapStudent';
 
 export default function StudentGrade() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -39,8 +40,15 @@ export default function StudentGrade() {
                 </Tabs>
                 <Divider />
                 <Box sx={{margin: '40px'}}>
-                    <StudentGradeTable gradeInfo = {gradeInfo} />
-                    <GradeRequest />
+                    <StudentGradeTable gradeInfo = {gradeInfo} classId={classId} />
+                    {gradeInfo.grade_list ? gradeInfo.grade_list.length > 0 ?  (
+                        <Box sx={{display: 'flex', justifyContent: 'flex-end', margin: '20px 0'}}>
+                            <ProfileMapStudent classId={classId} isMapping={gradeInfo.is_mapping} />
+                            <GradeRequest gradeInfo={gradeInfo} />
+                        </Box>
+                    ) : (
+                        <ProfileMapStudent classId={classId} isMapping={gradeInfo.is_mapping} />
+                    ) : <ProfileMapStudent classId={classId} isMapping={gradeInfo.is_mapping} />}
                     <Divider sx={{margin: '30px 0'}}/>
                     <GradeReviewDetail />
                 </Box>

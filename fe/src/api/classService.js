@@ -21,7 +21,7 @@ const classDetailsApi = async (classId) => {
 }
 
 const uploadFileApi = async (files, classId) => {
-  return await request('POST', "/classroom/uploadFile", {files, classId});
+  return await request('POST', "/classroom/uploadFile", {files: files, class_id: classId});
 }
 
 const updateGradeApi = async (classId, gradeId, grade, studentId) => {
@@ -32,9 +32,5 @@ const mapStudentApi = async (classId, currentStudentId, newStudentId) => {
   return await request('PATCH', "/classroom/map-student", {classId, currentStudentId, newStudentId});
 }
 
-const gradeStructureApi = async (classId, orderBy) => {
-  return await request('POST', "/classroom/grade/struture", {class_id: classId, order_by: orderBy});
-}
-
-export { classDetailsApi, createClassApi, joinClassApi, mapStudentApi, sendInviteMailApi, updateGradeApi, uploadFileApi, gradeStructureApi };
+export { classDetailsApi, createClassApi, joinClassApi, mapStudentApi, sendInviteMailApi, updateGradeApi, uploadFileApi };
 
