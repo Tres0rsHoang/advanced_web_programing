@@ -24,30 +24,23 @@ export default async function request(method, uri, body) {
     };
     const response = await axios(config).then(
         function (response) {
-            console.log(config, response);
             if (response.status === 202) toast.error(response.data.messages);
-            console.log(config, '/n', response);
             return response;
         }
     ).catch(
         async function (error) {
-            try {
-                if (error.response?.status === 403) {
-                    const refreshResponse = await refreshToken();
-                    localStorage.setItem('token', refreshResponse.data.access_token);            
-                    return request(method, uri, body);
-                }
-                if (error.code === "ERR_NETWORK") { 
-                    localStorage.clear();
-                    window.location = '/login';
-                    return;
-                }
-                return Promise.reject(error);
+            if (error.response?.status === 403) {
+                const refreshResponse = await refreshToken();
+                localStorage.setItem('token', refreshResponse.data.access_token);            
+                return request(method, uri, body);
             }
-            catch (err) {    
-                localStorage.clear();
-                window.location = '/login';
+
+            if (error.code === "ERR_NETWORK") { 
+                //localStorage.clear();
+                //window.location = '/login';
+                return;
             }
+            return Promise.reject(error);
         }
     );
 

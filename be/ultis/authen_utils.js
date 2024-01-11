@@ -43,8 +43,8 @@ export async function isAdmin(req, res, next) {
     const currentUserId = await getCurrentUserId(req, res);
 
     var sql = `SELECT is_admin FROM [user] WHERE id = '${currentUserId}'`;
-
     var isAdmin = await databaseQuery(databaseRequest, sql);
+
     if (isAdmin.length == 0) {
         res.status(202).send({messages: "ERROR: Invalid user id"});
         return;

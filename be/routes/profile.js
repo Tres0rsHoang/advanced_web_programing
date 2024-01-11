@@ -150,7 +150,7 @@ profileRouter.post('/get-grade', authenToken, isClassActive, isStudent, async fu
         const classId = reqData['class_id'];
         const currentUserId = await getCurrentUserId(req, res);
         
-        var sql = `SELECT in_class_id, student_id, first_name, u.last_name, u.email
+        var sql = `SELECT in_class_id, student_id, first_name, u.last_name, u.email, cstudent.previous_id
         FROM classroom_student cstudent 
         JOIN [user] u ON cstudent.student_id = u.id
         WHERE classroom_id = '${classId}' AND cstudent.is_removed = 0 AND cstudent.student_id = '${currentUserId}'`;
@@ -158,6 +158,15 @@ profileRouter.post('/get-grade', authenToken, isClassActive, isStudent, async fu
         var sqlResult = await databaseQuery(databaseRequest, sql);
 
         var studentInfor = sqlResult[0];
+
+        if (studentInfor['previous_id'] != null) {
+            studentInfor['is_mapping'] = true;
+        }
+        else {
+            studentInfor['is_mapping'] = false;
+        }
+
+        delete studentInfor['previous_id'];
 
         const studentScore = await getStudentScore(classId, currentUserId);
 

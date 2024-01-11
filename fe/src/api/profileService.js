@@ -17,8 +17,16 @@ const profileMapStudentApi = async (classId, inClassId) => {
   return await request('PATCH', "/profile/map-student", {class_id: classId, in_class_id: inClassId});
 }
 
+const profileUnMapStudentApi = async (classId) => {
+  return await request('PATCH', "/profile/un-mapping", {class_id: classId});
+}
+
 const getGradeApi = async (classId) => {
   return await request('POST', "/profile/get-grade", { class_id: classId });
 }
 
-export { getCurrentUserApi, getGradeApi, profileMapStudentApi, updateUserProfileApi };
+const createGradeReviewApi = async (gradeId, content, expectedGrade) => {
+  return await request('POST', "/profile/comment", { grade_id: gradeId, content: content, expected_grade: expectedGrade });
+}
+
+export { getCurrentUserApi, getGradeApi, profileMapStudentApi, profileUnMapStudentApi, updateUserProfileApi, createGradeReviewApi };

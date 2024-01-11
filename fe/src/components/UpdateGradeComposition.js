@@ -5,13 +5,12 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Typography } from '@mui/material';
-import { Add } from '@mui/icons-material';
+import { Done } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { createGradeApi } from '../api/gradeService';
 
-export default function AddGradeComposition({classId}) {
+export default function UpdateGradeComposition({classId}) {
   const [open, setOpen] = React.useState(false);
   const [gradeName, setGradeName] = React.useState('');
   const [gradeScale, setGradeScale] = React.useState('');
@@ -46,11 +45,10 @@ export default function AddGradeComposition({classId}) {
 
   return (
     <React.Fragment>
-      <Button variant="contained" sx={{textTransform: 'none'}}
+      <Button variant="contained" sx={{textTransform: 'none', ml: '10px'}}
         onClick={handleClickOpen}
       >
-        <Add sx={{mr: '10px'}}/>
-        <Typography sx={{mr: '10px', fontSize: '14px'}}>Add grade composition</Typography> 
+        <Done />
       </Button>
       <Dialog open={open} onClose={handleClose} fullWidth
         PaperProps={{ sx: { borderRadius: "12px", padding: '10px' } }}

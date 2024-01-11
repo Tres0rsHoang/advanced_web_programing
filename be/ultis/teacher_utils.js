@@ -104,6 +104,7 @@ export async function unMapStudent(classId, studentId) {
     WHERE previous_id = '${studentId}' AND classroom_id = '${classId}' AND is_removed = 1`;
 
     var previousId = await databaseQuery(databaseRequest, sql);
+    console.log(sql);
     previousId = previousId[0]['student_id'];
 
     var sql = `UPDATE classroom_student
@@ -129,14 +130,13 @@ export async function unMapStudent(classId, studentId) {
 }
 
 export async function isMapping(studentId) {
-    var sql = `SELECT previous_id 
+    var sql = `SELECT student_id 
     FROM classroom_student cs 
-    WHERE cs.student_id = '${studentId}'`;
-
-    var result = await databaseQuery(databaseRequest, sql);
+    WHERE cs.previous_id = '${studentId}'`;
 
     try{
-       if (result[0]['previous_id'] == null) return false;
+       var result = await databaseQuery(databaseRequest, sql);
+       if (result.length == 0) return false;
        return true;
     }
     catch (err) {
@@ -145,6 +145,18 @@ export async function isMapping(studentId) {
 }
 
 export async function mapStudentByInClassId(classId, newStudentId, inClassId) {
+    var sql = `SELECT 1
+    FROM classroom_student 
+    WHERE in_class_id = '${inClassId}'
+    AND student_id = '${newStudentId}'
+    AND classroom_id = '${classId}'`;
+
+    var sqlResult = await databaseQuery(databaseRequest, sql);
+
+    if (sqlResult.length != 0) {
+        return "ERROR: You can't mapping your self with your old in class id";
+    }
+
     const mapping = await isMapping(newStudentId);
     if (mapping) return "ERROR: This student already mapping to one account";
 
