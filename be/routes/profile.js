@@ -1,6 +1,5 @@
 import bcrypt from 'bcrypt';
 import express from 'express';
-import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from "uuid";
 import authenToken from "../helper/authenticate_token.js";
 import databaseConnection from '../helper/database_connection.js';
@@ -75,15 +74,7 @@ profileRouter.patch('/', authenToken, async function (req, res, next) {
             reqData = JSON.parse(req.body);
         }
 
-        const authorizationHeader = req.headers['authorization'];
-        const accessToken = authorizationHeader.split(' ')[1];
-
-        const refreshTokenId = jwt.decode(accessToken)['refresh_token_id'];
-        const userIdSql = `SELECT user_id FROM [refresh_authen] WHERE id = '${refreshTokenId}'`;
-
-        const userIdQueryResult = await databaseQuery(databaseRequest, userIdSql);
-
-        const userId = userIdQueryResult[0]['user_id'];
+        const userId = await getCurrentUserId(req, res);
 
         if (reqData['password']) {
             const hashPassword = await bcrypt.hash(reqData['password'], parseInt(process.env.SALT_ROUNDS)).catch(err => console.error(err.message));
