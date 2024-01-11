@@ -360,9 +360,9 @@ classroomRouter.post('/uploadFile', fileUpload({ createParentPath: true }), auth
                 });
 
                 var userInfor = {
-                    inClassId: rowsValue[studentIdColumnIndex],
-                    firstName: rowsValue[firstNameColumnIndex],
-                    lastName: rowsValue[lastNameColumnIndex]
+                    inClassId: rowsValue[studentIdColumnIndex] ?? null,
+                    firstName: rowsValue[firstNameColumnIndex] ?? null,
+                    lastName: rowsValue[lastNameColumnIndex] ?? null
                 }
                 updateStudent(classId, userInfor, gradeInforList);
             }
@@ -494,9 +494,9 @@ classroomRouter.patch('/un-mapping', authenToken, isClassActive, isTeacher, asyn
 
         const classId = reqData['class_id'];
         const studentId = reqData['student_id'];
-        
+
         const messages = await unMapStudent(classId, studentId);
-        
+
         var statusCode = 200;
         if (messages.includes("ERROR")) var statusCode = 202;
         res.status(statusCode).send({ messages: messages });
@@ -568,52 +568,62 @@ classroomRouter.post('/comment-list', authenToken, isClassActive, async function
         const classId = reqData['class_id'];
 
         var sql = `SELECT id, name
-    FROM classroom_grade 
-    WHERE classroom_id = '${classId}'`;
+        FROM classroom_grade 
+        WHERE classroom_id = '${classId}'`;
 
         var gradeIds = await databaseQuery(databaseRequest, sql);
+        
+        await Promise.all(
+            gradeIds.map(
+                async (gradeId) => {
+                    for (const element of gradeIds) {
+                        const gradeId = element['id'];
+            
+                        var sql = `SELECT c.id, content, expected_grade, grade_id, user_id, create_time
+                        FROM comment c
+                        JOIN classroom_grade cg ON cg.id = c.grade_id
+                        WHERE cg.classroom_id = '${classId}' AND cg.id = '${gradeId}'`;
+            
+                        commentList = await databaseQuery(databaseRequest, sql);
+            
+                        for (const comment of commentList) {
+                            const commentUser = comment['user_id'];
+            
+                            var sql = `SELECT CONCAT(u.first_name,' ', u.last_name) as full_name 
+                            FROM [user] u
+                            WHERE u.id = '${commentUser}'`;
+            
+                            const commentUserName = await databaseQuery(databaseRequest, sql);
+            
+                            comment['comment_user'] = {
+                                id: commentUser,
+                                name: commentUserName[0]['full_name'],
+                            }
+            
+                            delete comment['user_id'];
+            
+                            const gradeId = comment['grade_id'];
+            
+                            var sql = `SELECT name FROM classroom_grade WHERE id = '${gradeId}'`;
+                            const gradeName = await databaseQuery(databaseRequest, sql);
+            
+                            comment['grade'] = {
+                                id: gradeId,
+                                name: gradeName[0]['name'],
+                            }
+            
+                            delete comment['grade_id'];
+                        }
+                    }
 
-        for (const element of gradeIds) {
-            const gradeId = element['id'];
-
-            var sql = `SELECT c.id, content, expected_grade, grade_id, user_id, create_time
-        FROM comment c
-        JOIN classroom_grade cg ON cg.id = c.grade_id
-        WHERE cg.classroom_id = '${classId}' AND cg.id = '${gradeId}'`;
-
-            var commentList = await databaseQuery(databaseRequest, sql);
-
-            for (const comment of commentList) {
-                const commentUser = comment['user_id'];
-
-                var sql = `SELECT CONCAT(u.first_name,' ', u.last_name) as full_name 
-            FROM [user] u
-            WHERE u.id = '${commentUser}'`;
-
-                const commentUserName = await databaseQuery(databaseRequest, sql);
-
-                comment['comment_user'] = {
-                    id: commentUser,
-                    name: commentUserName[0]['full_name'],
                 }
+            )
+        );
 
-                delete comment['user_id'];
-
-                const gradeId = comment['grade_id'];
-
-                var sql = `SELECT name FROM classroom_grade WHERE id = '${gradeId}'`;
-                const gradeName = await databaseQuery(databaseRequest, sql);
-
-                comment['grade'] = {
-                    id: gradeId,
-                    name: gradeName[0]['name'],
-                }
-
-                delete comment['grade_id'];
-            }
-        }
-
+        
         res.send(commentList);
+
+        
     }
     catch (err) {
         console.log("ERROR[/classroom/comment-list]:", err);

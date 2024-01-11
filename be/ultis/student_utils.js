@@ -34,7 +34,7 @@ export async function isStudent(req, res, next) {
 }
 
 export async function getStudentScore(classId, studentId) {
-    var sql = `SELECT c.id, g.grade, c.name , g.is_finalized
+    var sql = `SELECT c.id, g.grade, c.name , g.is_finalized, c.grade_scale
     FROM student_grade g
     JOIN classroom_grade c ON g.grade_id = c.id
     WHERE student_id = '${studentId}' 

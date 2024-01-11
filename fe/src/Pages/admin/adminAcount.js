@@ -4,7 +4,7 @@ import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import { DataGrid, GridDeleteIcon } from '@mui/x-data-grid';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { getUserListApi, toggleLockAccountApi } from '../../api/adminService';
+import { getUserListApi, toggleAdminApi, toggleLockAccountApi } from '../../api/adminService';
 import MiniDrawer from '../../components/Drawer';
 
 export default function AdminAccount() {
@@ -36,7 +36,7 @@ export default function AdminAccount() {
         {
             field: 'id',
             headerName: 'Account ID',
-            flex: 1
+            flex: 3
         },
         {
             field: 'firstName',
@@ -93,7 +93,26 @@ export default function AdminAccount() {
         var element = selectedRows[0];
 
         toggleLockAccountApi(element['id']).then(response => {
-            console.log(response);
+            if (response.status === 200) {
+                toast.success(response.data.messages);
+                setFetchData(!fetchData);
+            }
+        });
+    }
+
+    const handleToggleAdmin = () => {
+        if (selectedRows.length === 0) {
+            toast.error("No user sellected");
+            return;
+        }
+
+        var element = selectedRows[0];
+
+        toggleAdminApi(element['id']).then(response => {
+            if (response.status === 200) {
+                toast.success(response.data.messages);
+                setFetchData(!fetchData);
+            }
         });
     }
 
@@ -111,17 +130,22 @@ export default function AdminAccount() {
                     <Tab label="Mapping" href='/admin/mapping' />
                 </Tabs>
                 <Divider />
-                <Box md={{ height: '25%' }}>
+                <div style={{ height: 500, width: '100%' }} >
                     <DataGrid
+                        sx={{
+                            "& .MuiDataGrid-cell:focus-within, & .MuiDataGrid-cell:focus": {
+                                outline: "none"
+                            }
+                        }}
                         autosizeOptions
-                        rows = {rows}
-                        columns = {columns}
+                        rows={rows}
+                        columns={columns}
                         initialState={{
                             pagination: {
-                                paginationModel: { page: 0, pageSize: 5 },
+                                paginationModel: { page: 0, pageSize: 10 },
                             },
                         }}
-                        pageSizeOptions={[5, 10]}
+                        pageSizeOptions={[10, 50, 100]}
                         onRowSelectionModelChange={(ids) => {
                             const selectedIDs = new Set(ids);
                             const selectedRows = rows.filter((row) =>
@@ -130,11 +154,11 @@ export default function AdminAccount() {
                             setSelectedRows(selectedRows);
                         }}
                     />
-                </Box>
+                </div>
                 <Box sx={{ display: "flex", alignItems: "center", justifyContent: "start" }}>
                     <Stack direction="row" spacing={2}>
                         <Button variant="contained" color="error" startIcon={<GridDeleteIcon />} onClick={handleLockAccount}>Toggle Lock</Button>
-                        <Button variant="contained" startIcon={<CheckBoxIcon />}>Toggle Admin</Button>
+                        <Button variant="contained" startIcon={<CheckBoxIcon />} onClick={handleToggleAdmin}>Toggle Admin</Button>
                     </Stack>
                 </Box>
             </MiniDrawer>

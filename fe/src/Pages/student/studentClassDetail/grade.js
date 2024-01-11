@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import { Box, Divider, Tab, Tabs } from '@mui/material';
-import MiniDrawer from '../../../components/Drawer';
-import StudentGradeTable from '../../../components/StudentGradeTable';
-import GradeRequest from '../../../components/GradeRequest';
-import GradeReviewDetail from '../../../components/GradeReviewDetail';
+import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getGradeApi } from '../../../api/profileService';
 import ProfileMapStudent from '../../../components/ProfileMapStudent';
+import MiniDrawer from '../../../components/Drawer';
+import GradeRequest from '../../../components/GradeRequest';
+import GradeReviewDetail from '../../../components/GradeReviewDetail';
+import StudentGradeTable from '../../../components/StudentGradeTable';
 
 export default function StudentGrade() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -23,6 +23,7 @@ export default function StudentGrade() {
             }
         }
         fetchData();
+        
     }, []);
 
     return (
