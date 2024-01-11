@@ -65,9 +65,8 @@ export default function userReducer(state = INITIAL_STATE, action) {
             };
 
         case USER_LOGOUT:
-            localStorage.clear();
             logoutApi();
-
+            localStorage.clear();
             return {
                 ...state,
                 account: {

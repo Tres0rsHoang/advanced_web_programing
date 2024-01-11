@@ -11,9 +11,9 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { signUpApi } from '../api/authService';
-import { useNavigate } from 'react-router-dom';
 
 
 const defaultTheme = createTheme();
@@ -88,9 +88,9 @@ export default function SignUp() {
     try {
 
       const response = await signUpApi(email, password, phoneNumber, firstName, lastName);
-
-      console.log(response)
-
+      
+      console.log(response);
+      
       if(response.status !== 200) {
         return;
       }
@@ -105,7 +105,8 @@ export default function SignUp() {
 
       toast.success(response.data.messages);
       navigate("/login");
-    } catch (err) {
+    } 
+    catch (err) {
         if (!err?.response) {
           toast.error('Server not responding...');
         } else if (err.response?.status === 409) {
